@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <title>Tour Detail</title>
+</head>
+<body>
+{% include "../common/navbar.jinja2" %}
+<section class="cid-riOgV1r1Ph">
+    <div class="container">
+        
+		<h1 class="mt-5 mb-2">{{tour.title[:30]}}...
+            <small>by
+            <a href="#">{{tour.fullname}}</a>
+            </small>
+        </h1>
+
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/">Home</a>
+            </li>
+            <li class="breadcrumb-item active">{{tour.short_desc}}</li>
+        </ol>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Preview Image -->
+				{% if tour.banner : %}
+					<img name="banner" class="img-fluid rounded" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{tour.uid}}/{{tour.banner}}" alt="" style="cursor: pointer; width:900px;height:300px;" v-on:click="file_open" >	
+				{% else %}
+					<img name="banner" class="img-fluid rounded" src="http://placehold.it/900x300" alt="Tour banner image" >	
+				{% endif %}	
+                <!--<img class="img-fluid rounded" src="{{request.static_url('localguide:static/assets/images/mbr-1-676x451.jpg')}}" alt="localguide" style="height: 300px; width: 100%; display: block;">-->
+                <hr>
+                <!-- Date/Time -->
+                <p>Posted on {{tour.mtime}}, {{tour.created_in_words}} ago</p>
+                <hr>
+                <!-- Post Content -->
+                <p>{{tour.content|safe}}</p>                
+                <hr>
+                <!-- Comments Form -->
+                
+            </div>
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-md-4">
+                <!-- Search Widget -->
+                <div class="localguide_card mb-4">
+                    <h5 class="localguide_card-header">Search</h5>
+                    <div class="localguide_card-body">
+                        <p>Tour in <b>{{tour.days}} days</b></p>
+						<p><b>{{tour.price}}</b> USD</p>
+						<span class="input-group-btn">
+                            <button class="btn btn-secondary btn-sm" type="button">Book now</button>
+                        </span>
+						<!--
+						<div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary btn-sm" type="button">Go!</button>
+                            </span>
+                        </div>
+						-->
+                    </div>
+                </div>
+
+                <!-- Categories Widget -->
+                <div class="localguide_card my-4">
+                    <h5 class="localguide_card-header">Categories</h5>
+                    <div class="localguide_card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li>
+                                        <a href="#">Web Design</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">HTML</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Freebies</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li>
+                                        <a href="#">JavaScript</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">CSS</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Tutorials</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Widget -->
+                <div class="localguide_card my-4">
+                    <h5 class="localguide_card-header">Side Widget</h5>
+                    <div class="localguide_card-body">
+                        You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+</section>
+
+{% include "../common/footer.jinja2" %}
+  
+</body>
+</html>

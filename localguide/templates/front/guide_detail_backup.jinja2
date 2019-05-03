@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <title>Guide detail</title>
+
+	<!-- Quill start -->
+	<script src="https://cdn.quilljs.com/1.3.4/quill.js"></script>
+	<!--<script src="https:////cdn.quilljs.com/1.3.6/quill.min.js"></script>-->
+	<!-- Quill JS Vue -->
+	<script src="https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.4/dist/vue-quill-editor.js"></script>
+	<!-- Include stylesheet -->
+	<link href="https://cdn.quilljs.com/1.3.4/quill.core.css" rel="stylesheet">
+	<!-- Theme -->
+	<link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
+	<!--<link href="https://cdn.quilljs.com/1.3.4/quill.bubble.css" rel="stylesheet">-->
+	<!-- Quill end -->
+	
+</head>
+<body>
+{% include "../common/navbar.jinja2" %}
+<section class="cid-riOgV1r1Ph">
+    <div class="container">
+		<!-- Page Heading/Breadcrumbs -->
+		<h1 class="mt-5 mb-2">Guide profile
+			<small>Subheading</small>
+		</h1>
+
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="index.html">Home</a>
+			</li>
+			<li class="breadcrumb-item active">Portfolio Item</li>
+		</ol>
+
+    	<!--Item Row -->
+    	<div class="row">
+			<div class="col-md-4 mt-3 mb-3  align-center">
+				<div class="profile-photo" id="avatarUpload">
+					{% if user.avatar: %}
+						<img class="img-fluid rounded" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{user.uid}}/{{user.avatar}}" style="cursor: pointer; display: block;" v-on:click="file_open" alt="Click image to update">	
+					{% else %}
+						<img name="avatar" class="img-fluid rounded" src="{{request.static_url('localguide:static/assets/images/noimage.jpg')}}" style="cursor: pointer;" v-on:click="file_open" alt="Click image to update">	
+					{% endif %}
+					<input ref="file" type="file" name="banner" class="upload_file" @change="filesChange($event)">
+                </div>
+				<div class="mbr-author-name mbr-bold mbr-fonts-style display-7">
+					{{user.fullname}}
+				</div>
+				<small class="mbr-author-desc mbr-italic mbr-light mbr-fonts-style display-7">
+					{% if not user.job: %} <span style="color:red;">Your job ?<span> {% else %} {{user.job}} {% endif %}
+				</small>
+				<!--<img class="img-fluid" src="http://placehold.it/750x500" alt="">-->
+			</div>
+
+			<div class="col-md-8">
+				<h3 class="my-3">Basic information</h3>
+				<ul>
+					<li>{% if user.sex == '1' : %} Male {% else %} Female {% endif %}</li>
+					<li>{% if not user.age: %} <span style="color:red;">How old are you ?</span> {% else %} {{user.age}} years old {% endif %}</li>
+					<li>Live in {% if not user.country : %} Country {% else %} {{user.country}} {% endif %} / {% if not user.city : %} City {% else %} {{user.city}} {% endif %}</li>
+					<li>{% if not user.language: %} <span style="color:red;">Your speaking language ?<span> {% else %} Can speak {{user.language}} {% endif %}</li>
+					<li>{% if not user.hobby: %} <span style="color:red;">Your interested in ?</span> {% else %} Interested in {{user.hobby}} {% endif %}</li>
+				</ul>
+			</div>			
+    	</div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="localguide_card mb-4">
+                    <h5 class="localguide_card-header-not-active">Tour not active</h5>
+                    <div class="localguide_card-body" id="notActiveModal">
+                        You have <a href="#" class="num" @click="showModal">${ count }</a> tour is not active<br/>
+						<b-modal ref="notActiveModalRef" size="md" title="Tour not active" hide-footer centered >
+							<div v-if="count == 0">
+								<small>You don't have any tour. Please create it now. <a href="../tour/create">New Tour</a></small>
+							</div>
+							<div v-else class="row" v-for="tour,num in tours">
+								
+								<div class="col-md-1" style="padding-right:0px;">
+									${ num+1 }.
+								</div>
+								<div class="col-md-8">
+									<a href="#" @click="edit(tour.id, tour.uid)">${tour.title.substring(0,30) }</a>
+								</div>
+								<div class="col-md-2">
+									<a href="#" @click="del(tour.id, tour.uid)" style="color:red">delete</a>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<hr>
+								</div>
+							</div>
+							<div class="row align-center">
+								<div class="col">
+									<small>Please complete your tour. And admin will review. </small>
+								</div>
+							</div>
+						</b-modal>
+                    </div>
+                </div>	
+			</div>
+
+			<div class="col-md-4">
+				<div class="localguide_card mb-4">
+                    <h5 class="localguide_card-header-active">Tour in actived</h5>
+                    <div class="localguide_card-body" id="activeModal">
+                        You have <a href="#" class="num" @click="showModal">${ count }</a> tour in actived<br/>
+						<b-modal ref="activeModalRef" size="md" title="Tour in actived" hide-footer centered >
+							<div v-if="count == 0">
+								<small>You don't have any tour. Please create it now. <a href="../tour/create">New Tour</a></small>
+							</div>
+							<div v-else class="row" v-for="tour,num in tours">
+								<div class="col-md-1" style="padding-right:0px;">
+									${ num+1 }.
+								</div>
+								<div class="col-md-8">
+									<a href="#" @click="edit(tour.id, tour.uid)">${tour.title.substring(0,30) }</a>
+								</div>
+								<div class="col-md-2">
+									<a href="#" v-if="tour.status=='1'" @click="disable(tour.id, tour.uid)" style="color:red">disable</a>
+									<a href="#" v-else @click="enable(tour.id, tour.uid)" style="color:red">enable</a>
+								</div>
+							</div>							
+						</b-modal>
+                    </div>
+                </div>	
+			</div>
+
+			<div class="col-md-4">
+				<p>20 users reviewed your profile</p>
+				<div id="basicModal" class="text-dark">
+					<form>
+						<button type="button" class="btn btn-success btn-sm" @click="showModal">Edit Info</button>
+						<button type="button" class="btn btn-success btn-sm" onclick="location.href='/tour/create'">New Tour</button>
+						<b-modal ref="basicModalRef" size="sl" title="Edit basic information" hide-footer hide-header-close no-close-on-backdrop centered >
+							<b-form-group label="Full name" description="">
+								<b-form-input type="text"  v-model.trim="user.fullname" ref="fullname" :value="user.fullname" placeholder="Fullname" maxlength="50" autocapitalize="off" autocorrect="off" autofocus required=""></b-form-input>
+							</b-form-group>
+							<div class="row">
+								<div class="col">
+									<b-form-group label="Current job" description="">
+										<b-form-input type="text" v-model.trim="user.job" ref="job" :value='user.job' placeholder="Tour guide" maxlength="50" autocapitalize="off" autocorrect="off" required=""></b-form-input>
+									</b-form-group>
+								</div>
+								<div class="col">
+									<b-form-group label="Mobile phone" description="">
+										<b-form-input type="text" v-model.trim="user.mobile" ref="mobile" :value='user.mobile' ref="mobile"  placeholder="Mobile phone" maxlength="12" autocapitalize="off" autocorrect="off" required=""></b-form-input>
+									</b-form-group>
+								</div>
+							</div>	
+							<div class="row">
+								<div class="col">
+									<b-form-group label="Country" description="">
+										<select name="country" v-model="country" @change="onChange" class="form-control" required="">
+											<option v-for="country in countries" :value="country.name">
+												{%raw%}{{country.name}}{%endraw%}
+											</option>
+										</select>
+									</b-form-group>
+								</div>
+								<div class="col">
+									<b-form-group label="City" description="" v-if="count_city > 0">
+										<select name="city" v-model="city" class="form-control" >
+											<option>Select City</option>
+											<option v-for="option in options" :value="option.value">
+												{%raw%}{{ option.name }}{%endraw%} 
+											</option>
+										</select>
+									</b-form-group>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<b-form-group label="Age" description="">
+										<b-form-input type="text" v-model.trim="user.age" ref="age" :value='user.age' maxlength="2" autocapitalize="off" autocorrect="off" required=""></b-form-input>
+									</b-form-group>
+								</div>
+								<div class="col">
+									<b-form-group label="Sex" description="">
+										<select name="sex" v-model="sex" class="form-control" >
+											<option value='1'>Male</option>
+											<option value='0'>Female</option>
+										</select>
+									</b-form-group>
+								</div>
+							</div>
+							<b-form-group label="Languages" description="">
+								<b-form-input type="text"  v-model.trim="user.language" ref="language" :value="user.language" placeholder="English, Japanese, VietNamese" maxlength="200" autocapitalize="off" autocorrect="off" required=""></b-form-input>
+							</b-form-group>
+							<b-form-group label="Hobby" description="">
+								<b-form-input type="text" v-model.trim="user.hobby" ref="hobby" :value="user.hobby" ref="hobby" placeholder="Cooking, Movie, Travel" maxlength="200" autocapitalize="off" autocorrect="off" required=""></b-form-input>
+							</b-form-group>
+
+							<div class="row align-center">
+								<button class="btn btn-success btn-sm" @click="save">SAVE</button>
+								<button class="btn btn-warning btn-sm" @click="hideModal">CANCEL</button>
+							</div>
+						</b-modal>
+					</form>
+				</div>	
+			</div>
+		</div>
+    	<!-- /.row -->
+		<h3 class="my-4">Experience</h3>
+		<div class="row">
+			<div class="col-sm-11 mb-4">
+				<div id="experienceEditor" class="text-dark">
+					<div :disabled="isEditing" :class="{view: isEditing}">
+						{% if user.experience == 'None' :%}
+							<i>Please update your experience</i>
+						{% else %}
+							{{user.experience|safe}}
+						{% endif %}
+					</div>
+					<div :disabled="!isEditing" :class="{view: !isEditing}">
+						<quill-editor v-model="user.experience" ref="expEditor" :options="editorOption"></quill-editor>
+					</div>
+					<br/>
+					<a href="#" @click="isEditing = !isEditing" v-if="!isEditing">Edit</a>
+					<button @click="save" v-else-if="isEditing">Save</button>
+					<button v-if="isEditing" @click="isEditing = false">Cancel</button>
+				</div>	 
+			</div>
+		</div>
+
+		<h3 class="my-4">Working history</h3>
+		<div class="row">
+			<div class="col-sm-11 mb-4">
+				<div id="workhistoryEditor" class="text-dark">
+					<div :disabled="isEditing" :class="{view: isEditing}">
+						{% if user.work_history == 'None' :%}
+							<i>Please update your working history</i>
+						{% else %}
+							{{user.work_history|safe}}
+						{% endif %}
+					</div>
+					<div :disabled="!isEditing" :class="{view: !isEditing}">
+						<quill-editor v-model="user.work_history" ref="workEditor" :options="editorOption"></quill-editor>
+					</div>
+					<br/>
+					<a href="#" @click="isEditing = !isEditing" v-if="!isEditing">Edit</a>
+					<button @click="save" v-else-if="isEditing">Save</button>
+					<button v-if="isEditing" @click="isEditing = false">Cancel</button>
+				</div>	 
+			</div>
+		</div>	
+		
+    	<!-- Related Projects Row -->
+    	<h3 class="my-4">Recent Tours</h3>
+    	<div class="row">
+			<div class="col-md-3 col-sm-6 mb-4">
+				<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+			</div>
+
+			<div class="col-md-3 col-sm-6 mb-4">
+				<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+			</div>
+
+			<div class="col-md-3 col-sm-6 mb-4">
+				<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+			</div>
+
+			<div class="col-md-3 col-sm-6 mb-4">
+				<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+			</div>
+    	</div>
+    </div>
+</section>
+
+{% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/assets/js/image_resize.min.js')}}"></script>
+<script type="text/javascript">
+	//Vue.use(VeeValidate);
+	Vue.use(bootstrapVue);
+	Vue.use(VueQuillEditor);
+	
+	/* List Tour is not Active*/
+	const notActiveModal = new Vue({
+        delimiters: ['${', '}'],
+		el: '#notActiveModal',
+		data: {
+			tours: [],
+			count: '',
+		},
+		created() {
+			this.getTourNotActive()
+		},
+		methods: {
+			showModal() {
+				this.$refs.notActiveModalRef.show();
+			},
+			hideModal() {
+				this.$refs.notActiveModalRef.hide();
+			},
+			getTourNotActive() {
+				axios({
+					method: 'GET',
+					url: 'http://localhost:6543/tour/getTourNotActive',
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(response => {
+					this.tours = response.data
+					this.count = response.data.length
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+			edit(id, uid) {
+				url = "../tour/edit?id=" + id + '&hash=' + uid;
+				console.log(url)
+				location.href = url				
+			},
+			del(id, uid) {
+				conf = confirm('Do you want delete this tour ?')
+				if(conf) {
+					axios({
+						method: 'POST',
+						url: 'http://localhost:6543/tour/deleteTour',
+						data: {id: id, uid: uid},
+						config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+					})
+					.then(function (response) {
+						//handle success
+						if (response.status == '200' && response.statusText == 'OK') {
+							location.reload() 
+						}
+					})
+					.catch(function (response) {
+						//handle error
+						console.log(response);
+					});
+				}
+			}
+		}
+	});	
+
+	/* List Tour in Actived */
+	const activeModal = new Vue({
+		delimiters: ['${', '}'],
+        el: '#activeModal',
+		data: {
+			tours: [],
+			count: '',
+		},
+		created() {
+			this.getTourActive()
+		},
+		methods: {
+			showModal() {
+				this.$refs.activeModalRef.show();
+			},
+			hideModal() {
+				this.$refs.activeModalRef.hide();
+			},
+			getTourActive() {
+				axios({
+					method: 'GET',
+					url: 'http://localhost:6543/tour/getTourActive',
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(response => {
+					this.tours = response.data
+					this.count = response.data.length
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+			edit(id, uid) {
+				url = "../tour/edit?id=" + id + '&hash=' + uid;				
+				location.href = url				
+			},
+			disable(id, uid) {
+				conf = confirm('Do you want disable this tour ?¥n Your tour will be not show in homepage')
+				if(conf) {
+					axios({
+						method: 'POST',
+						url: 'http://localhost:6543/tour/disableTour',
+						data: {id: id, uid: uid},
+						config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+					})
+					.then(function (response) {
+						//handle success
+						if (response.status == '200' && response.statusText == 'OK') {
+							location.reload() 
+						}
+					})
+					.catch(function (response) {
+						//handle error
+						console.log(response);
+					});
+				}
+			},
+			enable(id, uid) {
+				conf = confirm('Do you want enable this tour ?¥n Your tour will be show in homepage')
+				if(conf) {
+					axios({
+						method: 'POST',
+						url: 'http://localhost:6543/tour/enableTour',
+						data: {id: id, uid: uid},
+						config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+					})
+					.then(function (response) {
+						//handle success
+						if (response.status == '200' && response.statusText == 'OK') {
+							location.reload() 
+						}
+					})
+					.catch(function (response) {
+						//handle error
+						console.log(response);
+					});
+				}
+			}
+		}
+	});	
+
+	/* Update basic info*/
+	const basicModal = new Vue({
+        el: '#basicModal',
+        data: {
+			country: '{{user.country}}',
+			city: '{{user.city}}',
+			sex: '{{user.sex}}',
+			countries:[],
+			count_city:'',
+			cityData: {
+               Japan: [
+                    { name: 'Tokyo', value: 'Tokyo' },
+                    { name: 'Osaka', value: 'Osaka' },
+               ],
+               VietNam: [
+                   { name: 'SaiGon', value: 'SaiGon' },
+                   { name: 'DaNang', value: 'DaNang' },
+               ]
+           	},
+			user: {
+				uid:'',
+				fullname:'{{user.fullname}}',
+				job: '{{user.job}}',
+				mobile: '{{user.mobile}}',
+            	country: '{{user.country}}',
+				city: '{{user.city}}',
+				age: '{{user.age}}',
+				sex: '{{user.sex}}',
+				language: '{{user.language}}',
+				hobby: '{{user.hobby}}',
+			},
+        },
+		created() {
+			this.getCountry()
+			if (this.city != 'None' || this.city != '')
+				this.count_city = 1		
+			if(this.user.job == 'None')
+				this.user.job = ''
+			if(this.user.mobile == 'None')
+				this.user.mobile = ''		
+			if(this.user.language == 'None')
+				this.user.language = ''	
+			if(this.user.hobby == 'None')
+				this.user.hobby = ''		
+		},
+		computed: {
+			options: function() {
+        		let options = ''
+                switch(this.country) {
+                    case 'Japan':
+                    	options = this.cityData.Japan
+                    	break;                    
+                    case 'VietNam':
+                    	options = this.cityData.VietNam
+                    	break;
+                    //default:
+                    //	options = this.cityData.Japan
+                }
+                return options
+           }
+    	},
+        methods: {
+			showModal () {
+				this.$refs.basicModalRef.show()
+			},
+			hideModal () {
+				this.$refs.basicModalRef.hide();
+			},
+			getCountry() {
+				axios.get('http://localhost:6543/static/js/country.json').then(response => {
+					this.countries = response.data
+				})
+      		},
+			onChange: function () {
+            	this.options = this.options
+				this.count_city = this.options.length
+         	},
+			save(evt) {
+				// Prevent modal from closing
+				evt.preventDefault()
+				//this.user.uid = this.$refs['uid'].value;
+				this.user.fullname = this.$refs['fullname'].value;
+				this.user.job = this.$refs['job'].value;
+				this.user.mobile = this.$refs['mobile'].value;
+				this.user.age = this.$refs['age'].value;
+				this.user.langauge = this.$refs['language'].value;
+				this.user.hobby = this.$refs['hobby'].value;
+				this.user.sex = this.sex;
+				this.user.country = this.country;
+				this.user.city = this.city;
+				
+				axios({
+					method: 'POST',
+					url: 'http://localhost:6543/guide/updateBasicInfo',
+					data: this.user,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						alert("UPDATE BASIC INFO SUCCESS")
+						basicModal.hideModal()
+						location.reload() 
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},    
+        }	
+    });
+
+	/* Experience */
+	const experienceEditor = new Vue({
+        el: '#experienceEditor',
+        data: {
+			isEditing: false,
+			user: {
+				uid:'',
+				experience:'{{user.experience|safe}}',
+			},
+			editorOption: {
+				syntax: true,
+				placeholder: 'Please update your experience',
+				theme: 'snow',
+				modules: {
+					imageResize: {
+          				displaySize: true
+        			},
+					toolbar: {
+						container: [
+							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+							['bold', 'italic', 'underline', 'strike'],
+							[{ 'color': [] }, { 'background': [] }], 
+							[{ 'align': [] }],
+							[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+							['link', 'image', 'video'],
+							['blockquote'],
+							['clean']  
+						],
+						handlers: {
+							image: imageHandler
+						}
+					},
+				},
+			},
+		},
+		components: {
+			LocalQuillEditor: VueQuillEditor.quillEditor
+		},
+		methods: {
+			save(evt) {
+				this.isEditing = !this.isEditing;
+				// Prevent modal from closing
+				evt.preventDefault()
+				//this.user.uid = this.$refs['uid'].value;
+				this.user.experience = this.$refs['expEditor'].value;
+
+				axios({
+					method: 'POST',
+					url: 'http://localhost:6543/guide/updateExperience',
+					data: this.user,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						alert("UPDATE Experience SUCCESS")
+						location.reload() 
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			}
+		},
+		/*
+		computed: {
+			editorA() {
+				return this.$refs.expEditor.quill
+			},
+		},
+		mounted() {
+			console.log('this is quill A instance object', this.editorA)
+		}
+		*/	
+    });
+
+	/* Work history */
+	const workhistoryEditor = new Vue({
+        el: '#workhistoryEditor',
+        data: {
+			isEditing: false,
+			user: {
+				uid:'',
+				work_history:'{{user.work_history|safe}}',
+			},
+			editorOption: {
+				syntax: true,
+				placeholder: 'Please update your working history',
+				theme: 'snow',
+				modules: {
+					imageResize: {
+          				displaySize: true
+        			},
+					toolbar: {
+						container: [
+							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+							['bold', 'italic', 'underline', 'strike'],
+							[{ 'color': [] }, { 'background': [] }], 
+							[{ 'align': [] }],
+							[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+							['link', 'image', 'video'],
+							['blockquote'],
+							['clean']  
+						],
+						handlers: {
+							image: imageHandler
+						}
+					},
+				},
+			},
+		},
+		components: {
+			LocalQuillEditor: VueQuillEditor.quillEditor
+		},
+		methods: {
+			save(evt) {
+				this.isEditing = !this.isEditing;
+				// Prevent modal from closing
+				evt.preventDefault()
+				this.user.work_history = this.$refs['workEditor'].value;
+
+				axios({
+					method: 'POST',
+					url: 'http://localhost:6543/guide/updateWorkHistory',
+					data: this.user,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						alert("UPDATE Work history SUCCESS")
+						location.reload() 
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			}
+		}
+    });
+
+	const avatarUpload = new Vue({
+        el: '#avatarUpload',
+		validator: null,
+        data: {	
+			uploadfile: '',
+        },
+        methods: {
+			file_open () {
+				this.$refs.file.click()
+			},
+			filesChange(e) {
+				e.preventDefault();
+				//let file_name = this.$refs.file.files[0].name;
+				//let file_size = this.$refs.file.files[0].size;
+				if(!this.validate_img(this.$refs.file.files[0])) {
+					alert('File size too large or not image file')	
+				} else {
+					this.uploadfile = this.$refs.file.files[0]
+					
+					//let formData = new FormData();
+      				//formData.append('file', this.uploadfile);
+      				//console.log('>> formData >> ', formData);
+					let formData = new FormData();
+					formData.append('photo', this.uploadfile);
+					console.log('>> formData >> ', formData);
+
+					axios({
+						method: 'POST',
+						url: 'http://localhost:6543/guide/uploadImage',
+						data: formData, 
+						headers: {'Content-Type': 'multipart/form-data'} 
+					})
+					.then(function (response) {
+						//handle success
+						if (response.status == '200' && response.statusText == 'OK') {
+							alert("UPLOAD SUCCESS")
+							location.reload() 
+						}
+					})
+					.catch(function (response) {
+						//handle error
+						console.log(response);
+					});
+				}
+			},	
+			validate_img (f) {
+				if (f.name == '') {
+					alert('No file chosen');
+					return false;
+				} else if (! /\.(jpg|jpeg|png|gif)$/i.test(f.name)) {
+        			alert('Not image');
+					return false;
+      			} else if (f.size > 1024 * 1024) {
+					alert('File too big (> 1MB)');
+					return false;
+				}
+				return true
+			}
+        }	
+    });
+	/* Make common file */
+	/* Step 1: Select local file */
+	function imageHandler() {
+		alert("Select Image")
+		const input = document.createElement('input');
+		input.setAttribute('type', 'file');
+		input.click();
+
+		// Listen upload local image and save to server
+		input.onchange = () => {
+			const file = input.files[0];
+			alert(file.type);
+			// file type is only image.
+			if (/^image\//.test(file.type)) {
+				console.log('Save file');
+				console.log(this.quill)
+				saveToServer(this.quill, file);
+			} else {
+				console.warn('You could only upload images.');
+			}
+		};
+    }
+
+	/* Step2: Save to server */
+    function saveToServer(quill, file) {
+		var uploadFile = file;
+		alert("Save To Server" + uploadFile);
+		const formData = new FormData();
+		formData.append('photo', uploadFile);
+
+		axios({
+			method: 'POST',
+			url: 'http://localhost:6543/common/uploadEditorImage',
+			data: formData, 
+			headers: {'Content-Type': 'multipart/form-data'},
+		})
+        .then(res => {
+			if(res.status == '200' && res.statusText == 'OK'){
+				var Delta = Quill.import('delta');
+				let range = quill.getSelection(true);
+				quill.updateContents(new Delta()
+					.retain(range.index)
+					.delete(range.length)
+					.insert({ image: res.data.url })
+				, Quill.sources.USER);
+			} else {
+				console.error(res);
+			}
+        })
+        .catch(e => {
+        	console.error(e);
+        });
+    }
+
+</script>
+  
+</body>
+</html>

@@ -1,0 +1,244 @@
+/*!
+ * Start Bootstrap - Modern Business (https://startbootstrap.com/template-overviews/modern-business)
+ * Copyright 2013-2019 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-logomodern-business-nav/blob/master/LICENSE)
+ */
+ .localguide_card {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+
+.localguide_card > hr {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.localguide_card > .list-group:first-child .list-group-item:first-child {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.card > .list-group:last-child .list-group-item:last-child {
+  border-bottom-right-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.localguide_card-body {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 1.25rem;
+}
+
+.localguide_card-body > .num {
+  font-size: 2em;
+  color: rgb(187, 59, 59);
+  font-weight: 700;
+}
+
+.localguide_card-title {
+  margin-bottom: 0.75rem;
+}
+
+.localguide_card-subtitle {
+  margin-top: -0.375rem;
+  margin-bottom: 0;
+}
+
+.localguide_card-text:last-child {
+  margin-bottom: 0;
+}
+
+.localguide_card-link:hover {
+  text-decoration: none;
+}
+
+.localguide_card-link + .card-link {
+  margin-left: 1.25rem;
+}
+
+.localguide_card-header {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0;
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.localguide_card-header-not-active {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0;
+  color: rgb(240, 6, 6);
+  font-size: 15px;
+  font-weight: 700;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.localguide_card-header-active {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0;
+  color: rgb(3, 17, 209);
+  font-size: 15px;
+  font-weight: 700;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.localguide_card-header-new {
+  padding: 0.55rem 0.55rem;
+  margin-bottom: 0;
+  color: rgb(0, 0, 20);
+  font-size: 15px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-header:first-child {
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+}
+
+.card-header + .list-group .list-group-item:first-child {
+  border-top: 0;
+}
+
+.localguide_card-footer {
+  padding: 0.75rem 1.25rem;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.localguide_card-footer:last-child {
+  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
+}
+
+.localguide_card-header-tabs {
+  margin-right: -0.625rem;
+  margin-bottom: -0.75rem;
+  margin-left: -0.625rem;
+  border-bottom: 0;
+}
+
+.localguide_card-header-pills {
+  margin-right: -0.625rem;
+  margin-left: -0.625rem;
+}
+
+.localguide_card-img-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1.25rem;
+}
+
+.localguide_card-img {
+  width: 100%;
+  border-radius: calc(0.25rem - 1px);
+}
+
+.localguide_card-img-top {
+  width: 100%;
+  border-top-left-radius: calc(0.25rem - 1px);
+  border-top-right-radius: calc(0.25rem - 1px);
+}
+
+.localguide_card-img-bottom {
+  width: 100%;
+  border-bottom-right-radius: calc(0.25rem - 1px);
+  border-bottom-left-radius: calc(0.25rem - 1px);
+}
+
+.localguide_card-deck {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.localguide_card-deck .card {
+  margin-bottom: 15px;
+}
+
+@media (min-width: 576px) {
+  .localguide_card-deck {
+    -ms-flex-flow: row wrap;
+    flex-flow: row wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+  }
+  .localguide_card-deck .card {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 1 0 0%;
+    flex: 1 0 0%;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin-right: 15px;
+    margin-bottom: 0;
+    margin-left: 15px;
+  }
+}
+
+.form-control-borderless {
+  border: none;
+}
+
+.form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.searchbox_card {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: transparent;
+  background-clip: border-box;
+  border: 1px solid rgb(255, 255, 255);
+  border-radius: .25rem;
+}
+.searchbox_body {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 0.1rem;
+}
+
+/* Placeholder in italic */
+::-webkit-input-placeholder {
+	font-style: italic;
+}
+:-moz-placeholder {
+	font-style: italic;  
+}
+::-moz-placeholder {
+	font-style: italic;  
+}
+:-ms-input-placeholder {  
+	font-style: italic; 
+}
+
+.is-error {
+  color: red;
+  font-size: 13px;
+}
+.upload_file {
+	display: none;
+}
+.view {
+  display:none;
+}

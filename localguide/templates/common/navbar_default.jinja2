@@ -1,0 +1,73 @@
+<!-- Top navigation -->
+<nav class="navbar navbar-expand-md fixed-top top-nav navbar-light bg-light">
+	<div class="container">
+		<div class="menu-content-top">
+            <div class="menu-logo">
+                <div class="navbar-brand">
+                    <span class="navbar-logo">
+                        <a href="/">
+                            <img src="{{request.static_url('localguide:static/assets/images/logo.png')}}" alt="Mobirise" style="height: 4rem;">
+                        </a>
+                    </span>
+                    <span class="navbar-caption-wrap">
+                        <a href="/" class="brand-link mbr-bold display-5">Localguide</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			{% if request.authenticated_userid : %}
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item {% if request.path == '/faq' %} active {%endif%} ">
+						<a class="nav-link" href="/faq">FAQ's</a>
+					</li>
+					<li class="nav-item {% if request.path == '/contact' %} active {%endif%} ">
+						<a class="nav-link" href="/contact">Contact</a>
+					</li>
+
+					<li class="nav-item {% if request.path == '/user/' + request.authenticated_userid %} active {%endif%} ">
+						<a class="nav-link" href="/user/{{request.authenticated_userid}}">Profile</a>
+					</li>
+
+					<li class="nav-item {% if request.path == '/logout' %} active {%endif%} ">
+						<a class="nav-link" href="/auth/logout">Logout</a>
+					</li>
+					<!--
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Dropdown
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+							<a class="dropdown-item" href="#">Action</a>
+							<a class="dropdown-item" href="#">Another action</a>
+							<a class="dropdown-item" href="#">Something else here</a>
+						</div>
+					</li>
+					-->
+				</ul>
+			{% else %}
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item {% if request.path == '/faq' %} active {%endif%} ">
+						<a class="nav-link" href="/faq">FAQ's</a>
+					</li>
+					<li class="nav-item {% if request.path == '/contact' %} active {%endif%} ">
+						<a class="nav-link" href="/contact">Contact</a>
+					</li>
+
+					<li class="nav-item {% if request.path == '/login' %} active {%endif%} ">
+						<a class="nav-link" href="/login">Login</a>
+					</li>
+
+					<li class="nav-item {% if request.path == '/user/create' %} active {%endif%} ">
+						<a class="nav-link" href="/user/create">Signup</a>
+					</li>
+				</ul>
+			{% endif %}
+			
+		</div>	
+	</div>
+</nav>

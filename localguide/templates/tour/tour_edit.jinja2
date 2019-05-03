@@ -1,0 +1,122 @@
+{% extends "layout_tour_edit.jinja2" %}
+
+{% block content %}
+
+<h4 class="mbr-fonts-style mbr-bold display-2">
+	Tour Update
+	- <small>update your tour</small>
+</h4>
+<section class="form2 cid-rccP5jr1mU">
+	<div class="col-md-12 card" data-form-type="formoid">
+		<div class="row row-sm-offset">
+			<div class="col">
+				<div class="form-group" id="bannerUpload">
+					<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Banner image</label> <small>(Click on image below to upload banner size 900x300)</small></h4>
+					{% if tour.banner: %}
+						<img name="banner" class="img-fluid rounded" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{tour.uid}}/{{tour.banner}}" alt="" style="cursor: pointer; width:900px;height:300px;" v-on:click="file_open">	
+					{% else %}
+						<img name="banner" class="img-fluid rounded" src="http://placehold.it/900x300" alt="" style="cursor: pointer;" v-on:click="file_open" >	
+					{% endif %}	
+					<input ref="file" type="file" name="banner" class="upload_file" @change="filesChange($event)">
+				</div>
+				<small>(Please upload image file with extension is png or jpg or jpeg. And image size is not larger than 1MB)</small>
+			</div>
+		</div>
+		<br>
+		<form id="tourUpdateForm" method="POST" class="mbr-form">
+			<!--<input type="hidden" name="email" data-form-email="true" value="gbEjPUpE9TlSyfGJqFqs+xOeVkoqUToPYF0eCXm2xwm56T9S/zQg7bQvW5XoiJ74+PX2w9FAtRk6/Oyhba6/x8WfzlOod3tajc16+A7An27Wk0yZ3pTt8s7KLa7A7wI/">-->
+			<div class="row row-sm-offset">
+				<div class="col-md-6 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-2 mbr-bold form-title display-4">Tour name</h4>
+						<input type="text" ref="title" name="title" v-validate="'required|min:20|max:45'" v-model="tour.title" class="form-control"  :disabled="!isEditing" :class="{view_info: isEditing}"  autofocus="" autocapitalize="off" autocorrect="off">
+						<span v-show="errors.has('title')" class="is-error">${errors.first('title')}</span>
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal" >
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Tour type</h4>
+						<input type="text" ref="type" name="type" v-validate="'required|min:8'" v-model="tour.type" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}"  autocapitalize="off" autocorrect="off">
+						<span v-show="errors.has('type')" class="is-error">${errors.first('type')}</span>
+					</div>
+				</div>
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Short description</h4>
+						<textarea ref="short_desc" name="short_desc" v-validate="'required|min:20'" v-model="tour.short_desc" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">{{tour.short_desc}}</textarea>
+						<span v-show="errors.has('short_desc')" class="is-error">${errors.first('short_desc')}</span>
+					</div>
+				</div>
+
+				<div class="col-md-6 multi-horizontal" >
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Country</h4>						
+						<select ref="country" name="country" v-validate="'required'" v-model="tour.country" @change="onChange" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">
+							<option v-for="country in countries" :value="country.name">
+								${country.name}
+							</option>
+						</select>
+						<span v-show="errors.has('country')" class="is-error">${errors.first('country')}</span>
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">City</h4>
+						<select ref="city" name="city" v-validate="'required'" v-model="tour.city" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">
+							<!--<option>{{tour.city}}</option>-->
+							<option v-for="option in options" :value="option.value">
+								${option.name}
+							</option>
+						</select>
+						<span v-show="errors.has('city')" class="is-error">${errors.first('city')}</span>
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Price (USD)</h4>
+						<input type="text" ref="price" name="price" v-validate="'numeric|min:2|max:3'" v-model="tour.price" class="form-control" placeholder="300" :disabled="!isEditing" :class="{view_info: isEditing}" autocapitalize="off" autocorrect="off">
+						<span v-show="errors.has('price')" class="is-error">${errors.first('price')}</span>
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Days</h4>
+						<input type="text" ref="days" name="days" v-validate="'min:1|max:2'" v-model="tour.days" class="form-control" placeholder="2" :disabled="!isEditing" :class="{view_info: isEditing}" autocapitalize="off" autocorrect="off">
+						<span v-show="errors.has('days')" class="is-error">${errors.first('days')}</span>
+					</div>
+				</div>
+				<div class="col-md-12 multi-horizontal">
+					<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Long describe about your tour</h4>
+					<div>
+						{% if tour.content == 'None' :%}
+							<i>Please update your content</i>
+						{% else %}
+							<textarea rows="5" class="form-control" :disabled="!isEditing" :class="{view: isEditing}" v-model="tour.content"></textarea>
+						{% endif %}
+					</div>
+					<div :disabled="!isEditing" :class="{view: !isEditing}">
+						<quill-editor ref="content" name="content" v-model="tour.content" :options="editorOption"></quill-editor>
+					</div>
+				</div>
+				<!--
+				<div class="col-md-12 multi-horizontal" :disabled="!isEditing" :class="{view: !isEditing}">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Long describe about your tour</h4>
+						<quill-editor ref="content" name="content" v-model="tour.content" :options="editorOption"></quill-editor>
+					</div>
+				</div>
+				-->
+			</div>
+			<span class="input-group-btn">
+				<!--<button class="btn btn-form btn-primary display-4">Update</button>-->
+				<button @click="isEditing = !isEditing" v-if="!isEditing" class="btn btn-form btn-light display-4">Edit<br></button>
+				<button v-if="!isEditing" class="btn btn-form btn-secondary display-4" @click="back">Back<br></button>
+				<button v-else-if="isEditing" @click="processForm" class="btn btn-form btn-primary display-4">Save</button>
+				<button v-if="isEditing" @click="isEditing = false" class="btn btn-form btn-secondary display-4">Cancel</button>
+			</span>
+		</form>
+	</div>
+</section>
+
+{% endblock content %}
+

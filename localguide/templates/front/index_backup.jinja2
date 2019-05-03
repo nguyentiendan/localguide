@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <title>Home</title>
+</head>
+<body>
+{% include "../common/navbar.jinja2" %}
+
+<section class="header1 cid-riOeR1Vl2z mbr-parallax-background" id="header1-n">
+    <div class="mbr-overlay" style="opacity: 0.6; background-color: rgb(20, 157, 204);"></div>
+
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="mbr-white col-md-10">
+                <h1 class="mbr-section-title align-center mbr-bold pb-3 mbr-fonts-style display-1">Local guide searching</h1>                
+                <p class="mbr-text align-center pb-3 mbr-fonts-style display-5">It is not where you travel to, it is who you travel with</p>
+                <form class="searchbox_card card-sm">
+                    <div class="searchbox_body row no-gutters align-items-center">
+                        <div class="col">
+                            <input class="form-control form-control-lg form-control-borderless" type="search" placeholder="Search topics or keywords">
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-success" type="submit" style="padding:12px;">Search</button>
+                        </div>
+                    </div>
+                </form>
+                <small class="align-center">Search some thing</small>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+<section class="features3 cid-riOgeOMZcx" id="features3-r">
+     <div class="container">
+        <div class="media-container-row">
+            <div class="title col-12 align-center">
+                <h2 class="pb-3 mbr-fonts-style display-2">
+                    Popular Tours
+                </h2>
+                <h3 class="mbr-section-subtitle mbr-light pb-3 mbr-fonts-style display-5">
+                    You can fully control where and how to spend your time
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="randomTour">
+        <div class="media-container-row" v-if="count < 3">
+            {% include "../common/dummy_tour.jinja2" %}
+        </div>
+        <div class="media-container-row" v-else >
+            <div class="card p-3 col-12 col-md-6 col-lg-4" v-for="tour in tours">
+                <div class="card-wrapper">
+                    <div class="card-img">
+                        <img class="rounded" :src="'{{request.static_url('localguide:static/assets/user_images/guide/')}}'+tour.uid+'/'+tour.banner" @click="tourDetail(tour.id, tour.uid)" alt="localguide" style="cursor: pointer;">
+                    </div>
+                    <div class="card-box">
+                        <h4 class="card-title mbr-fonts-style mbr-bold display-6">${tour.title}</h4>
+                        <p class="mbr-text mbr-fonts-style display-4">${tour.type}</p>
+                        <p class="mbr-text mbr-fonts-style display-8">
+                            ${tour.short_desc}
+                        </p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="col-12 align-right mbr-section-btn">
+                <a href="/tour/all" class="btn btn-primary display-4">
+                    All Tours
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials1 cid-riOgV1r1Ph" id="testimonials1-t">
+    <div class="container">
+        <div class="media-container-row">
+            <div class="title col-12 align-center">
+                <h2 class="pb-3 mbr-fonts-style display-2">
+                    WHAT OUR FANTASTIC USERS SAY
+                </h2>
+                <h3 class="mbr-section-subtitle mbr-light pb-3 mbr-fonts-style display-5">
+                    This theme is based on Bootstrap 4 - most powerful mobile first framework
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt-1 mt-2" id="randomGuide">
+        <div class="media-container-row" v-if="count > 3">
+            {% include "../common/dummy_guide.jinja2" %} 
+        </div>
+        <div class="media-container-row" v-else>
+            <div class="mbr-testimonial p-1 align-center col-12 col-md-6 col-lg-4" v-for="guide in guides">
+                <div class="panel-item p-1">
+                    <div class="card-block">
+                        <div class="testimonial-photo">
+                            <img :src="'{{request.static_url('localguide:static/assets/user_images/guide/')}}'+guide.uid+'/avatar.jpg'" @click="guideProfile(guide.id, guide.uid)" style="cursor: pointer;">
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="mbr-author-name mbr-bold mbr-fonts-style display-7">
+                            ${guide.fullname}    
+                        </div>
+                        <small class="mbr-author-desc mbr-italic mbr-light mbr-fonts-style display-7">
+                            ${guide.job}<br/>
+                            Live in ${guide.city}/${guide.country}<br/>
+                            Can speak ${guide.language}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+</section>
+
+<section class="counters6 counters cid-riQFVKTjcb" id="counters6-w">
+    <div class="container pt-4 mt-2">
+        <h2 class="mbr-section-title pb-3 align-center mbr-fonts-style display-2">Why Choose Us</h2>
+        <h3 class="mbr-section-subtitle pb-5 align-center mbr-fonts-style display-5">
+            Responsive block with counters and media. 
+        </h3>
+        <div>
+            <div class="cards-container">
+                <div class="card col-12 col-md-6 col-lg-4 pb-md-4">
+                    <div class="panel-item align-center">
+                        <div class="card-img pb-3">
+                            <h3 class="img-text mbr-fonts-style display-1">01.</h3>
+                        </div>
+                        <div class="card-text">
+                            <h4 class="mbr-content-title mbr-bold mbr-fonts-style display-7">Honest and Dependable</h4>
+                            <p class="mbr-content-text mbr-fonts-style display-7">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae cupiditate rerum ipsum tempora vero.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card col-12 col-md-6 col-lg-4 pb-md-4">
+                    <div class="panel-item align-center">
+                        <div class="card-img pb-3">
+                            <h3 class="img-text mbr-fonts-style display-1">02.</h3>
+                        </div>
+                        <div class="card-text">
+                            <h4 class="mbr-content-title mbr-bold mbr-fonts-style display-7">We Are Always Improving</h4>
+                            <p class="mbr-content-text mbr-fonts-style display-7">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card col-12 col-md-6 col-lg-4 last-child">
+                    <div class="panel-item align-center">
+                        <div class="card-img pb-3">
+                            <h3 class="img-text mbr-fonts-style display-1">03.</h3>
+                        </div>
+                        <div class="card-text">
+                            <h4 class="mbr-content-title mbr-bold mbr-fonts-style display-7">We Are Passionate</h4>
+                            <p class="mbr-content-text mbr-fonts-style display-7">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae cupiditate rerum ipsum tempora vero.</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include "../common/footer.jinja2" %}
+<script type="text/javascript">
+	//Vue.use(VeeValidate);
+	//Vue.use(bootstrapVue);
+	
+	/* List Random Tour  */
+	const randomTour = new Vue({
+        delimiters: ['${', '}'],
+		el: '#randomTour',
+		data: {
+			tours: [],
+			count: '',
+		},
+		created() {
+			this.getRandomTour()
+            this.timer = setInterval(this.getRandomTour, 300000)
+		},
+		methods: {			
+			getRandomTour() {
+				axios({
+					method: 'GET',
+					url: URL + 'tour/getRandomTour',
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(response => {
+					this.tours = response.data
+					this.count = response.data.length
+					//console.log(this.count)
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+			tourDetail(id, uid) {
+				url = "../tour/detail?id=" + id + '&hash=' + uid;
+				location.href = url				
+			},
+		}
+	});
+
+    /* List Random Guide  */
+	const randomGuide = new Vue({
+        delimiters: ['${', '}'],
+		el: '#randomGuide',
+		data: {
+			guides: [],
+			count: '',
+		},
+		created() {
+			this.getRandomGuide()
+            this.timer = setInterval(this.getRandomGuide, 300000)
+		},
+		methods: {			
+			getRandomGuide() {
+				axios({
+					method: 'GET',
+					url: URL + 'guide/getRandomGuide',
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(response => {
+					this.guides = response.data
+					this.count = response.data.length
+					//console.log(this.count)
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+			guideProfile(id, uid) {
+				url = "../guide/profile?id=" + id + '&hash=' + uid;
+				console.log(url)
+				location.href = url				
+			},
+		}
+	});
+
+</script>
+</body>
+</html>

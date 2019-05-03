@@ -1,0 +1,68 @@
+{% extends "layout_user.jinja2" %}
+
+{% block content %}
+<h4 class="mbr-fonts-style mbr-bold display-2">
+	User Profile
+	- <small>Experience</small>
+</h4>
+<section class="form2 cid-rccP5jr1mU" id="experienceEditor">
+	<div class="col-md-12 card" data-form-type="formoid">
+		<div data-form-alert="" hidden="">Thanks you for complete!</div>
+		<form class="mbr-form" data-form-title="form">
+			<div class="row row-sm-offset">
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-2 mbr-bold form-title display-4">Experience</h4>
+						<div :disabled="isEditing" :class="{view: isEditing}">
+							{% if user.experience == 'None' :%}
+								<i>Please update your experience</i>
+							{% else %}
+								<p class="mbr-fonts-style display-4">{{user.experience|safe}}</p>
+							{% endif %}
+						</div>
+						<div :disabled="!isEditing" :class="{view: !isEditing}">
+							<quill-editor v-model="user.experience" ref="expEditor" :options="editorOption"></quill-editor>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span class="input-group-btn">
+				<button @click="isEditing = !isEditing" v-if="!isEditing" class="btn btn-form btn-light display-4">Edit<br></button>
+				<button v-else-if="isEditing" @click="save" class="btn btn-form btn-primary display-4">Save</button>
+				<button v-if="isEditing" @click="isEditing = false" class="btn btn-form btn-secondary display-4">Cancel</button>
+			</span>
+		</form>
+	</div>
+</section>
+<hr>
+<section class="form2 cid-rccP5jr1mU" id="workhistoryEditor">
+	<div class="col-md-12 card" data-form-type="formoid">
+		<div data-form-alert="" hidden="">Thanks you for complete!</div>
+		<form class="mbr-form" data-form-title="form">
+			<div class="row row-sm-offset">
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-2 mbr-bold form-title display-4">Working history</h4>
+						<div :disabled="isEditing" :class="{view: isEditing}">
+							{% if user.work_history == 'None' :%}
+								<i>Please update your experience</i>
+							{% else %}
+								<p class="mbr-fonts-style display-4">{{user.work_history|safe}}</p>
+							{% endif %}
+						</div>
+						<div :disabled="!isEditing" :class="{view: !isEditing}">
+							<quill-editor v-model="user.work_history" ref="workEditor" :options="editorOption"></quill-editor>
+						</div>
+					</div>
+				</div>
+			</div>
+			<span class="input-group-btn">
+				<button @click="isEditing = !isEditing" v-if="!isEditing" class="btn btn-form btn-light display-4">Edit<br></button>
+				<button v-else-if="isEditing" @click="save" class="btn btn-form btn-primary display-4">Save</button>
+				<button v-if="isEditing" @click="isEditing = false" class="btn btn-form btn-secondary display-4">Cancel</button>
+			</span>
+		</form>
+	</div>
+</section>
+
+{% endblock content %}

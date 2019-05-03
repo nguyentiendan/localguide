@@ -1,0 +1,105 @@
+{% extends "layout_user.jinja2" %}
+
+{% block content %}
+
+<h4 class="mbr-fonts-style mbr-bold display-2">
+	User Profile
+	- <small>Basic info</small>
+</h4>
+<section class="form2 cid-rccP5jr1mU" id="basicInfo">
+	<div class="col-md-12 card" style="align-items: center;">
+		<div class="card p-3 col-12 col-md-5 col-lg-3">
+			<div class="card-wrapper">
+				<div class="card-img">
+					{% if user.avatar: %}
+						<img name="avatar" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{user.uid}}/{{user.avatar}}" style="cursor: pointer; display: block;" v-on:click="file_open" alt="Click image to update">	
+					{% else %}
+						<img name="avatar" src="{{request.static_url('localguide:static/assets/images/noimage.jpg')}}" v-on:click="file_open" style="cursor: pointer;" alt="Click image to update">	
+					{% endif %}
+					<input ref="file" type="file" name="banner" class="upload_file" @change="filesChange($event)">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12 card" data-form-type="formoid">
+		<div data-form-alert="" hidden="">Thanks you for complete!</div>
+		<form class="mbr-form" data-form-title="Basic Infor">
+			<!--<input type="hidden" name="email" data-form-email="true" value="gbEjPUpE9TlSyfGJqFqs+xOeVkoqUToPYF0eCXm2xwm56T9S/zQg7bQvW5XoiJ74+PX2w9FAtRk6/Oyhba6/x8WfzlOod3tajc16+A7An27Wk0yZ3pTt8s7KLa7A7wI/">-->
+			<div class="row row-sm-offset">
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-2 mbr-bold form-title display-4">Fullname</h4>
+						<input type="text" v-model.trim="user.fullname" ref="fullname" :value="user.fullname" class="form-control" placeholder="Fullname" maxlength="50" :disabled="!isEditing" :class="{view_info: isEditing}" required="">
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal" >
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Current job</h4>
+						<input type="text" v-model.trim="user.job" ref="job" :value='user.job' class="form-control" placeholder="Tour guide" maxlength="50" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Mobile phone</h4>
+						<input type="text" v-model.trim="user.mobile" ref="mobile" :value='user.mobile' ref="mobile" class="form-control" placeholder="Mobile phone" maxlength="12" autocapitalize="off" autocorrect="off"  :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal" >
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Country</h4>
+						<select name="country" v-model="country" @change="onChange" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">
+							<option v-for="country in countries" :value="country.name">
+								{%raw%}{{country.name}}{%endraw%}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">City</h4>
+						<select name="city" v-model="city" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">
+							<option>Select City</option>
+							<option v-for="option in options" :value="option.value">
+								{%raw%}{{ option.name }}{%endraw%} 
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Age</h4>
+						<input type="text" v-model.trim="user.age" ref="age" :value='user.age' class="form-control" maxlength="2" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+				<div class="col-md-6 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Sex</h4>
+						<select name="sex" v-model="sex" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">
+							<option value='1'>Male</option>
+							<option value='0'>Female</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Languages</h4>
+						<input type="text"  v-model.trim="user.language" ref="language" :value="user.language" class="form-control" placeholder="English, Japanese, VietNamese" maxlength="200" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Hobby</h4>
+						<input type="text" v-model.trim="user.hobby" ref="hobby" :value="user.hobby" ref="hobby" class="form-control" placeholder="Cooking, Movie, Travel" maxlength="200" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+			</div>
+			<span class="input-group-btn">
+				<button @click="isEditing = !isEditing" v-if="!isEditing" class="btn btn-form btn-light display-4">Edit<br></button>
+				<button v-else-if="isEditing" @click="save" class="btn btn-form btn-primary display-4">Save</button>
+				<button v-if="isEditing" @click="isEditing = false" class="btn btn-form btn-secondary display-4">Cancel</button>
+			</span>
+		</form>
+	</div>
+</section>
+
+{% endblock content %}

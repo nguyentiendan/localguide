@@ -1,0 +1,80 @@
+<section class="menu cid-rccOpUxecg" once="menu" id="menu1-0">
+    <nav class="navbar navbar-dropdown align-items-center navbar-fixed-top navbar-toggleable-sm bg-color transparent">
+        <div class="menu-content-top">
+            <div class="menu-logo">
+                <div class="navbar-brand">
+                    <span class="navbar-logo">
+                        <a href="/">
+                            <img src="{{request.static_url('localguide:static/assets/images/logo.png')}}" alt="Mobirise" style="height: 4rem;">
+                        </a>
+                    </span>
+                    <span class="navbar-caption-wrap">
+                        <a href="/" class="brand-link mbr-black text-danger display-5">
+                            Localguide</a>
+                    </span>
+                </div>
+            </div>
+            
+            <!--
+            <div class="menu-content-right">
+                <div class="info-widget">
+                    <span class="widget-icon mbr-iconfont mbri-arrow-next" style="color: rgb(255, 74, 82); fill: rgb(255, 74, 82);"></span>
+                    <div class="widget-content display-4">
+                        <p class="widget-title mbr-fonts-style display-4"></p>
+                        <p class="widget-text mbr-fonts-style display-4"></p>
+                    </div>
+                </div>
+                <div class="navbar-buttons mbr-section-btn"><a class="btn btn-md btn-primary display-4" href="#">
+                    <span class="mbri-arrow-next mbr-iconfont mbr-iconfont-btn">Login</span></a>
+                </div>
+            </div>
+            -->
+        </div>
+        <div class="menu-bottom">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav nav-dropdown js-float-line" data-app-modern-menu="true">
+                    <li class="nav-item">
+                        <a class="nav-link link mbr-black text-danger display-4" href="#">Publish a tour</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link link mbr-black text-danger display-4" href="#">Help</a>
+                    </li>
+
+                    {% if request.authenticated_userid : %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link link mbr-black dropdown-toggle text-danger display-4" href="#" data-toggle="dropdown-submenu" aria-expanded="false"><b>Welcome</b></a>
+                            <div class="dropdown-menu">
+                                <a class="mbr-black dropdown-item text-danger display-4" href="/user/basic" aria-expanded="false">Profile</a>
+                                <a class="mbr-black dropdown-item text-danger display-4" href="/auth/logout" aria-expanded="false">Logout</a>
+                            </div>
+                        </li>
+                    {% else : %}
+                        <li class="nav-item">
+                            <a class="nav-link link mbr-black text-danger display-4" href="/user/create">Signup</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link link mbr-black text-danger display-4" href="/auth/login">Login</a>
+                        </li>
+                    {% endif %}
+                    <!--
+                    <li class="nav-item dropdown open">
+                        <a class="nav-link link mbr-black dropdown-toggle text-danger display-4" href="#" data-toggle="dropdown-submenu" aria-expanded="true">Canlı Demo Blokları</a>
+                        <div class="dropdown-menu">
+                            <a class="mbr-black dropdown-item text-danger display-4" href="#">Üstbilgi</a>
+                            <a class="mbr-black dropdown-item text-danger display-4" href="#" aria-expanded="false">Özellikler</a>
+                            <a class="mbr-black dropdown-item text-danger display-4" href="#" aria-expanded="false">Video/Resim &amp; İçerik</a><a class="mbr-black text-danger dropdown-item display-4" href="https://mobirise.com" aria-expanded="false">Takım &amp; Görüşler</a><a class="mbr-black text-danger dropdown-item display-4" href="https://mobirise.com" aria-expanded="false">Akordeonlar</a><a class="mbr-black text-danger dropdown-item display-4" href="https://mobirise.com" aria-expanded="false">Formlar/ Haritalar &amp; Altbilgiler<br></a>
+                        </div>
+                    </li></ul>
+                    -->
+            </div>
+            <button class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+        </div>
+    </nav>
+</section>

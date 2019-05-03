@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <title>All Tour</title>
+</head>
+<body>
+{% include "../common/navbar.jinja2" %}
+<section class="cid-riOgV1r1Ph">
+    <div class="container">
+        <!-- Page Heading/Breadcrumbs -->
+        <h1 class="mt-5 mb-2">All Tours</h1>
+
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="index.html">Home</a>
+            </li>
+            <li class="breadcrumb-item active">All Tours</li>
+        </ol>
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Blog Post -->
+				
+				{% if not tour : %}
+					<h5>Sorry, we have not tour in this time.</h5>
+				{% else %}
+                    {% for t in tour %}
+                    <div class="localguide_card mb-4">
+                        {% if t.banner : %}
+                            <img name="banner" class="img-fluid rounded" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{t.uid}}/{{t.banner}}" alt="Tour banner image" style="cursor: pointer; width:750px;height:250px;">	
+                        {% else %}
+                            <img name="banner" class="img-fluid rounded" src="http://placehold.it/750x300" alt="Tour banner image">	
+                        {% endif %}	
+                        <div class="localguide_card-body">
+                            <!--<h2 class="localguide_card-title">{{t.title}}</h2>-->
+                            <h4 class="card-title mbr-fonts-style pb-1 mbr-bold display-5">{{t.title}}</h4>
+                            <p class="mbr-text mbr-fonts-style display-4">City Tours, Urban</p>
+                            <!--<p class="localguide_card-text">{{t.content|safe}}</p>-->
+                            <p class="mbr-text mbr-fonts-style display-8">{{t.short_desc|safe}}</p>
+                            <!--<a href="/tour/detail" class="btn btn-primary btn-sm">Read More &rarr;</a> -->
+                        </div>
+                        <div class="localguide_card-footer text-muted">
+                            Posted on {{t.mtime}}, {{t.created_in_words}} ago
+                        </div>
+                    </div>
+                    {% endfor %}				
+				{% endif %}
+
+               
+
+                <!-- Pagination -->
+                <ul class="pagination justify-content-center mb-4">
+                <li class="page-item">
+                    <a class="page-link" href="#">&larr; Older</a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">Newer &rarr;</a>
+                </li>
+                </ul>
+
+            </div>
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-md-4">
+                <!-- Search Widget -->
+                <div class="localguide_card mb-4">
+                    <h5 class="localguide_card-header">Search</h5>
+                    <div class="localguide_card-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary btn-sm" type="button">Go!</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Widget -->
+                <div class="localguide_card my-4">
+                    <h5 class="localguide_card-header">Categories</h5>
+                    <div class="localguide_card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <ul class="list-unstyled mb-0">
+                                <li>
+                                    <a href="#">Web Design</a>
+                                </li>
+                                <li>
+                                    <a href="#">HTML</a>
+                                </li>
+                                <li>
+                                    <a href="#">Freebies</a>
+                                </li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-6">
+                                <ul class="list-unstyled mb-0">
+                                <li>
+                                    <a href="#">JavaScript</a>
+                                </li>
+                                <li>
+                                    <a href="#">CSS</a>
+                                </li>
+                                <li>
+                                    <a href="#">Tutorials</a>
+                                </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Widget -->
+                <div class="localguide_card my-4">
+                    <h5 class="localguide_card-header">Side Widget</h5>
+                    <div class="localguide_card-body">
+                        You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+</section>
+
+{% include "../common/footer.jinja2" %}
+  
+</body>
+</html>

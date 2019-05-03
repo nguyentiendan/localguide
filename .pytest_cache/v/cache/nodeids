@@ -1,0 +1,4 @@
+[
+  "localguide/tests.py::TestMyViewSuccessCondition::test_passing_view",
+  "localguide/tests.py::TestMyViewFailureCondition::test_failing_view"
+]

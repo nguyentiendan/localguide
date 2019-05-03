@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    
+</head>
+<body>
+{% include "../common/navbar_default.jinja2" %}
+
+<div class="container" style="padding-top:150px; padding-bottom:200px">
+	<div class="row">
+		{% block content %}{% endblock %}
+	</div>
+</div>
+
+{% include "../common/footer.jinja2" %}
+
+
+<script type="text/javascript">
+	
+</script>
+</body>
+</html>

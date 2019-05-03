@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <title>Tour Profile</title>
+</head>
+<body>
+{% include "../common/navbar.jinja2" %}
+<section class="cid-riOgV1r1Ph">
+    <div class="container">
+		<!-- Page Heading/Breadcrumbs -->
+		<h1 class="mt-5 mb-2">Guide profile
+			<small>Subheading</small>
+		</h1>
+
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="index.html">Home</a>
+			</li>
+			<li class="breadcrumb-item active">Portfolio Item</li>
+		</ol>
+
+    	<!-- Portfolio Item Row -->
+    	<div class="row">
+			<div class="col-md-4 mt-3 mb-3  align-center">
+				<div class="profile-photo">
+                    <img src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{user.uid}}/{{user.avatar}}">
+                </div>
+				<div class="mbr-author-name mbr-bold mbr-fonts-style display-7">
+					{{user.fullname}}
+				</div>
+				<small class="mbr-author-desc mbr-italic mbr-light mbr-fonts-style display-7">
+					{{user.job}}
+				</small>
+				<!--<img class="img-fluid" src="http://placehold.it/750x500" alt="">-->
+			</div>
+
+			<div class="col-md-8">
+				<h3 class="my-3">Basic information</h3>
+				<ul>
+					<li>Male</li>
+					<li>30 years old</li>
+					<li>Live in Japan/Tokyo</li>
+					<li>Can speak Japanese,English,.....</li>
+					<li>Interested in </li>
+					<button type="button" class="btn btn-light btn-sm">Movie</button> <button type="button" class="btn btn-light btn-sm">Music</button> <button type="button" class="btn btn-light btn-sm">Cooking</button>
+				</ul>
+			</div>
+    	</div>
+    	<!-- /.row -->
+		<h3 class="my-4">Experience</h3>
+		<div class="row">
+			<div class="col-sm-12 mb-4">
+				Hi guys! Aloha my ohana! (Family) My name is Rinako. You can call me Rii, Rina, Lily! I was living in Hawaii for almost 7 years and also working as a tour guide for about a year! I’m very talkative & energetic person!! It would be great / will be able to know me if you watch my introduction video! I’m looking forward to seeing you in the tour! Thank you Mahalo!
+			</div>
+		</div>
+
+		<h3 class="my-4">Working history</h3>
+		<div class="row">
+			<div class="col-sm-12 mb-4">
+				Hi guys! Aloha my ohana! (Family) My name is Rinako. You can call me Rii, Rina, Lily! I was living in Hawaii for almost 7 years and also working as a tour guide for about a year! I’m very talkative & energetic person!! It would be great / will be able to know me if you watch my introduction video! I’m looking forward to seeing you in the tour! Thank you Mahalo!
+			</div>
+		</div>	
+		
+    	<!-- Related Projects Row -->
+    	<h3 class="my-4">Recent Tours</h3>
+    	<div class="row">
+			<div class="col-md-3 col-sm-6 mb-4">
+				<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+			</div>
+
+			<div class="col-md-3 col-sm-6 mb-4">
+				<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+			</div>
+
+			<div class="col-md-3 col-sm-6 mb-4">
+				<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+			</div>
+
+			<div class="col-md-3 col-sm-6 mb-4">
+				<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+			</div>
+    	</div>
+    </div>
+</section>
+
+{% include "../common/footer.jinja2" %}
+  
+</body>
+</html>

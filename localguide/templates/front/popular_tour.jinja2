@@ -1,0 +1,43 @@
+<section class="features6 cid-rccOyRMpwz" id="randomTour">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <h2 class="mbr-section-title title pb-2 mb-1 mbr-bold mbr-fonts-style align-left display-5">Popular Tours</h2>
+            </div>
+        </div>
+        <div class="row row-content justify-content-center" v-if="count < 3">
+            {% include "../common/dummy_tour.jinja2" %}
+        </div>
+        <div class="row row-content justify-content-center" v-else>
+            <div class="card p-3 col-12 col-md-6 col-lg-4" v-for="tour in tours">
+                <div class="card-wrapper">
+                    <div class="card-img">
+                        <div class="price-box">
+                            <h5 class="price mbr-fonts-style mbr-bold display-4">${tour.price}$</h5>
+                        </div>
+                        <img class="rounded" :src="'{{request.static_url('localguide:static/assets/user_images/guide/')}}'+tour.uid+'/'+tour.banner" @click="tourDetail(tour.id, tour.uid)" alt="localguide" style="cursor: pointer;">
+                    </div>
+                    <div class="card-box">
+                        <h4 class="card-title mbr-fonts-style pb-1 mbr-bold display-5">${tour.title}</h4>
+                        <p class="mbr-text mbr-fonts-style mbr-normal display-4">${tour.type}</p>
+                        <div class="ico-line-wrap">
+                            <div class="ico-line">
+                                <div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+                                <div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+                                <div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+                                <div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
+                                <div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
+                                <h3 class="rev mbr-fonts-style mbr-bold display-4">4 reviews</h3>
+                            </div>
+                            <div class="ico-line">
+                                <div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-clock" style="color: rgb(0, 0, 0); fill: rgb(0, 0, 0);" media-simple="true"></div>
+                                <h3 class="rev mbr-fonts-style mbr-bold display-4">${tour.days} days</h3>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

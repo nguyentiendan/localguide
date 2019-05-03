@@ -1,0 +1,78 @@
+{% extends "layout_front_common.jinja2" %}
+
+{% block content %}
+<div class="col-md-8">
+	<section class="form2 cid-rccAB2jr1U">
+		<div class="row">
+			<div class="col-md-12">
+				<img name="banner" class="img-fluid rounded" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{tour.Tour.uid}}/{{tour.Tour.banner}}" alt="" style="width:900px;height:300px;">	
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-9">
+				<h4 class="mbr-fonts-style pb-1 pt-3 mbr-bold display-2">{{tour.Tour.title}}</h4>
+				<p class="mbr-text mbr-fonts-style mbr-normal display-5">{{tour.Tour.type}}</p>
+				<p class="mbr-text mbr-fonts-style mbr-normal display-4">
+					Country : {{tour.Tour.country}} / city : {{tour.Tour.city}}
+				</p>
+				<div class="ico-line-wrap">
+					<div class="ico-line">
+						<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+						<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+						<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+						<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
+						<div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
+						<h3 class="rev mbr-fonts-style mbr-bold display-4">4 reviews</h3>
+						<!--
+						<div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-clock" style="color: rgb(0, 0, 0); fill: rgb(0, 0, 0);" media-simple="true"></div>
+						<h3 class="rev mbr-fonts-style mbr-bold display-4">{{tour.Tour.days}} days / {{tour.Tour.price}} $</h3>
+						-->
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3 card" style="align-items: center;">
+				<div class="card-wrappers">
+					<div class="card-img">
+						<img src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{tour.Tour.uid}}/{{tour.avatar}}" style="cursor: pointer;" alt="">
+					</div>
+				</div>
+				<div class="mbr-author-name mbr-bold mbr-fonts-style display-8">
+					{{tour.fullname}}
+				</div>
+			</div>
+		</div>
+		<hr>
+		
+		<div class="row">
+			<div class="col-md-12">
+				<h4 class="mbr-fonts-style display-4">{{tour.Tour.short_desc}}</h4>
+				<span class="mbr-fonts-style">
+					{{tour.Tour.content|safe}}
+				</span>
+			</div>
+		</div>
+	</section>
+</div>
+<!-- Right panel -->
+<div class="col-md-4">
+	<section class="form2 cid-rccAB2jr1U">
+		<div class="col-md-12 col-lg-12">
+			<div class="card-wrapper">
+				<div class="card-box">
+					<h4 class="card-title mbr-fonts-style pb-1 mbr-bold display-2">{{tour.Tour.price}} $ <small class="mbr-normal display-4">/ {{tour.Tour.days}} days</small></h4>
+					<p class="mbr-text mbr-fonts-style mbr-normal display-4 pb-5">Country : {{tour.Tour.country}} / city : {{tour.Tour.city}}</p>
+					<span class="input-group-btn" style="align-items: center;">
+						<button class="btn btn-form btn-primary btn-lg display-4" style="width:90%">Booking</button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="form2 cid-rccAB2jr1U">
+		<div class="col-md-12 col-lg-12 align-center">
+			<h4 class="mbr-fonts-style display-4"><a href="#">Report this tour</a></h4>
+		</div>
+	</section>	
+</div>
+
+{% endblock content %}
