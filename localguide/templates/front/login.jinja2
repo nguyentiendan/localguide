@@ -86,7 +86,7 @@
 							//validation passed succesfully
 							axios({
 								method: 'POST',
-								url: 'http://localhost:6543/auth/login',
+								url: URL + 'auth/login',
 								data: this.user,
 								config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
 							})
@@ -114,7 +114,7 @@
 				},
 				hideModal () {
 					this.$refs.myModalRef.hide();
-					window.location='http://localhost:6543/'
+					window.location = URL;
 				},
 				//rerender() {
 				//	this.$forceUpdate();

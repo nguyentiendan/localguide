@@ -11,13 +11,11 @@
 </head>
 
 <body>
-
     <div class="form-container">
 		<div class="text-center mb-4" style="padding-top:100px;">
 			<h1 class="h1 mb-3 font-weight-bold">LocalGuide</h1>
 			<p class="text-center display-5">Signup to become a user</p>
-		</div>
-		
+		</div>	
 		<form id="signupForm" @submit.prevent="processForm">	
 			<div>
 				<b-modal ref="myModalRef" hide-footer hide-header no-close-on-esc no-close-on-backdrop title="Signup">
@@ -87,8 +85,8 @@
                     if (result) {
 						//validation passed succesfully
 						axios({
-							method: 'post',
-							url: 'http://localhost:6543/user/create',
+							method: 'POST',
+							url: URL + 'user/create',
 							data: this.user,
 							config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
 						})
@@ -100,8 +98,6 @@
 						})
 						.catch( (response) => {
 							//handle error
-							console.log(response);
-							alert('Redirect to error page')
 						});
                     }
                 });
@@ -111,7 +107,7 @@
 			},
 			hideModal () {
 				this.$refs.myModalRef.hide();
-				window.location='http://localhost:6543/'
+				window.location = URL
 			},
         }	
     }); 
