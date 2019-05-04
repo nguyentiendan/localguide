@@ -79,7 +79,11 @@
 			success: false,
 			//country: '',
 			//city: '',
-			countries:[],
+			countries: 
+				[
+  					{ name: 'Japan', code: 'JP' },
+  					{ name: 'VietNam', code: 'VN' },
+				],
 			count_city:'',
 			cityData: {
                Japan: [
@@ -132,7 +136,7 @@
 			},
         },
 		created() {
-			this.getCountry()
+			//this.getCountry()
 			if (this.tour.city != 'None' || this.tour.city != '')
 				this.count_city = 1		
 		},
@@ -156,11 +160,11 @@
 			LocalQuillEditor: VueQuillEditor.quillEditor
 		},
         methods: {
-			getCountry() {
-				axios.get(URL + 'static/js/country.json').then(response => {
-					this.countries = response.data
-				})
-      		},
+			//getCountry() {
+			//	axios.get(URL + 'static/js/country.json').then(response => {
+			//		this.countries = response.data
+			//	})
+      		//},
 			onChange: function () {
             	this.options = this.options
 				this.count_city = this.options.length
