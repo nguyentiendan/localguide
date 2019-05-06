@@ -1,6 +1,5 @@
 def includeme(config):
     config.add_static_view('static', 'static/assets', cache_max_age=3600)
-    config.add_static_view('html', 'templates/static')
     config.add_route('index', '/')
     
     config.add_route('guide_action', '/guide/{action}')
