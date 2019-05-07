@@ -12,7 +12,6 @@
 			<div class="card-wrapper">
 				<div class="card-img">
 					{% if user.avatar: %}
-					Aaaaaaaaa
 						<img name="avatar" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{user.uid}}/{{user.avatar}}" style="cursor: pointer; display: block;" v-on:click="file_open" alt="Click image to update">	
 					{% else %}
 						<img name="avatar" src="{{request.static_url('localguide:static/assets/images/noimage.jpg')}}" v-on:click="file_open" style="cursor: pointer;" alt="Click image to update">	
