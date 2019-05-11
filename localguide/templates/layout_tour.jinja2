@@ -20,14 +20,27 @@
 <body>
 {% include "../common/navbar_default.jinja2" %}
 
-<div class="container" style="padding-top:150px; padding-bottom:200px">
+{% if role == '2' :%}
+	<div class="container-full" style="padding-top:150px; padding-bottom:200px">
+{% else :%}
+	<div class="container" style="padding-top:150px; padding-bottom:200px">
+{% endif %}
+
 	<div class="row">
-        <div class="col-md-3">
-			{% include "../common/sidebar.jinja2" %}
-		</div>
-		<div class="col">
+        {% if role == '2' :%}
+        	<div class="col-md-2">
+		{% else :%}
+			<div class="col-md-3">
+		{% endif %}
+		{% include "../common/sidebar.jinja2" %}
+			</div>
+		{% if role == '2' :%}
+			<div class="col-md-10">
+		{% else :%}
+			<div class="col-md-9">
+		{% endif %}
 			{% block content %}{% endblock %}
-		</div>
+			</div>
 	</div>
 </div>
 
@@ -169,7 +182,8 @@
             	this.options = this.options
 				this.count_city = this.options.length
          	},
-			processForm() {
+			processForm(evt) {
+				evt.preventDefault()
         		//attempt validating all
                 this.$validator.validateAll().then((result) => {
                     if (result) {
@@ -207,6 +221,9 @@
                     }
                 });
             },
+			back() {
+				window.history.back();
+			}
         }	
     });
 	

@@ -18,34 +18,49 @@ from pyramid.httpexceptions import HTTPFound, HTTPNotFound,  HTTPForbidden
 from ..models.user import User
 from ..services.user_service import UserService
 from ..utils import XssHtml
-import smtplib
 #For send mail
 from pyramid_mailer.message import Message
 from pyramid_mailer.mailer import Mailer
 from pyramid_mailer import get_mailer
 
+@view_config(route_name='user_action', match_param='action=admin_userlist', renderer='localguide:templates/admin/admin_user_list.jinja2')
+def admin_userlist(request):
+    print('ADMIN USER LIST')      
+    user = request.user
+    if user is None :
+        raise exception_response(404)
+    else :
+        user = UserService.all(request=request)
+    #return {'user':user}
+    return {'user':user, 'role':request.user.role}
+
 @view_config(route_name='user_action', match_param='action=create', renderer='localguide:templates/front/user_create.jinja2')
 def signup(request):
-    print('USER CREATE')  
-    user = User()
-    
-    if request.method == 'POST':
-        data = request.json_body
-        user.fullname    = data['fullname']
-        user.email       = data['email']
-        password         = data['password']
-        user.set_password(password)
-        user.random_uid()
-        
-        try :
-            request.dbsession.add(user)
-            settings = request.registry.settings
-            access_rights = 0o755    
-            user_folder = settings['user.folder'] + user.random_uid()
-            os.mkdir(user_folder)
-        except DBAPIError:
-            return Response(db_err_msg, content_type='text/plain', status=500)
-    return {}   
+    print('USER CREATE')      
+    user = request.user
+    if user is not None :
+        raise HTTPFound(request.route_url("index"))
+    else :
+        if request.method == 'POST':
+            data = request.json_body
+            user.fullname    = data['fullname']
+            user.email       = data['email']
+            password         = data['password']
+            user.set_password(password)
+            user.random_uid()
+            
+            if UserService.check_email(request, user.email) == False :  # email not duplicate
+                try :
+                    request.dbsession.add(user)
+                    settings = request.registry.settings
+                    access_rights = 0o755    
+                    user_folder = settings['user.folder'] + user.random_uid()
+                    os.mkdir(user_folder)
+                except DBAPIError:
+                    return Response(db_err_msg, content_type='text/plain', status=500)
+            else :
+                return Response('NG', content_type='text/plain') 
+        return {}   
 
     '''
     mailer = get_mailer(request)
@@ -57,46 +72,41 @@ def signup(request):
     '''
 
 @view_config(route_name='user_action', match_param='action=basic', renderer='localguide:templates/user/basic_info.jinja2')
-def user_basic(request):
+def user_setting(request):
+    #Basic info for user with role=1,2
     print('USER BASIC INFO')
-    uid = request.unauthenticated_userid 
-    User = UserService.by_uid(uid, request)
-    
-    if User is None :
+    user = request.user
+    if user is None :
         raise exception_response(404)
-    if UserService.check_login(request) == False:
-        raise exception_response(404)
-    return dict(user=User)
-
-    #if (not User) or (UserService.check_two_uid(uid, request) == False):
-    #    raise exception_response(404)
+    else :
+        User = UserService.by_uid_all(request.user.uid, request)
+        if User is None :
+            raise exception_response(404)   
+    return {'user':User, 'role':request.user.role} 
     
 @view_config(route_name='user_action', match_param='action=advance', renderer='localguide:templates/user/advance_info.jinja2')
 def user_advance(request):
     print('USER ADVANCE INFO')
-    uid = request.unauthenticated_userid 
-    User = UserService.by_uid(uid, request)
-    
-    if User is None :
+    user = request.user
+    if user is None :
         raise exception_response(404)
-    if UserService.check_login(request) == False:
-        raise exception_response(404)
-    return dict(user=User)
-
-
+    else :
+        User = UserService.by_uid_all(request.user.uid, request)
+        if User is None :
+            raise exception_response(404)
+    return {'user':User, 'role':request.user.role} 
+    #return dict(user=User)    
 
 @view_config(route_name='user_action', match_param='action=updateBasicInfo')
 def guide_updateBasicInfo(request):
     print("UPDATE BASIC INFO")
-    
-    uid = request.unauthenticated_userid
-    if uid is None:
+    user = request.user
+    if user is None :
         raise exception_response(404)
     else:
         next_url = "/user/setting"
         data = request.json_body    
-        user = User()
-        user = UserService.by_uid(uid, request=request)
+        user = UserService.by_uid_all(request.user.uid, request=request)
         user.fullname       = data['fullname']
         user.job            = data['job']
         user.mobile         = data['mobile']
@@ -118,22 +128,19 @@ def guide_updateBasicInfo(request):
 @view_config(route_name='user_action', match_param='action=updateExperience')
 def guide_updateExperience(request):
     print("UPDATE Experience")
-    
-    uid = request.unauthenticated_userid     
-    if uid is None:
+    user = request.user
+    if user is None :
         raise exception_response(404)
     else:
         next_url = "/guide/detail"
         data = request.json_body    
-        user = User()
-        user = UserService.by_uid(uid, request=request)
+        user = UserService.by_uid_all(request.user.uid, request=request)
 
         #Xss process
         x = XssHtml.XssHtml()
         x.feed(data['experience'])
         x.close()
         data['experience'] = x.getHtml()
-
         user.experience		= data['experience']
         
         return Response(
@@ -147,22 +154,20 @@ def guide_updateExperience(request):
 @view_config(route_name='user_action', match_param='action=updateWorkHistory')
 def guide_updateWorkHistory(request):
     print("Update Work History")
-    
-    uid = request.unauthenticated_userid
-    if uid is None:
+    user = request.user
+    if user is None :
         raise exception_response(404)
     else:
         next_url = "/guide/detail"
         data = request.json_body    
         user = User()
-        user = UserService.by_uid(uid, request=request)
+        user = UserService.by_uid_all(request.user.uid, request=request)
 
         #Xss process
         x = XssHtml.XssHtml()
         x.feed(data['work_history'])
         x.close()
         data['work_history'] = x.getHtml()
-
         user.work_history   = data['work_history']
         
         return Response(
@@ -172,11 +177,9 @@ def guide_updateWorkHistory(request):
                     ('Content-Type', 'text/html'),
                 ]
         )
-@view_config(route_name='guide_action', match_param='action=getRandomGuide', renderer='json')
-def tour_getRandomGuide(request):
-    print("GET RANDOM Guide")
-    
-    user = User()
+@view_config(route_name='user_action', match_param='action=getRandomGuide', renderer='json')
+def getRandomGuide(request):
+    print("GET RANDOM GUIDE")
     rs = UserService.get_RandomGuide(request=request)
     return [
         dict(id=user.id, uid=user.uid, fullname=user.fullname, avatar=user.avatar, country=user.country, city=user.city, job=user.job, language=user.language)
@@ -185,19 +188,14 @@ def tour_getRandomGuide(request):
 
 #Upload avatar of user
 @view_config(route_name='user_action', match_param='action=uploadImage')
-def guide_uploadImage(request):
+def uploadImage(request):
     print("UPLOAD IMAGE")
-
-    uid = request.unauthenticated_userid
-    if uid is None:
+    user = request.user
+    if user is None :
         raise exception_response(404)
     else:
-        user = User()
-        user = UserService.by_uid(uid, request)
-
-        if UserService.check_login(request) == False:
-            raise exception_response(404)
-        
+        user = UserService.by_uid_all(request.user.uid, request=request)
+    
         #if (not user) or (UserService.check_two_uid(uid, request) == False):
         #    raise exception_response(404)
 
@@ -220,7 +218,7 @@ def guide_uploadImage(request):
         #dir_path = os.path.dirname(os.path.realpath(__file__))
 
         settings = request.registry.settings
-        user_folder = settings['user.folder'] + uid
+        user_folder = settings['user.folder'] + request.user.uid
         file_path = os.path.join(user_folder, '%s' % newFile)
 
         #file_path = os.path.join(cwd +'/localsearch/static/assets/user_img', '%s' % newFile)
@@ -248,17 +246,18 @@ def guide_uploadImage(request):
             ]
         )
 
-@view_config(route_name='guide_action', match_param='action=profile', renderer='localguide:templates/front/guide_profile.jinja2')
+@view_config(route_name='user_action', match_param='action=profile', renderer='localguide:templates/user/user_profile.jinja2')
 def user_profile(request):
-    print('GUIDE PROFILE')
+    print('USER PROFILE for GUIDE')
     id  = request.params.get('id')
     uid = request.params.get('hash')
-    if id is None or uid is None :
+    user = request.user
+    
+    if user is None or id is None or uid is None :
         raise exception_response(404)
     else :
-        user = User()
-        user = UserService.by_id_uid(id, uid, request=request)
-        if user is None :
+        rs = UserService.by_id_uid(id, uid, request=request)
+        if rs is None :
             raise exception_response(404)
+    return {'user':rs, 'role':request.user.role} 
 
-    return {'user':user}

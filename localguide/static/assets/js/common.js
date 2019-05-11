@@ -1,4 +1,6 @@
 
+
+
 /** Upload Image for Quill Editor */
 /* Step 1: Select local file */
 function imageHandler() {

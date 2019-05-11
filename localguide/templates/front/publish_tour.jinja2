@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <title>Publish tour</title>
+</head>
+<body>
+
+<br><br>
+<h1>Comming soon.</h1>
+<br><br>
+<div id="publish">
+    <button class="btn btn-form btn-primary display-4" @click="publish({{request.user.uid}},{{request.user.role}})">Become a tour guide</button>
+</div>
+</body>
+</html>
+
+<script src="{{request.static_url('localguide:static/assets/js/vue.js')}}"></script>
+
+<script type="text/javascript">
+	const publish = new Vue({
+		el: '#publish',
+		data: {},
+		methods: {
+			publish(uid,role) {			
+                axios({
+                    method: 'POST',
+                    url: URL + 'user/requestTourGuide',
+                    data: {uid: uid, role: role},
+                    config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+                })
+                .then(function (response) {
+                    //handle success
+                    if (response.status == '200' && response.statusText == 'OK') {
+                        alert("Thanks you") 
+                    }
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                });
+			},
+		}	
+	});	
+</script>    

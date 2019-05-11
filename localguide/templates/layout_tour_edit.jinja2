@@ -20,7 +20,11 @@
 <body>
 {% include "../common/navbar_default.jinja2" %}
 
-<div class="container" style="padding-top:150px; padding-bottom:200px">
+{% if role == '2' :%}
+	<div class="container-full" style="padding-top:150px; padding-bottom:200px">
+{% else :%}
+	<div class="container" style="padding-top:150px; padding-bottom:200px">
+{% endif %}
 	<div class="row">
         <div class="col-md-3">
 			{% include "../common/sidebar.jinja2" %}

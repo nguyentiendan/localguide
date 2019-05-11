@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <title>Admin Setting</title>
+	<link rel="stylesheet" href="{{request.static_url('localguide:static/assets/theme/css/sidebar.css')}}">	
+</head>
+<body>
+{% include "../common/navbar_default.jinja2" %}
+{% if role == '2' :%}
+	<div class="container-full" style="padding-top:150px; padding-bottom:200px">
+{% else :%}
+	<div class="container" style="padding-top:150px; padding-bottom:200px">
+{% endif %}
+	<div class="row">
+        <div class="col-md-2">
+			{% include "../common/sidebar.jinja2" %}
+		</div>
+		<div class="col-md-10">
+			{% block content %}{% endblock %}
+		</div>
+	</div>
+</div>
+
+{% include "../common/footer.jinja2" %}
+
+<script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
+<script type="text/javascript">
+	//Vue.use(VeeValidate);
+	//Vue.use(bootstrapVue);
+	//Vue.use(VueQuillEditor);
+	
+	
+
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+{% extends "layout_front_common.jinja2" %}
+
+{% block content %}
+
+<div class="col-md-8">
+	<section class="form2 cid-rccAB2jr1U">
+		<h4 class="mbr-fonts-style pb-3 mbr-bold display-2">Guide Profile</h4>
+		<div class="col-md-12 card" style="align-items: center;">
+			<div class="card" style="align-items: center !important;">
+				<div >
+					<div class="card-img">
+						<img name="avatar" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{user.uid}}/{{user.avatar}}" alt="profile image">	
+					</div>
+					<div class="card-box">
+						<h4 class="card-title pb-1 mbr-fonts-style mbr-bold display-5">{{user.fullname}}</h4>
+						<p class="mbr-text mbr-fonts-style mbr-bold display-4">{{user.job}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12 card-wrapper">
+			<h4 class="mbr-fonts-style mbr-bold display-4">Basic info</h4>			
+			<div class="card-box">
+				<h4 class="card-title mbr-fonts-style pb-1 display-4">{%if user.sex == '1'%}Male{%else%}Female{%endif%}, {{user.age}} years old</h4>
+				<h4 class="card-title mbr-fonts-style pb-1 display-4">Live in {{user.country}} / {{user.city}}</h4>
+				<h4 class="card-title mbr-fonts-style pb-1 display-4">Can speak {{user.language}}</h4>
+				<h4 class="card-title mbr-fonts-style pb-1 display-4">Hobby {{user.hobby}}</h4>				
+			</div>
+		</div>
+		<br>
+		<div class="col-md-12 card-wrapper">
+			<h4 class="mbr-fonts-style mbr-bold display-4">Experience</h4>			
+			<div class="card-box">
+				<h4 class="card-title mbr-fonts-style pb-1 display-4">{{user.experience|safe}}</h4>
+			</div>
+		</div>
+		<br>
+		<div class="col-md-12 card-wrapper">
+			<h4 class="mbr-fonts-style mbr-bold display-4">Working history</h4>			
+			<div class="card-box">
+				<h4 class="card-title mbr-fonts-style pb-1 display-4">{{user.work_history|safe}}</h4>
+			</div>
+		</div>
+		
+	</section>
+
+</div>
+<!-- Right panel -->
+<div class="col-md-4">
+	<section class="form2 cid-rccAB2jr1U">
+		<div class="col-md-12 col-lg-12">
+			<div class="card-wrapper">
+				<div class="card-box">
+					<h4 class="card-title mbr-fonts-style pb-1 mbr-bold display-2">ABCXYZ</h4>
+					<p class="mbr-text mbr-fonts-style mbr-normal display-4 pb-5">
+					Something will show here. But I don't know what should be show
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="form2 cid-rccAB2jr1U">
+		<div class="col-md-12 col-lg-12 align-center">
+			<h4 class="mbr-fonts-style display-4"><a href="#">Report this tour</a></h4>
+		</div>
+	</section>	
+</div>
+<div class="col-md-12">
+	<h3 class="my-4">Recent Tours</h3>
+	<div class="row">
+		<div class="col-md-3 col-sm-6 mb-4">
+			<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+		</div>
+
+		<div class="col-md-3 col-sm-6 mb-4">
+			<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+		</div>
+
+		<div class="col-md-3 col-sm-6 mb-4">
+			<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+		</div>
+
+		<div class="col-md-3 col-sm-6 mb-4">
+			<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+		</div>
+	</div>
+</div>
+{% endblock content %}

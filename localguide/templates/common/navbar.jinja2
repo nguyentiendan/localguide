@@ -33,22 +33,20 @@
         <div class="menu-bottom">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav nav-dropdown js-float-line" data-app-modern-menu="true">
+                    {% if request.user.role == '0' %}
                     <li class="nav-item">
-                        <a class="nav-link link mbr-black text-danger display-4" href="#">Publish a tour</a>
+                        <a class="nav-link link mbr-black text-danger display-4" href="/publish_tour">Publish a tour</a>
                     </li>
+                    {%endif%}
                     <li class="nav-item">
                         <a class="nav-link link mbr-black text-danger display-4" href="#">Help</a>
                     </li>
 
-                    {% if request.authenticated_userid : %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link link mbr-black dropdown-toggle text-danger display-4" href="#" data-toggle="dropdown-submenu" aria-expanded="false"><b>Welcome</b></a>
-                            <div class="dropdown-menu">
-                                <a class="mbr-black dropdown-item text-danger display-4" href="/user/basic" aria-expanded="false">Profile</a>
-                                <a class="mbr-black dropdown-item text-danger display-4" href="/auth/logout" aria-expanded="false">Logout</a>
-                            </div>
-                        </li>
-                    {% else : %}
+                    {% if request.user.uid %}                        
+                        <li class="nav-item">
+                            <a class="nav-link link mbr-black text-danger display-4" href="/user/basic">Profile</a>
+                        </li>    
+                    {% else %}
                         <li class="nav-item">
                             <a class="nav-link link mbr-black text-danger display-4" href="/user/create">Signup</a>
                         </li>

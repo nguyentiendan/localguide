@@ -35,7 +35,7 @@ class Tour(Base):
     days            = Column(String(2), nullable=True)
     content         = Column(Text, nullable=True)
     banner          = Column(String(50), nullable=True)
-    status          = Column(String(1), default=0)  #0:Deactive : not show on homepage and admin must review, 1:Active : show on homepage, 2:Disable : not show on homepage and guide can active again
+    status          = Column(String(1), default=0)  #0:Deactive : not active, 1:Active : show on homepage, 2:Disable : not show on homepage and guide can active again
     ctime           = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     mtime           = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     

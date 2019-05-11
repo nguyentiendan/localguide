@@ -43,6 +43,7 @@ class User(Base):
     hobby           = Column(String(255), nullable=True)    
     status          = Column(String(1), default=1)  #0:Deactive: can not login, 1:Active
     role            = Column(String(1), default=0)  #0:User, #1:Guide, #2:Admin 
+    approve         = Column(String(1), default=0)  #0:Not appove, #1:Approve request, #2 Approved
     last_login      = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     ctime           = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     mtime           = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)

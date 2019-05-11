@@ -7,18 +7,31 @@ class UserService(object):
     @classmethod
     def all(cls, request):
         query = request.dbsession.query(User)
-        return query.order_by(sa.desc(User.ctime))
+        return query.order_by(sa.desc(User.mtime))
     
     @classmethod
     def by_uid(cls, _uid, request):
-        rs = request.dbsession.query(User).filter(User.uid == _uid).first()
+        #Select 2 column uid, role
+        rs = request.dbsession.query(User.uid, User.role).filter(User.uid == _uid).first()
         return rs
-        
+
+    @classmethod
+    def by_uid_all(cls, _uid, request): 
+        #Select all column
+        rs = request.dbsession.query(User).filter(User.uid == _uid).first()
+        return rs    
         '''
         query = request.dbsession.query(User)
         print(query) 
         return query.get(_uid)
         '''
+    @classmethod
+    def check_email(cls, request, _email):        
+        rs = request.dbsession.query(User.email).filter(User.email == _email).first()
+        if rs is not None: # email duplicate
+            return True
+        return False
+
     @classmethod
     def by_id_uid(cls, _id, _uid, request):
         rs = request.dbsession.query(User).filter(User.id == _id, User.uid == _uid, User.status == '1').first()
@@ -31,10 +44,7 @@ class UserService(object):
 
     @classmethod
     def by_email(cls, email, request):
-        '''return request.dbsession.query(User.uid, User.email, User.password_hash).filter(User.email == email).first()'''
         return request.dbsession.query(User).filter(User.email == email, User.status == '1').first()
-        #rs = request.dbsession.query(User).filter(User.email == email).first()
-        #return rs
     
     @classmethod
     def check_login(cls, request):
@@ -52,5 +62,5 @@ class UserService(object):
     @classmethod
     def get_RandomGuide(cls, request):
         #Get random Guide active
-        rs = request.dbsession.query(User.id, User.uid, User.fullname, User.avatar, User.country, User.city, User.job, User.language).filter(User.status == '1').order_by(func.rand()).limit(3).all()
+        rs = request.dbsession.query(User.id, User.uid, User.fullname, User.avatar, User.country, User.city, User.job, User.language).filter(User.status == '1', User.role == '1').order_by(func.rand()).limit(3).all()
         return rs

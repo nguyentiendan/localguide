@@ -21,24 +21,34 @@ from ..services.user_service import UserService
 from ..services.tour_service import TourService
 from ..utils import XssHtml
 
-@view_config(route_name='tour_action', match_param='action=list', renderer='localguide:templates/tour/tour_list.jinja2')
-def tour_list(request):
-    print('TOUR LIST')
-    uid = request.unauthenticated_userid   
-    
-    if uid is None :
+@view_config(route_name='tour_action', match_param='action=admin_tourlist', renderer='localguide:templates/admin/admin_tour_list.jinja2')
+def admin_tourlist(request):
+    print('ADMIN TOUR LIST')
+    user = request.user
+    if user is None :
         raise exception_response(404)
     else :
-        tour = Tour()
-        tour = TourService.by_uid(uid, request=request)
+        uid  = request.user.uid
+        role = request.user.role
+        tour = TourService.admin_tourall(request=request)
+    return {'tour':tour, 'role':role}
 
-    return {'tour':tour}
+@view_config(route_name='tour_action', match_param='action=list', renderer='localguide:templates/tour/tour_list.jinja2')
+def tour_list(request):
+    print('TOUR LIST of GUIDE')
+    user = request.user
+    if user is None :
+        raise exception_response(404)
+    else :
+        uid  = request.user.uid
+        role = request.user.role
+        tour = TourService.by_uid(uid, request=request)
+    return {'tour':tour, 'role':role}
 
 @view_config(route_name='tour_action', match_param='action=all', renderer='localguide:templates/front/tour_all.jinja2')
-def tour_all(request):
+def front_tourall(request):
     print('ALL TOUR')
-    tour = Tour()
-    tour = TourService.all(request=request)
+    tour = TourService.front_tourall(request=request)
     
     return {'tour':tour}
     
@@ -48,28 +58,31 @@ def tour_detail(request):
     print('TOUR DETAIL')
     id  = request.params.get('id')
     uid = request.params.get('hash')
+    user = request.user
+    
     if id is None or uid is None :
         raise exception_response(404)
     else :
+        role = request.user.role
         tour = Tour()
         tour = TourService.detail_by_id_uid(id, uid, request=request)
-        print(tour)
         if tour is None :
             raise exception_response(404)
-    return {'tour':tour}
+    return {'tour':tour, 'role':role}
 
 
 @view_config(route_name='tour_action', match_param='action=create', renderer='localguide:templates/tour/tour_create.jinja2')
 def tour_create(request):
     print('TOUR CREATE')
-    uid = request.unauthenticated_userid   
-    
-    if uid is None :
+    user = request.user
+
+    if user is None :
         raise exception_response(404)
     else :
-        tour = Tour()        
+        tour = Tour()
+        role = request.user.role        
         if request.method == 'POST':
-            tour.uid        = uid
+            tour.uid        = request.user.uid       
             tour.title      = request.POST['title']
             tour.type       = request.POST['type']
             tour.short_desc = request.POST['short_desc']
@@ -79,14 +92,14 @@ def tour_create(request):
             tour.days       = request.POST['days']
             tour.content    = request.POST['content']
             if(request.POST['banner']!='undefined'):
-                tour.banner = banner_upload(uid, request.POST['banner'], request)
+                tour.banner = banner_upload(request.user.uid, request.POST['banner'], request)
 
             try :
                 request.dbsession.add(tour)
             except DBAPIError:
                 return Response(db_err_msg, content_type='text/plain', status=500)  
             
-        return {}
+        return {'role':role}
 
 @view_config(route_name='tour_action', match_param='action=edit', renderer='localguide:templates/tour/tour_edit.jinja2')
 def tour_edit(request):
@@ -94,27 +107,28 @@ def tour_edit(request):
     
     id  = request.params.get('id')
     uid = request.params.get('uid')
-    if uid is None or id is None or uid != request.unauthenticated_userid :
+    user = request.user
+    if uid is None or id is None or uid != request.user.uid :
         raise exception_response(404)
     else :
-        tour = TourService.by_id_uid(id, uid, request=request)
+        tour = TourService.by_id_uid(id, request.user.uid, request=request)
         if tour is None :
             raise exception_response(404)
     
-        return {'tour':tour}
+        return {'tour':tour, 'role':request.user.role}
 
 @view_config(route_name='tour_action', match_param='action=updateTour')
 def tour_update(request):
     print("UPDATE TOUR")
     
-    uid = request.unauthenticated_userid
-    if uid is None :
+    user = request.user
+    if user is None :
         raise exception_response(404)
     else :
         tour = Tour()
         if request.method == 'POST':
             data = request.json_body    
-            tour = TourService.by_id_uid(data['id'], uid, request=request)
+            tour = TourService.by_id_uid(data['id'], request.user.uid, request=request)
             tour.title       = data['title']
             tour.type        = data['type']
             tour.short_desc  = data['short_desc']
@@ -136,8 +150,9 @@ def tour_delete(request):
     data = request.json_body
     id  = data['id']
     uid = data['uid']
-    
-    if uid is None or id is None or uid != request.unauthenticated_userid :
+    user = request.user
+
+    if uid is None or id is None or uid != request.user.uid :
         raise exception_response(404)
     else :
         tour = Tour()
@@ -156,8 +171,9 @@ def tour_disable(request):
     data = request.json_body
     id  = data['id']
     uid = data['uid']
-    
-    if uid is None or id is None or uid != request.unauthenticated_userid :
+    user = request.user
+
+    if uid is None or id is None or uid != request.user.uid :
         raise exception_response(404)
     else :
         tour = Tour()
@@ -176,8 +192,9 @@ def tour_enable(request):
     data = request.json_body
     id  = data['id']
     uid = data['uid']
-    
-    if uid is None or id is None or uid != request.unauthenticated_userid :
+    user = request.user
+
+    if uid is None or id is None or uid != request.user.uid :
         raise exception_response(404)
     else :
         tour = Tour()
@@ -236,13 +253,12 @@ def banner_upload(uid,file,request):
 def tour_getTourNotActive(request):
     print("GET TOUR NOT ACTIVE")
     
-    uid = request.unauthenticated_userid     
-    if uid is None:
+    user = request.user     
+    if user is None:
         raise exception_response(404)
     else:           
         tour = Tour()
-        rs = TourService.get_TourNotActive(uid, request=request)
-        print(rs)
+        rs = TourService.get_TourNotActive(request.user.uid, request=request)
         return [
             dict(id=tour.id, uid=tour.uid, title=tour.title)
             for tour in rs
@@ -252,8 +268,8 @@ def tour_getTourNotActive(request):
 def tour_getTourActive(request):
     print("GET TOUR ACTIVE")
     
-    uid = request.unauthenticated_userid     
-    if uid is None:
+    user = request.user     
+    if user is None:
         raise exception_response(404)
     else:           
         tour = Tour()
@@ -266,8 +282,6 @@ def tour_getTourActive(request):
 @view_config(route_name='tour_action', match_param='action=getRandomTour', renderer='json')
 def tour_getRandomTour(request):
     print("GET RANDOM TOUR")
-    
-    tour = Tour()
     rs = TourService.get_RandomTour(request=request)
     return [
         dict(id=tour.id, uid=tour.uid, title=tour.title, type=tour.type, short_desc=tour.short_desc, price=tour.price, days=tour.days, banner=tour.banner)
@@ -281,12 +295,12 @@ def tour_uploadImage(request):
     
     id  = request.POST['id']
     hash = request.POST['hash']
-    uid = request.unauthenticated_userid
-    if uid is None or id is None or hash != uid :
+    user = request.user
+    if user is None or id is None or hash != request.user.uid :
         raise exception_response(404)
     else:
         tour = Tour()
-        tour = TourService.by_id_uid(id, uid, request=request)
+        tour = TourService.by_id_uid(id, request.user.uid, request=request)
         #user = UserService.by_uid(uid, request)
 
         if UserService.check_login(request) == False:
@@ -314,7 +328,7 @@ def tour_uploadImage(request):
         #dir_path = os.path.dirname(os.path.realpath(__file__))
 
         settings = request.registry.settings
-        user_folder = settings['user.folder'] + uid
+        user_folder = settings['user.folder'] + request.user.uid
         file_path = os.path.join(user_folder, '%s' % newFile)
 
         #file_path = os.path.join(cwd +'/localsearch/static/assets/user_img', '%s' % newFile)
@@ -333,7 +347,7 @@ def tour_uploadImage(request):
 
         #Update banner
         tour.id     = id
-        tour.uid    = uid
+        tour.uid    = request.user.uid
         tour.banner = newFile
 
         #try :

@@ -21,14 +21,37 @@
 <body>
 {% include "../common/navbar_default.jinja2" %}
 
-<div class="container" style="padding-top:150px; padding-bottom:200px">
+{% if role == '2' :%}
+	<div class="container-full" style="padding-top:150px; padding-bottom:200px">
+{% else :%}
+	<div class="container" style="padding-top:150px; padding-bottom:200px">
+{% endif %}
+
 	<div class="row">
-        <div class="col-md-3">
-			{% include "../common/sidebar.jinja2" %}
-		</div>
-		<div class="col">
+		{% if role == '2' %}
+        	<div class="col-md-2">
+				{% include "../common/sidebar.jinja2" %}
+			</div>
+		{% elif (role == '1') %}
+			<div class="col-md-3">
+				{% include "../common/sidebar.jinja2" %}
+			</div>
+		{% elif (role == '0') %}
+			<div class="col-md-3">
+				{% include "../common/sidebar.jinja2" %}
+			</div>
+		{% endif %}
+		
+		{% if role == '2' %}
+			<div class="col-md-10">
+		{% elif (role == '1')%}
+			<div class="col-md-9">
+		{% elif (role == '0')%}	
+			<div class="col-md-9">	
+		{% endif %}
 			{% block content %}{% endblock %}
-		</div>
+			</div>
+			
 	</div>
 </div>
 
@@ -37,18 +60,9 @@
 <script src="{{request.static_url('localguide:static/assets/js/image_resize.min.js')}}"></script>
 <script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
 <script type="text/javascript">
-	$(document).ready(function () {
-		$('#sidebarCollapse').on('click', function () {
-			$('#sidebar').toggleClass('active');
-			$(this).toggleClass('active');
-		});
-	});
-</script>
-<script type="text/javascript">
 	//Vue.use(VeeValidate);
 	//Vue.use(bootstrapVue);
 	Vue.use(VueQuillEditor);
-	
 	/* Update basic info*/
 	const basicInfo = new Vue({
 		el: '#basicInfo',
@@ -61,8 +75,8 @@
 			sex: '{{user.sex}}',
 			countries: 
 				[
-  					{ name: 'Japan', code: 'JP' },
-  					{ name: 'VietNam', code: 'VN' },
+					{ name: 'Japan', code: 'JP' },
+					{ name: 'VietNam', code: 'VN' },
 				],
 			count_city:'',
 			cityData: {
@@ -177,8 +191,8 @@
 					this.uploadfile = this.$refs.file.files[0]
 					
 					//let formData = new FormData();
-      				//formData.append('file', this.uploadfile);
-      				//console.log('>> formData >> ', formData);
+					//formData.append('file', this.uploadfile);
+					//console.log('>> formData >> ', formData);
 					let formData = new FormData();
 					formData.append('photo', this.uploadfile);
 					console.log('>> formData >> ', formData);
@@ -207,9 +221,9 @@
 					alert('No file chosen');
 					return false;
 				} else if (! /\.(jpg|jpeg|png|gif)$/i.test(f.name)) {
-        			alert('Please choose image');
+					alert('Please choose image');
 					return false;
-      			} else if (f.size > 1024 * 1024) {
+				} else if (f.size > 1024 * 1024) {
 					alert('File too big (> 1MB)');
 					return false;
 				}

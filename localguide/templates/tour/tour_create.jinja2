@@ -9,7 +9,7 @@
 <section class="form2 cid-rccP5jr1mU">
 	<div class="col-md-12 card" data-form-type="formoid">
 		<div data-form-alert="" hidden="">Thanks you for complete!</div>
-		<form id="tourCreateForm" @submit.prevent="processForm" method="POST" class="mbr-form">
+		<form id="tourCreateForm" method="POST" class="mbr-form">
 			<!--<input type="hidden" name="email" data-form-email="true" value="gbEjPUpE9TlSyfGJqFqs+xOeVkoqUToPYF0eCXm2xwm56T9S/zQg7bQvW5XoiJ74+PX2w9FAtRk6/Oyhba6/x8WfzlOod3tajc16+A7An27Wk0yZ3pTt8s7KLa7A7wI/">-->
 			<div class="row row-sm-offset">
 				<div class="col-md-6 multi-horizontal">
@@ -87,7 +87,8 @@
 				</div>
 			</div>
 			<span class="input-group-btn">
-				<button class="btn btn-form btn-primary display-4">Create</button>
+				<button @click="processForm" class="btn btn-form btn-primary display-4">Create</button>
+				<button @click="back" class="btn btn-form btn-secondary display-4">Cancel</button>
 			</span>
 		</form>
 	</div>

@@ -1,0 +1,38 @@
+{% extends "layout_approve.jinja2" %}
+
+{% block content %}
+
+<h4 class="mbr-fonts-style mbr-bold display-2">
+	Approve
+	- <small>to become tour guide</small>
+</h4>
+<section class="form2 cid-rccP5jr1mU" id="basicInfo">
+	<div class="col-md-12 card" data-form-type="formoid">
+		<div data-form-alert="" hidden="">Thanks you for complete!</div>
+		<form class="mbr-form" data-form-title="Basic Infor">
+			<!--<input type="hidden" name="email" data-form-email="true" value="gbEjPUpE9TlSyfGJqFqs+xOeVkoqUToPYF0eCXm2xwm56T9S/zQg7bQvW5XoiJ74+PX2w9FAtRk6/Oyhba6/x8WfzlOod3tajc16+A7An27Wk0yZ3pTt8s7KLa7A7wI/">-->
+			<div class="row row-sm-offset">
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Approve type</h4>
+						<select name="sex" v-model="sex" class="form-control" disabled>
+							<option value='0' selected>Request approve to become a tour guide</option>
+							<option value='1'>Request approve to publish a tour</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Reason</h4>
+						<textarea class="form-control" row="5"></textarea>
+					</div>
+				</div>
+			</div>
+			<span class="input-group-btn">
+				<button @click="" class="btn btn-form btn-primary display-4">Send request</button>
+			</span>
+		</form>
+	</div>
+</section>
+
+{% endblock content %}

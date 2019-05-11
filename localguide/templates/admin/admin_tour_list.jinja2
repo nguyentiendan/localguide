@@ -1,0 +1,49 @@
+{% extends "layout_admin.jinja2" %}
+
+{% block content %}
+<h4 class="mbr-fonts-style mbr-bold display-2">
+	Tour Listing
+	- <small>listing all tour</small>
+</h4>
+<section class="form2 cid-rccOyUZvnc" id="userList">
+	<div class="col-md-12">
+		{% if not tour : %}
+			<h5>Sorry, we have not tour in this time.</h5>
+		{% else %}
+		<table class="table table-striped">
+			<thead class="thead-light">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Tour name</th>
+					<th scope="col">Tour type</th>
+					<th scope="col">Country/City</th>
+					<th scope="col">Guide name</th>
+					<th scope="col">Price/Day</th>
+					<th scope="col">Status</th>
+					<th scope="col">Last update</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for t in tour %}
+					<tr>
+						<th scope="row">{{t.id}}</th>
+						<td><a href="#">{{t.title|e}}</a></td>
+						<td>{{t.type}}</td>
+						<td>{{t.country}}/{{t.city}}</td>
+						<td>
+							guide name
+						</td>
+						<td>{{t.price}}/{{t.days}}</td>
+						<td>
+							{{t.status}}
+						</td>
+						<td>{{t.mtime}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% endif %}
+	</div>
+</section>
+
+{% endblock content %}

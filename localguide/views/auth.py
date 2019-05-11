@@ -20,18 +20,18 @@ def login(request):
         next_url = request.route_url('index')
     message = ''
     email = ''
-    '''
-    uid = request.unauthenticated_userid
-    if uid :
-        return HTTPFound(location='/')
+    ''' 
+    user = request.user
+    if user is not None :
+        #have loging before
+        return HTTPFound(location='/')  
     else :
-        if request.method == 'POST':
+        if request.method == 'POST' :
             data = request.json_body
             email       = data['email']
             password    = data['password']
             
-            #user = request.dbsession.query(User).filter_by(email=email).first()
-            user = UserService.by_email(email, request=request)
+            user = UserService.by_email(email, request)
             if user is not None and user.check_password(password) :
                 headers = remember(request, user.uid)
                 message = 'success'

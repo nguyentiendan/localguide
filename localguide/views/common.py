@@ -16,17 +16,16 @@ from ..services.user_service import UserService
 @view_config(route_name='common_action', match_param='action=uploadEditorImage', renderer='json')
 def quill_uploadImage(request):
     print("QUILL UPLOAD IMAGE")
-    
-    if UserService.check_login(request) == False :
+    user = request.user
+    if user is None :
         raise exception_response(404)
     else :
-        uid = request.unauthenticated_userid
         filename = request.POST['photo'].filename
         f, ext = os.path.splitext(filename)
 
         #setting new file name
         rd = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(16)])
-        newFile = uid + '_' + rd + ext
+        newFile = request.user.uid + '_' + rd + ext
         
         # ``input_file`` contains the actual file data which needs to be
         # stored somewhere.
@@ -42,7 +41,7 @@ def quill_uploadImage(request):
         
         settings = request.registry.settings
         host = settings['host']
-        user_folder = settings['user.folder'] + uid
+        user_folder = settings['user.folder'] + request.user.uid
         file_path = os.path.join(user_folder, '%s' % newFile)
         
         # We first write to a temporary file to prevent incomplete files from
@@ -57,5 +56,5 @@ def quill_uploadImage(request):
         # Now that we know the file has been fully saved to disk move it into place.
         os.rename(temp_file_path, file_path)
 
-        url = host + 'static/user_images/guide/' + uid + '/' + newFile
+        url = host + 'static/user_images/guide/' + request.user.uid + '/' + newFile
         return {'url': url}

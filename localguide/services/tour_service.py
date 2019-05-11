@@ -7,7 +7,14 @@ from ..models.user import User
 class TourService(object):
     
     @classmethod
-    def all(cls, request):
+    def admin_tourall(cls, request):
+        query = request.dbsession.query(Tour)
+        return query.order_by(sa.desc(Tour.mtime))
+        #rs = request.dbsession.query(Tour).order_by(sa.desc(Tour.mtime)).all()
+        #return rs
+        
+    @classmethod
+    def front_tourall(cls, request):
         rs = request.dbsession.query(Tour).filter(Tour.status == '1').order_by(desc(Tour.mtime)).all()
         return rs
     
