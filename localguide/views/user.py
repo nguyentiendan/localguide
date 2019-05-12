@@ -43,6 +43,7 @@ def signup(request):
     else :
         if request.method == 'POST':
             data = request.json_body
+            user = User()
             user.fullname    = data['fullname']
             user.email       = data['email']
             password         = data['password']
@@ -106,6 +107,7 @@ def guide_updateBasicInfo(request):
     else:
         next_url = "/user/setting"
         data = request.json_body    
+        user = User()
         user = UserService.by_uid_all(request.user.uid, request=request)
         user.fullname       = data['fullname']
         user.job            = data['job']
@@ -133,7 +135,8 @@ def guide_updateExperience(request):
         raise exception_response(404)
     else:
         next_url = "/guide/detail"
-        data = request.json_body    
+        data = request.json_body
+        user = User()
         user = UserService.by_uid_all(request.user.uid, request=request)
 
         #Xss process
