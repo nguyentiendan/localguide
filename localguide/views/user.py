@@ -38,7 +38,6 @@ def admin_userlist(request):
 def signup(request):
     print('USER CREATE')      
     user = request.user
-    print(user)
     if user is not None :
         raise HTTPFound(request.route_url("index"))
     else :
@@ -50,7 +49,7 @@ def signup(request):
             password         = data['password']
             user.set_password(password)
             user.random_uid()
-            print(user.fullname)
+            
             if UserService.check_email(request, user.email) == False :  # email not duplicate
                 try :
                     request.dbsession.add(user)
