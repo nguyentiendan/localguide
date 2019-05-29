@@ -2060,6 +2060,8 @@ body {
 .cid-rccP5jr1mU textarea {
   border-radius: 0px;
   padding-left: 15px;
+  width:100%;
+  
 }
 .cid-rccP5jr1mU .mbr-section-subtitle {
   color: #656565;
@@ -2101,6 +2103,52 @@ body {
 
 .cid-rccP5jr1mU img {
   transition: all 0.3s;
+}
+
+/* Upload file */
+.cid-rccP5jr1mU .dropbox {
+  outline: 2px dashed grey; /* the dash box */
+  outline-offset: -10px;
+  background: lightcyan;
+  color: dimgray;
+  padding: 10px 10px;
+  min-height: 200px; /* minimum height */
+  position: relative;
+  cursor: pointer;
+  text-align: center;
+
+}
+.cid-rccP5jr1mU .input-file {
+  opacity: 0; /* invisible but it's there! */
+  width: 100%;
+  left:-5px;
+  height: 200px;
+  position: absolute;
+  cursor: pointer;
+}
+.cid-rccP5jr1mU .dropbox:hover {
+  background: lightblue; /* when mouse over to the drop zone, change color */
+}
+.cid-rccP5jr1mU .dropbox p {
+  font-size: 1.2em;
+  text-align: center;
+  padding: 50px 0;
+}
+.cid-rccP5jr1mU .img-thumbnail {
+  padding: .1rem;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: .1rem;
+  max-width: 70%;
+  height: auto;
+}
+.cid-rccP5jr1mU .img {
+  display: inline-block;
+  width: 320px;
+  height: 160px;
+  margin-bottom: 1.6rem;
+  overflow: hidden;
+  /*border-radius: 100%;*/
 }
 @media (max-width: 576px) {
   .cid-rccP5jr1mU .col-sm-12 {
@@ -2885,7 +2933,6 @@ body {
   padding-bottom: 90px;
   background-image: url("../../images/mbr-1-1920x1280.jpg");
 }
-
 /* End publish page */
 
 
@@ -2931,3 +2978,4 @@ body {
   color: red;
   font-size: 13px;
 }
+

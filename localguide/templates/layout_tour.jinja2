@@ -15,6 +15,7 @@
 	<!--<link href="https://cdn.quilljs.com/1.3.4/quill.bubble.css" rel="stylesheet">-->
 	<!-- Quill end -->
 	<link rel="stylesheet" href="{{request.static_url('localguide:static/assets/theme/css/sidebar.css')}}">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	
 </head>
 <body>
@@ -48,12 +49,113 @@
 
 <script src="{{request.static_url('localguide:static/assets/js/image_resize.min.js')}}"></script>
 <script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
+<!--<script src="{{request.static_url('localguide:static/assets/js/file_upload.fake.service.js')}}"></script>-->
+<script src="{{request.static_url('localguide:static/assets/js/file_upload.service.js')}}"></script>
 <script>
 	// Notify vue about the VeeValidate plugin
  	Vue.use(VeeValidate);
-	//Vue.use(bootstrapVue);	
-	Vue.use(VueQuillEditor);
+	//Vue.use(VueQuillEditor);
 	
+	const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
+	
+	const uploadPhoto = new Vue({
+		delimiters: ['${', '}'],
+		el: '#uploadPhoto',
+		data: {
+			id: '',
+			uid: '',
+			uploadedFiles: [],
+			uploadError: null,
+			currentStatus: null,
+			uploadFieldName: 'photos',
+		},
+		computed: {
+			isInitial() {
+				return this.currentStatus === STATUS_INITIAL;
+			},
+			isSaving() {
+				return this.currentStatus === STATUS_SAVING;
+			},
+			isSuccess() {
+				return this.currentStatus === STATUS_SUCCESS;
+			},
+			isFailed() {
+				return this.currentStatus === STATUS_FAILED;
+			}
+		},
+		created() {
+			this.id = getUrlParameter('id')
+			this.uid = getUrlParameter('hash')
+		},
+		methods: {
+			reset() {
+				// reset form to initial state
+				this.currentStatus = STATUS_INITIAL;
+				this.uploadedFiles = [];
+				this.uploadError = null;
+			},
+			goList() {
+				location.href = 'list'
+			},
+			save(formData) {
+				//console.log(formData)
+				// upload data to the server
+				this.currentStatus = STATUS_SAVING;
+				upload(formData)
+					.then(x => {
+						this.uploadedFiles = [].concat(x);
+						this.currentStatus = STATUS_SUCCESS;
+					})
+					.catch(err => {
+						this.uploadError = err.response;
+						this.currentStatus = STATUS_FAILED;
+					});
+				
+			},
+			filesChange(fieldName, fileList) {
+				// handle file changes
+				var formData = new FormData();
+				for ( i=0; i<fileList.length; i++ ) {
+					size = fileList[i].size;
+					type = fileList[i].type;
+					if ( !this.validate_img(type, size) ) {
+						//alert('File size too large OR not image file');	
+						return;
+					}
+				}
+				if ( !fileList.length || fileList.length > 5 ) {
+					alert('Please upload 5 files once time');						
+					return;
+				}
+				
+				// append the files to FormData
+				Array
+					.from(Array(fileList.length).keys())
+					.map(x => {
+						formData.append(fieldName, fileList[x], fileList[x].name);
+					});
+				formData.append('id', this.id);
+				formData.append('uid', this.uid);				
+				// save it
+				this.save(formData);
+			},			
+			validate_img(type,size) {
+				if (! /\/(jpg|jpeg|png|gif)$/i.test(type)) {
+					alert('Please upload image file')
+					return false;
+      			} else if (size > 5242880 ) { //5M
+				  	alert('File size too big. Please upload file size less than 5Mb')
+					return false;
+				}
+				return true
+			},
+		},
+		mounted() {
+			this.reset();
+		},	
+	});
+
+
 	const tourList = new Vue({
 		el: '#tourList',
 		data: {},
@@ -78,7 +180,7 @@
 					})
 					.catch(function (response) {
 						//handle error
-						console.log(response);
+						//console.log(response);
 					});
 				}
 			},
@@ -92,11 +194,7 @@
 			success: false,
 			//country: '',
 			//city: '',
-			countries: 
-				[
-  					{ name: 'Japan', code: 'JP' },
-  					{ name: 'VietNam', code: 'VN' },
-				],
+			countries: [],
 			count_city:'',
 			cityData: {
                Japan: [
@@ -110,7 +208,7 @@
                VietNam: [
                    { name: 'SaiGon', value: 'SaiGon' },
                    { name: 'DaNang', value: 'DaNang' },
-               ]
+               ],
            	},
 			tour: {
 				title:'',
@@ -149,7 +247,7 @@
 			},
         },
 		created() {
-			//this.getCountry()
+			this.getCountry()
 			if (this.tour.city != 'None' || this.tour.city != '')
 				this.count_city = 1		
 		},
@@ -173,11 +271,11 @@
 			LocalQuillEditor: VueQuillEditor.quillEditor
 		},
         methods: {
-			//getCountry() {
-			//	axios.get(URL + 'static/js/country.json').then(response => {
-			//		this.countries = response.data
-			//	})
-      		//},
+			getCountry() {
+				axios.get(URL + 'static/js/country.json').then(response => {
+					this.countries = response.data
+				})
+      		},
 			onChange: function () {
             	this.options = this.options
 				this.count_city = this.options.length
@@ -209,14 +307,16 @@
 							//handle success
 							if (response.status == '200' && response.statusText == 'OK') {
 								//console.log('SUCCESS')
-								location.href = '/tour/list'
+								console.log(response)
+								if(response.data!='') {
+									location.href = response.data  
+								}
 								//tourCreateForm.showModal()
 							}
 						})
 						.catch(function (response) {
 							//handle error
-							console.log(response);
-							alert('Redirect to error page');
+							//console.log(response);
 						});
                     }
                 });

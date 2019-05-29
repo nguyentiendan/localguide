@@ -80,7 +80,7 @@
 				<div class="col-md-12 multi-horizontal">
 					<div class="form-group">
 						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Banner image</label> <small>(900x300)</small></h4>
-						<input type="file" ref="file" name="banner" v-validate="'image|ext:jpeg,jpg,png|size:1024'">
+						<input type="file" ref="file" name="banner" v-validate="'image|ext:jpeg,jpg,png|size:1024'" style="opacity: 0;">
 						<span v-show="errors.has('banner')" class="is-error">${errors.first('banner')}</span><br>
 						<small>Please upload image file with extension is png or jpg or jpeg. And image size is not larger than 1MB</small>
 					</div>

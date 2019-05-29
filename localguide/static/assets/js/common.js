@@ -54,3 +54,17 @@ function saveToServer(quill, file) {
         console.error(e);
     });
 }
+
+// utils to delay promise
+function wait(ms) {
+    return (x) => {
+        return new Promise(resolve => setTimeout(() => resolve(x), ms));
+    };
+}
+//get url parameter
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}

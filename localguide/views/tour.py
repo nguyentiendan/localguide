@@ -1,5 +1,5 @@
 from docutils.core import publish_parts
-from sqlalchemy.sql import select, and_, or_
+from sqlalchemy.sql import select, and_, or_, func
 from pyramid.response import Response
 from pyramid.httpexceptions import exception_response
 
@@ -25,7 +25,8 @@ from ..utils import XssHtml
 def admin_tourlist(request):
     print('ADMIN TOUR LIST')
     user = request.user
-    if user is None :
+    #check only admin access this function
+    if user is None or request.user.role != '2' :  
         raise exception_response(404)
     else :
         uid  = request.user.uid
@@ -37,7 +38,8 @@ def admin_tourlist(request):
 def tour_list(request):
     print('TOUR LIST of GUIDE')
     user = request.user
-    if user is None :
+    #check only admin access this function
+    if user is None or request.user.role == '0' :
         raise exception_response(404)
     else :
         uid  = request.user.uid
@@ -96,9 +98,19 @@ def tour_create(request):
 
             try :
                 request.dbsession.add(tour)
+                # Get the new ID and redirect
+                t = request.dbsession.query(Tour.id).order_by(Tour.id.desc()).first()    
+                next_url = '/tour/uploadPhoto?id=' + str(t.id) + '&hash=' + request.user.uid 
+                #next_url = '/tour/uploadPhoto?id=' + str(t.id) + '&hash=' + request.user.uid 
+                return Response(
+                        next_url,
+                        headers=[
+                            ('X-Relocate', next_url),
+                            ('Content-Type', 'text/html'),
+                        ]
+                )
             except DBAPIError:
                 return Response(db_err_msg, content_type='text/plain', status=500)  
-            
         return {'role':role}
 
 @view_config(route_name='tour_action', match_param='action=edit', renderer='localguide:templates/tour/tour_edit.jinja2')
@@ -287,6 +299,81 @@ def tour_getRandomTour(request):
         dict(id=tour.id, uid=tour.uid, title=tour.title, type=tour.type, short_desc=tour.short_desc, price=tour.price, days=tour.days, banner=tour.banner)
         for tour in rs
     ]    
+@view_config(route_name='tour_action', match_param='action=uploadPhoto', renderer='localguide:templates/tour/tour_uploadPhoto.jinja2')
+def uploadPhoto(request):
+    print('UPLOAD PHOTO')
+    user = request.user
+    id  = request.params.get('id')
+    uid = request.params.get('hash')
+
+    if user is None or uid is None or id is None or request.user.role == '0' or uid != request.user.uid :
+        raise exception_response(404)
+    else :
+        role = request.user.role
+        
+    return {'role':role}
+
+@view_config(route_name='tour_action', match_param='action=uploadTourPhoto')
+def tour_uploadTourPhoto(request):
+    print("UPLOAD TOUR PHOTO")
+    
+    id  = request.POST['id']
+    uid = request.POST['uid']
+    fileslist = request.POST.getall('photos')
+    user = request.user
+    if user is None or id is None or uid != request.user.uid :
+        raise exception_response(404)
+    else:
+        settings = request.registry.settings
+        user_folder = settings['user.folder'] + request.user.uid + '/' + id
+        photo_json = os.path.join(user_folder, '%s' % "photo.json")
+        
+        data = {}  
+        data['images'] = []  
+
+        for file in fileslist :
+            #print ( "individual files: ", file.filename )
+            f, ext = os.path.splitext(file.filename)
+            
+            # ``input_file`` contains the actual file data which needs to be
+            # stored somewhere.
+            input_file = file.file
+
+            #Check size here if you need (but size is checking by Vue)
+            input_file.seek(0, 2) # Seek to the end of the file
+            size = input_file.tell() # Get the position of EOF
+            input_file.seek(0) # Reset the file position to the beginning
+            
+            #cwd = os.getcwd()
+            #dir_path = os.path.dirname(os.path.realpath(__file__))    
+            file_path = os.path.join(user_folder, '%s' % file.filename)
+            
+            # We first write to a temporary file to prevent incomplete files from
+            # being used.
+            temp_file_path = file_path + '~'
+            
+            # Finally write the data to a temporary file
+            #input_file.seek(0)
+            with open(temp_file_path, 'wb') as output_file:
+                shutil.copyfileobj(input_file, output_file)
+
+            # Now that we know the file has been fully saved to disk move it into place.
+            moveFile = os.rename(temp_file_path, file_path)
+            
+            data['images'].append({  
+                'name': file.filename,
+            })
+            with open(photo_json, "w") as json_file:
+                json.dump(data, json_file)
+
+        message = 'success'
+        return Response(
+            message,
+            headers=[
+                ('X-Relocate', ''),
+                ('Content-Type', 'text/html'),
+            ]
+        )        
 
 #Update banner when edit Tour
 @view_config(route_name='tour_action', match_param='action=uploadImage')
@@ -303,8 +390,8 @@ def tour_uploadImage(request):
         tour = TourService.by_id_uid(id, request.user.uid, request=request)
         #user = UserService.by_uid(uid, request)
 
-        if UserService.check_login(request) == False:
-            raise exception_response(404)
+        #if UserService.check_login(request) == False:
+        #    raise exception_response(404)
         
         #if (not user) or (UserService.check_two_uid(uid, request) == False):
         #    raise exception_response(404)
@@ -362,3 +449,4 @@ def tour_uploadImage(request):
                 ('Content-Type', 'text/html'),
             ]
         )
+
