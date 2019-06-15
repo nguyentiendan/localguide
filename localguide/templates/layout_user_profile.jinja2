@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+{% include "../common/navbar_default.jinja2" %}
+
+<div class="container" style="padding-top:150px; padding-bottom:200px">
+	{% block content %}{% endblock %}
+</div>
+
+{% include "../common/footer.jinja2" %}
+
+<script type="text/javascript">
+    /* User Related Tour  */
+	const relatedTour = new Vue({
+        delimiters: ['${', '}'],
+		el: '#relatedTour',
+		data: {
+			tours: [],
+			count: '',
+            user: {
+                id: "{{user.id}}",
+                uid: "{{user.uid}}"
+            },
+		},
+		created() {
+            this.getRelatedTour()
+            this.timer = setInterval(this.getRelatedTour, 300000)
+		},
+		methods: {			
+			getRelatedTour() {
+                axios.get(URL + 'tour/getRelatedTour', {
+                    params: {
+                        id: this.user.id,
+                        uid: this.user.uid,
+                    },
+                    config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+                })
+				.then(response => {
+					this.tours = response.data
+					this.count = response.data.length
+
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+			tourDetail(id, uid) {
+				url = "../tour/detail?id=" + id + '&hash=' + uid;
+				location.href = url				
+			},
+		}
+	});
+</script>
+
+</body>
+</html>

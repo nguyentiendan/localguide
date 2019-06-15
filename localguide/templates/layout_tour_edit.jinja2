@@ -36,8 +36,6 @@
 </div>
 
 {% include "../common/footer.jinja2" %}
-
-<script src="{{request.static_url('localguide:static/assets/js/image_resize.min.js')}}"></script>
 <script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
 <script>
 	// Notify vue about the VeeValidate plugin
@@ -53,11 +51,7 @@
 			success: false,
 			//country: '',
 			//city: '',
-			countries: 
-				[
-  					{ name: 'Japan', code: 'JP' },
-  					{ name: 'VietNam', code: 'VN' },
-				],
+			countries: [],
 			count_city:'',
 			cityData: {
                Japan: [
@@ -74,25 +68,22 @@
                ]
            	},
 			tour: {
-				id: '{{tour.id}}',
-				uid: '{{tour.uid}}',
-				title:'{{tour.title}}',
-				type: '{{tour.type}}',
-            	short_desc: '{{tour.short_desc}}',
+				id: "{{tour.id}}",
+				uid: "{{tour.uid}}",
+				title: "",
+				type: "",
+            	short_desc: "",
 				country:'{{tour.country}}',
 				city:'{{tour.city}}',
-				price:'{{tour.price}}',
-				days:'{{tour.days}}',
-				content:'{{tour.content|safe}}',
+				price:"",
+				days:"",
+				content: '{{tour.content|safe}}',
 			},
 			editorOption: {
 				syntax: true,
 				placeholder: 'Please update your content',
 				theme: 'snow',
 				modules: {
-					imageResize: {
-          				displaySize: true
-        			},
 					toolbar: {
 						container: [
 							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -100,19 +91,16 @@
 							[{ 'color': [] }, { 'background': [] }], 
 							[{ 'align': [] }],
 							[{ 'list': 'ordered' }, { 'list': 'bullet' }],
-							['link', 'image', 'video'],
+							['link',  'video'],
 							['blockquote'],
 							['clean']  
 						],
-						handlers: {
-							image: imageHandler
-						}
 					},
 				},
 			},
         },
 		created() {
-			//this.getCountry()
+			this.getCountry()
 			if (this.tour.city != 'None' || this.tour.city != '')
 				this.count_city = 1		
 		},
@@ -136,20 +124,27 @@
 			LocalQuillEditor: VueQuillEditor.quillEditor
 		},
         methods: {
-			//getCountry() {
-			//	axios.get(URL + 'static/js/country.json').then(response => {
-			//		this.countries = response.data
-			//	})
-      		//},
+			getCountry() {
+				axios.get(URL + 'static/js/country.json').then(response => {
+					this.countries = response.data
+				})
+      		},
 			onChange: function () {
             	this.options = this.options
 				this.count_city = this.options.length
          	},
-			processForm() {
+			processForm(evt) {
 				this.isEditing = !this.isEditing;
+				evt.preventDefault()
         		//attempt validating all
                 this.$validator.validateAll().then((result) => {
                     if (result) {
+						this.tour.title			= this.$refs['title'].value;
+						this.tour.type			= this.$refs['type'].value;
+						this.tour.short_desc	= this.$refs['short_desc'].value;
+						this.tour.price			= this.$refs['price'].value;
+						this.tour.days			= this.$refs['days'].value;
+						this.tour.content		= this.$refs['content'].value;
 						//validation passed succesfully
 						axios({
 							method: 'POST',
@@ -161,14 +156,13 @@
 							//handle success
 							if (response.status == '200' && response.statusText == 'OK') {
 								//tourUpdateForm.showModal()
-								//console.log('SUCCESS')
-								location.href = '/tour/list'
+								location.reload();
+								//location.href = '/tour/list'
 							}
 						})
 						.catch(function (response) {
 							//handle error
 							//console.log(response);
-							alert('Redirect to error page');
 						});
                     }
                 });

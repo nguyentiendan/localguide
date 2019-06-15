@@ -60,7 +60,7 @@ class UserService(object):
         return True
     
     @classmethod
-    def get_RandomGuide(cls, request):
-        #Get random Guide active
+    def get_RandomUser(cls, request):
+        #Get random user active
         rs = request.dbsession.query(User.id, User.uid, User.fullname, User.avatar, User.country, User.city, User.job, User.language).filter(User.status == '1', User.role == '1').order_by(func.rand()).limit(3).all()
         return rs

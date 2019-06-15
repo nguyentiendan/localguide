@@ -31,7 +31,7 @@ class TourService(object):
     @classmethod
     def detail_by_id_uid(cls, _id, _uid, request):
         # Lay them User.fullname , tham khảo by_id
-        rs = request.dbsession.query(Tour, User.fullname, User.avatar).filter(Tour.id == _id, Tour.uid == _uid, Tour.uid == User.uid).first()
+        rs = request.dbsession.query(Tour, User.id, User.fullname, User.avatar).filter(Tour.id == _id, Tour.uid == _uid, Tour.uid == User.uid).first()
         return rs
 
     @classmethod
@@ -52,8 +52,14 @@ class TourService(object):
     
     @classmethod
     def get_RandomTour(cls, request):
-        #Get random Tour adtive
+        #Get random Tour active
         rs = request.dbsession.query(Tour.id, Tour.uid, Tour.title, Tour.type, Tour.short_desc, Tour.price, Tour.days, Tour.banner).filter(Tour.status == '1').order_by(func.rand()).limit(3).all()
+        return rs
+
+    @classmethod
+    def get_RelatedTour(cls, request):
+        #Get related Tour for user
+        rs = request.dbsession.query(Tour.id, Tour.uid, Tour.title, Tour.type, Tour.short_desc, Tour.price, Tour.days, Tour.banner).filter(Tour.status == '1').order_by(func.rand()).limit(2).all()
         return rs
 
     @classmethod

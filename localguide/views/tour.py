@@ -60,17 +60,17 @@ def tour_detail(request):
     print('TOUR DETAIL')
     id  = request.params.get('id')
     uid = request.params.get('hash')
-    user = request.user
+    #user = request.user
     
     if id is None or uid is None :
         raise exception_response(404)
     else :
-        role = request.user.role
+        #role = request.user.role
         tour = Tour()
         tour = TourService.detail_by_id_uid(id, uid, request=request)
         if tour is None :
             raise exception_response(404)
-    return {'tour':tour, 'role':role}
+    return {'tour':tour}
 
 
 @view_config(route_name='tour_action', match_param='action=create', renderer='localguide:templates/tour/tour_create.jinja2')
@@ -92,7 +92,7 @@ def tour_create(request):
             tour.city       = request.POST['city']
             tour.price      = request.POST['price']
             tour.days       = request.POST['days']
-            tour.content    = request.POST['content']
+            tour.content    = request.POST['content'].replace("'", "\\'" )
             if(request.POST['banner']!='undefined'):
                 tour.banner = banner_upload(request.user.uid, request.POST['banner'], request)
 
@@ -100,8 +100,12 @@ def tour_create(request):
                 request.dbsession.add(tour)
                 # Get the new ID and redirect
                 t = request.dbsession.query(Tour.id).order_by(Tour.id.desc()).first()    
+                # Create folder for tour
+                settings = request.registry.settings
+                tour_folder = settings['user.folder'] + request.user.uid + '/' + str(t.id)
+                access_rights = 0o755    
+                os.mkdir(tour_folder)
                 next_url = '/tour/uploadPhoto?id=' + str(t.id) + '&hash=' + request.user.uid 
-                #next_url = '/tour/uploadPhoto?id=' + str(t.id) + '&hash=' + request.user.uid 
                 return Response(
                         next_url,
                         headers=[
@@ -115,12 +119,12 @@ def tour_create(request):
 
 @view_config(route_name='tour_action', match_param='action=edit', renderer='localguide:templates/tour/tour_edit.jinja2')
 def tour_edit(request):
-    print('TOUR EDIT')
-    
+    print('TOUR EDIT')    
     id  = request.params.get('id')
     uid = request.params.get('uid')
     user = request.user
-    if uid is None or id is None or uid != request.user.uid :
+    
+    if uid is None or id is None or user is None :
         raise exception_response(404)
     else :
         tour = TourService.by_id_uid(id, request.user.uid, request=request)
@@ -148,7 +152,7 @@ def tour_update(request):
             tour.city        = data['city']
             tour.price       = data['price']
             tour.days        = data['days']
-            tour.content     = data['content']
+            tour.content     = data['content'].replace("'", "\\'" )
         return Response(
                 '',
                 headers=[
@@ -164,7 +168,7 @@ def tour_delete(request):
     uid = data['uid']
     user = request.user
 
-    if uid is None or id is None or uid != request.user.uid :
+    if uid is None or id is None or user is None :
         raise exception_response(404)
     else :
         tour = Tour()
@@ -293,12 +297,29 @@ def tour_getTourActive(request):
 
 @view_config(route_name='tour_action', match_param='action=getRandomTour', renderer='json')
 def tour_getRandomTour(request):
-    print("GET RANDOM TOUR")
+    print("GET RANDOM TOUR")    
     rs = TourService.get_RandomTour(request=request)
     return [
         dict(id=tour.id, uid=tour.uid, title=tour.title, type=tour.type, short_desc=tour.short_desc, price=tour.price, days=tour.days, banner=tour.banner)
         for tour in rs
+    ]
+
+@view_config(route_name='tour_action', match_param='action=getRelatedTour', renderer='json')
+def tour_getRelatedTour(request):
+    print("GET RELATED TOUR")
+    id  = request.params.get('id')
+    uid = request.params.get('uid')
+    if uid is None or id is None :
+        raise exception_response(404)
+    else :
+        rs = TourService.get_RelatedTour(request=request)
+        if rs is None :
+            raise exception_response(404)
+    return [
+        dict(id=tour.id, uid=tour.uid, title=tour.title, type=tour.type, short_desc=tour.short_desc, price=tour.price, days=tour.days, banner=tour.banner)
+        for tour in rs
     ]    
+
 @view_config(route_name='tour_action', match_param='action=uploadPhoto', renderer='localguide:templates/tour/tour_uploadPhoto.jinja2')
 def uploadPhoto(request):
     print('UPLOAD PHOTO')

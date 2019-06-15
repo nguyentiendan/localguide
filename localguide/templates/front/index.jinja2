@@ -270,28 +270,27 @@
 		}
 	});
 
-    /* List Random Guide  */
-	const randomGuide = new Vue({
+    /* List Random User  */
+	const randomUser = new Vue({
         delimiters: ['${', '}'],
-		el: '#randomGuide',
+		el: '#randomUser',
 		data: {
-			guides: [],
+			users: [],
 			count: '',
 		},
 		created() {
-			this.getRandomGuide()
-            this.timer = setInterval(this.getRandomGuide, 300000)
+			this.getRandomUser()
+            this.timer = setInterval(this.getRandomUser, 300000)
 		},
 		methods: {			
-			getRandomGuide() {
+			getRandomUser() {
 				axios({
 					method: 'GET',
-					url: URL + 'user/getRandomGuide',
+					url: URL + 'user/getRandomUser',
 					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
 				})
 				.then(response => {
-                    console.log(response.data)
-					this.guides = response.data
+					this.users = response.data
 					this.count  = response.data.length
 				})
 				.catch(function (response) {

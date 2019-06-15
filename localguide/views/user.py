@@ -73,7 +73,7 @@ def signup(request):
     '''
 
 @view_config(route_name='user_action', match_param='action=basic', renderer='localguide:templates/user/basic_info.jinja2')
-def user_setting(request):
+def user_basic(request):
     #Basic info for user with role=1,2
     print('USER BASIC INFO')
     user = request.user
@@ -95,17 +95,15 @@ def user_advance(request):
         User = UserService.by_uid_all(request.user.uid, request)
         if User is None :
             raise exception_response(404)
-    return {'user':User, 'role':request.user.role} 
-    #return dict(user=User)    
+    return {'user':User, 'role':request.user.role}    
 
 @view_config(route_name='user_action', match_param='action=updateBasicInfo')
-def guide_updateBasicInfo(request):
+def user_updateBasicInfo(request):
     print("UPDATE BASIC INFO")
     user = request.user
     if user is None :
         raise exception_response(404)
-    else:
-        next_url = "/user/setting"
+    else :
         data = request.json_body    
         user = User()
         user = UserService.by_uid_all(request.user.uid, request=request)
@@ -116,16 +114,39 @@ def guide_updateBasicInfo(request):
         user.city           = data['city']
         user.age            = data['age']
         user.sex            = data['sex']
-        user.language       = data['language']
-        user.hobby          = data['hobby']
-        
         return Response(
                 '',
                 headers=[
-                    ('X-Relocate', next_url),
+                    ('X-Relocate', ''),
                     ('Content-Type', 'text/html'),
                 ]
         )
+
+@view_config(route_name='user_action', match_param='action=updateAdvanceInfo')
+def user_updateAdvanceInfo(request):
+    print("UPDATE ADVANCE INFO")
+    user = request.user
+    if user is None :
+        raise exception_response(404)
+    else :
+        data = request.json_body    
+        user = User()
+        user = UserService.by_uid_all(request.user.uid, request=request)
+        user.skill            = data['skill']
+        user.specialities     = data['specialities']
+        user.education        = data['education']
+        user.language         = data['language']
+        user.hobby            = data['hobby']
+        user.experience       = data['experience'].replace("'", "\\'" )
+        #user.experience = user.experience.replace("'", "\\'" )
+        return Response(
+                '',
+                headers=[
+                    ('X-Relocate', ''),
+                    ('Content-Type', 'text/html'),
+                ]
+        )
+
 
 @view_config(route_name='user_action', match_param='action=updateExperience')
 def guide_updateExperience(request):
@@ -180,10 +201,10 @@ def guide_updateWorkHistory(request):
                     ('Content-Type', 'text/html'),
                 ]
         )
-@view_config(route_name='user_action', match_param='action=getRandomGuide', renderer='json')
-def getRandomGuide(request):
-    print("GET RANDOM GUIDE")
-    rs = UserService.get_RandomGuide(request=request)
+@view_config(route_name='user_action', match_param='action=getRandomUser', renderer='json')
+def getRandomUser(request):
+    print("GET RANDOM USER")
+    rs = UserService.get_RandomUser(request=request)
     return [
         dict(id=user.id, uid=user.uid, fullname=user.fullname, avatar=user.avatar, country=user.country, city=user.city, job=user.job, language=user.language)
         for user in rs
@@ -254,8 +275,16 @@ def user_profile(request):
     print('USER PROFILE for GUIDE')
     id  = request.params.get('id')
     uid = request.params.get('hash')
-    user = request.user
-    
+    #user = request.user
+    if id is None or uid is None :
+        raise exception_response(404)
+    else :
+        rs = UserService.by_id_uid(id, uid, request=request)
+        if rs is None :
+            raise exception_response(404)
+    return {'user':rs} 
+
+    '''
     if user is None or id is None or uid is None :
         raise exception_response(404)
     else :
@@ -263,4 +292,4 @@ def user_profile(request):
         if rs is None :
             raise exception_response(404)
     return {'user':rs, 'role':request.user.role} 
-
+    '''

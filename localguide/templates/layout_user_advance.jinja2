@@ -56,113 +56,68 @@
 </div>
 
 {% include "../common/footer.jinja2" %}
-
-<script src="{{request.static_url('localguide:static/assets/js/image_resize.min.js')}}"></script>
 <script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
 <script type="text/javascript">
 	//Vue.use(VeeValidate);
 	//Vue.use(bootstrapVue);
 	Vue.use(VueQuillEditor);
-	/* Update basic info*/
-	const basicInfo = new Vue({
-		el: '#basicInfo',
-		validator: null,
+	
+	/* Update Advance info*/
+	const advanceInfo = new Vue({
+		el: '#advanceInfo',		
 		data: {
 			isEditing: false,
-			uploadfile: '',
-			country: '{{user.country}}',
-			city: '{{user.city}}',
-			sex: '{{user.sex}}',
-			countries: 
-				[
-					{ name: 'Japan', code: 'JP' },
-					{ name: 'VietNam', code: 'VN' },
-				],
-			count_city:'',
-			cityData: {
-				Japan: [
-					{ name: 'Tokyo', value: 'Tokyo' },
-					{ name: 'Osaka', value: 'Osaka' },
-					{ name: 'Nagoya', value: 'Nagoya' },
-					{ name: 'Kyoto', value: 'Kyoto' },
-					{ name: 'Hiroshima', value: 'Hiroshima' },
-					{ name: 'Hokkaido', value: 'Hokkaido' },
-				],
-				VietNam: [
-					{ name: 'SaiGon', value: 'SaiGon' },
-					{ name: 'DaNang', value: 'DaNang' },
-				]
-			},
 			user: {
 				uid:'',
-				fullname:'{{user.fullname}}',
-				job: '{{user.job}}',
-				mobile: '{{user.mobile}}',
-				country: '{{user.country}}',
-				city: '{{user.city}}',
-				age: '{{user.age}}',
-				sex: '{{user.sex}}',
-				language: '{{user.language}}',
-				hobby: '{{user.hobby}}',
+				skill:"",
+				specialities: "",
+				education: "",
+				language: "",
+				hobby: "",
+				education: "",
+				experience: '{{user.experience|safe}}',	
+			},
+			editorOption: {
+				syntax: true,
+				placeholder: 'Please update your content',
+				theme: 'snow',
+				modules: {
+					toolbar: {
+						container: [
+							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+							['bold', 'italic', 'underline', 'strike'],
+							[{ 'color': [] }, { 'background': [] }], 
+							[{ 'align': [] }],
+							[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+							['link', 'video'],
+							['blockquote'],
+							['clean']  
+						],
+					},
+				},
 			},
 		},
-		created() {
-			//this.getCountry()
-			if (this.city != 'None' || this.city != '')
-				this.count_city = 1		
-			if(this.user.job == 'None')
-				this.user.job = ''
-			if(this.user.mobile == 'None')
-				this.user.mobile = ''		
-			if(this.user.language == 'None')
-				this.user.language = ''	
-			if(this.user.hobby == 'None')
-				this.user.hobby = ''
+		created() {	
 		},
-		computed: {
-			options: function() {
-				let options = ''
-				switch(this.country) {
-					case 'Japan':
-						options = this.cityData.Japan
-						break;                    
-					case 'VietNam':
-						options = this.cityData.VietNam
-						break;
-					//default:
-					//	options = this.cityData.Japan
-				}
-				return options
-			}
+		components: {
+			LocalQuillEditor: VueQuillEditor.quillEditor
 		},
 		methods: {
-			//getCountry() {
-			//	axios.get(URL + 'static/js/country.json').then(response => {
-			//		this.countries = response.data
-			//	})
-			//},
-			onChange: function () {
-				this.options = this.options
-				this.count_city = this.options.length
-			},
-			save(evt) {
+			processForm(evt) {
 				this.isEditing = !this.isEditing;
 				// Prevent modal from closing
 				evt.preventDefault()
 				//this.user.uid = this.$refs['uid'].value;
-				this.user.fullname = this.$refs['fullname'].value;
-				this.user.job = this.$refs['job'].value;
-				this.user.mobile = this.$refs['mobile'].value;
-				this.user.age = this.$refs['age'].value;
-				this.user.langauge = this.$refs['language'].value;
-				this.user.hobby = this.$refs['hobby'].value;
-				this.user.sex = this.sex;
-				this.user.country = this.country;
-				this.user.city = this.city;
+				this.user.skill			 = this.$refs['skill'].value;
+				this.user.specialities	 = this.$refs['specialities'].value;
+				this.user.education 	 = this.$refs['education'].value;
+				this.user.language		 = this.$refs['language'].value;
+				this.user.hobby			 = this.$refs['hobby'].value;
+				this.user.experience	 = this.$refs['experience'].value;
 				
 				axios({
 					method: 'POST',
-					url: URL + 'user/updateBasicInfo',
+					url: URL + 'user/updateAdvanceInfo',
 					data: this.user,
 					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
 				})
@@ -178,62 +133,11 @@
 					console.log(response);
 				});
 			},
-			file_open () {
-				this.$refs.file.click()
-			},
-			filesChange(e) {
-				e.preventDefault();
-				//let file_name = this.$refs.file.files[0].name;
-				//let file_size = this.$refs.file.files[0].size;
-				if(!this.validate_img(this.$refs.file.files[0])) {
-					//alert('File size too large or not image file')	
-					return;
-				} else {
-					this.uploadfile = this.$refs.file.files[0]
-					
-					//let formData = new FormData();
-					//formData.append('file', this.uploadfile);
-					//console.log('>> formData >> ', formData);
-					let formData = new FormData();
-					formData.append('photo', this.uploadfile);
-					console.log('>> formData >> ', formData);
-
-					axios({
-						method: 'POST',
-						url: URL + 'user/uploadImage',
-						data: formData, 
-						headers: {'Content-Type': 'multipart/form-data'} 
-					})
-					.then(function (response) {
-						//handle success
-						if (response.status == '200' && response.statusText == 'OK') {
-							location.reload();
-							location.reload(); 
-						}
-					})
-					.catch(function (response) {
-						//handle error
-						console.log(response);
-					});
-				}
-			},	
-			validate_img (f) {
-				if (f.name == '') {
-					alert('No file chosen');
-					return false;
-				} else if (! /\.(jpg|jpeg|png|gif)$/i.test(f.name)) {
-					alert('Please choose image');
-					return false;
-				} else if (f.size > 1024 * 1024) {
-					alert('File too big (> 1MB)');
-					return false;
-				}
-				return true
-			}    
 		}	
 	});
 
 	/* Experience */
+	/*
 	const experienceEditor = new Vue({
         el: '#experienceEditor',
         data: {
@@ -299,8 +203,10 @@
 			}
 		},
     });
+	*/
 
 	/* Work history */
+	/*
 	const workhistoryEditor = new Vue({
         el: '#workhistoryEditor',
         data: {
@@ -365,6 +271,7 @@
 			}
 		}
     });
+	*/
 
 </script>
 </body>

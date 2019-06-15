@@ -27,18 +27,6 @@ function upload(formData) {
     return Promise.all(promises);
 }
 
-function allImage(formData) {
-    const photos = formData.getAll('photos');
-    const promises = photos.map((x) => getImage(x)
-        .then(img => ({
-            id: img,
-            originalName: x.name,
-            fileName: x.name,
-            url: img
-        })));
-    return Promise.all(promises);
-}
-
 function getImage(file) {
     return new Promise((resolve, reject) => {
         const fReader = new FileReader();

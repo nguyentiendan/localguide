@@ -8,9 +8,7 @@
 </h4>
 <section class="form2 cid-rccP5jr1mU">
 	<div class="col-md-12 card" data-form-type="formoid">
-		<div data-form-alert="" hidden="">Thanks you for complete!</div>
 		<form id="tourCreateForm" method="POST" class="mbr-form">
-			<!--<input type="hidden" name="email" data-form-email="true" value="gbEjPUpE9TlSyfGJqFqs+xOeVkoqUToPYF0eCXm2xwm56T9S/zQg7bQvW5XoiJ74+PX2w9FAtRk6/Oyhba6/x8WfzlOod3tajc16+A7An27Wk0yZ3pTt8s7KLa7A7wI/">-->
 			<div class="row row-sm-offset">
 				<div class="col-md-6 multi-horizontal">
 					<div class="form-group">
@@ -29,7 +27,7 @@
 				<div class="col-md-12 multi-horizontal">
 					<div class="form-group">
 						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Short description</h4>
-						<textarea ref="short_desc" name="short_desc" v-validate="'required|min:20'" v-model="tour.short_desc" class="form-control" placeholder="Short description about tour"></textarea>
+						<textarea ref="short_desc" name="short_desc" v-validate="'required|min:20|max:120'" v-model="tour.short_desc" class="form-control" placeholder="Short description about tour"></textarea>
 						<span v-show="errors.has('short_desc')" class="is-error">${errors.first('short_desc')}</span>
 					</div>
 				</div>
@@ -49,7 +47,6 @@
 					<div class="form-group">
 						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">City</h4>
 						<select ref="city" name="city" v-validate="'required'" v-model="tour.city" class="form-control" >
-							<!--<option>Select City</option>-->
 							<option v-for="option in options" :value="option.value">
 								${option.name}
 							</option>
@@ -67,27 +64,28 @@
 				<div class="col-md-6 multi-horizontal">
 					<div class="form-group">
 						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Days</h4>
-						<input type="text" ref="days" name="days" v-validate="'min:1|max:2'" v-model="tour.days" class="form-control" placeholder="3" autocapitalize="off" autocorrect="off">
+						<input type="text" ref="days" name="days" v-validate="'required|numeric|min:1|max:2'" v-model="tour.days" class="form-control" placeholder="3" autocapitalize="off" autocorrect="off">
 						<span v-show="errors.has('days')" class="is-error">${errors.first('days')}</span>
 					</div>
-				</div>
+				</div>	
 				<div class="col-md-12 multi-horizontal">
 					<div class="form-group">
 						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Long describe about your tour</h4>
-						<quill-editor ref="content" name="content" v-model="tour.content" :options="editorOption"></quill-editor>
+						<quill-editor ref="content" name="content" v-model="tour.content" v-validate="'required'" :options="editorOption"></quill-editor>
+						<span v-show="errors.has('content')" class="is-error">${errors.first('content')}</span>
 					</div>
 				</div>
 				<div class="col-md-12 multi-horizontal">
 					<div class="form-group">
-						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Banner image</label> <small>(900x300)</small></h4>
-						<input type="file" ref="file" name="banner" v-validate="'image|ext:jpeg,jpg,png|size:1024'" style="opacity: 0;">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Banner image<small>(900x300)</small></h4>
+						<input type="file" ref="file" name="banner" v-validate="'image|ext:jpeg,jpg,png|size:1024'" style="opacity: 1;" accept="image/*">
 						<span v-show="errors.has('banner')" class="is-error">${errors.first('banner')}</span><br>
 						<small>Please upload image file with extension is png or jpg or jpeg. And image size is not larger than 1MB</small>
 					</div>
 				</div>
 			</div>
 			<span class="input-group-btn">
-				<button @click="processForm" class="btn btn-form btn-primary display-4">Create</button>
+				<button @click="processForm" :disabled="errors.any()" class="btn btn-form btn-primary display-4">Next</button>
 				<button @click="back" class="btn btn-form btn-secondary display-4">Cancel</button>
 			</span>
 		</form>

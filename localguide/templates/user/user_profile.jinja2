@@ -1,4 +1,4 @@
-{% extends "layout_front_common.jinja2" %}
+{% extends "layout_user_profile.jinja2" %}
 
 {% block content %}
 
@@ -11,18 +11,18 @@
 					<img class="img-fluid rounded" src="https://images.pexels.com/photos/870903/pexels-photo-870903.jpeg?w=940&h=650&auto=compress&cs=tinysrgb" alt="Card image cap">
 				</div>
 				<div class="card-body pt-5">
-					<img src="https://randomuser.me/api/portraits/men/64.jpg" class="profile" alt="profile-image" />
-					<h4 class="card-title pt-3">Michel Joe
+					<img src="{{request.static_url('localguide:static/assets/user_images/guide/')}}{{user.uid}}/{{user.avatar}}" class="profile" alt="profile-image" />
+					<h4 class="card-title pt-3">{{user.fullname}}
 						<span class="badge badge-warning">pro</span>
 					</h4> 
 					<p class="card-text mbr-fonts-style">
-						<i class="fa fa-briefcase"></i>Tour guide<br>
-						<i class="fa fa-home"></i>Live in Japan<br>
-						<i class="fa fa-map-pin"></i>From Ho Chi Minh City, Vietnam<br>
-            			<i class="fa fa-venus-mars"></i>Male / 30 years old<br>
-						<i class="fa fa-university"></i>Camelon university<br>
-						<i class="fa fa-language"></i>English, Japanese, VietNamese<br>
-						<i class="fa fa-history"></i>Joined from 2018/06
+						<i class="fa fa-briefcase"></i>{{user.job}}<br>
+						<i class="fa fa-home"></i>Live in {{user.country}}<br>
+						<i class="fa fa-map-pin"></i>From {{user.city}}<br>
+            			<i class="fa fa-venus-mars"></i>{% if user.sex == '1' %}Male{%else%}Female{%endif%} / {{user.age}} years old<br>
+						<i class="fa fa-university"></i>{{user.education}}<br>
+						<i class="fa fa-language"></i>{{user.language}}<br>
+						<i class="fa fa-history"></i>Joined from {{user.ctime}}
 					</p>
 					<hr>
 					
@@ -56,22 +56,19 @@
 
 					<hr>
 					<h5 class="mbr-fonts-style pb-1 pt-1 mbr-bold display-4">SKILLS</h5>
-					<button type="button" class="btn btn-light btn-sm skill">city tour</button>
-					<button type="button" class="btn btn-light btn-sm skill">treak</button>
-					<button type="button" class="btn btn-light btn-sm skill">swim</button>
-					<button type="button" class="btn btn-light btn-sm skill">domestic travel</button>
-					<hr>
-					
+					{% for item in user.skill.split(',') %}						
+						<button type="button" class="btn btn-light btn-sm skill">{{item}}</button>
+					{%endfor%}
+					<hr>					
 					<h5 class="mbr-fonts-style pb-1 pt-1 mbr-bold display-4">SPECIALITIES</h5>
-					<button type="button" class="btn btn-light btn-sm skill">aaaaa</button>
-					<button type="button" class="btn btn-light btn-sm skill">bbbbb</button>
-					<button type="button" class="btn btn-light btn-sm skill">ccccc</button>
-					<button type="button" class="btn btn-light btn-sm skill">ddddd</button>
+					{% for item in user.specialities.split(',') %}						
+						<button type="button" class="btn btn-light btn-sm skill">{{item}}</button>
+					{%endfor%}
 					<hr>
 					
 				</div>
 			</div>			
-		</section>		
+		</section>
 	</div>
 	<!-- Right panel-->	
 	<div class="col-md-8">
@@ -101,88 +98,13 @@
 			
 			<div class="card">
 				<h5 class="mbr-fonts-style pb-1 pt-3 mbr-bold display-4">EXPERIENCES</h5>
-				<p class="card-text">
-					Hello there! Looking for an amazing experience in Tokyo? Well, you're in the right place! Let's check out some hidden go-to places for the locals! If I take you on a tour, not only you will savor the freshly grilled Yakitori, but you will see locals drinking after a long day at work, and you will hear locals exchanging thoughts and dreams with the help of alcohol. 
-					<br><br>
-					And if you're really lucky, you might get to talk to them and ask some of your dying questions! The whole atmosphere is just very different from other countries, and I will guarantee that you will have an amazing tour. I am looking forward to meeting you all! Looking forward to meeting you all!
-				</p>
+				<span class="card-text">
+					{{ user.experience.replace("\\'","'")|safe}}
+				</span>
 			</div>
 		</section>
-		<section class="cid-rccOyRMpwz" style="padding-top:0px;padding-bottom:0px;">
-			<div class="container">
-				<div class="row justify-content-center">
-					<div class="col-md-12">
-						<h5 class="mbr-fonts-style pb-1 pt-3 mbr-bold display-4">RELATED TOURS</h5>
-					</div>
-				</div>
-				<div class="row row-content justify-content-center">
-					<div class="card p-3 col-12 col-md-6">
-						<div class="card-wrapper">
-							<div class="card-img">
-								<div class="price-box">
-									<h5 class="price mbr-fonts-style mbr-bold display-4">$500</h5>
-								</div>
-								<img src="{{request.static_url('localguide:static/assets/images/01.jpg')}}" title="">
-							</div>
-							<div class="card-box">
-								<h4 class="card-title mbr-fonts-style pb-1 mbr-bold display-5">China Autumn</h4>
-								<p class="mbr-text mbr-fonts-style mbr-normal display-4">
-									City Tours, Urban</p>
-								<div class="ico-line-wrap">
-									<div class="ico-line">
-										<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
-										<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
-										<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
-										<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
-										<div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
-										<h3 class="rev mbr-fonts-style mbr-bold display-4">4 reviews</h3>
-									</div>
-									<div class="ico-line">
-										<div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-clock" style="color: rgb(0, 0, 0); fill: rgb(0, 0, 0);" media-simple="true"></div>
-										<h3 class="rev mbr-fonts-style mbr-bold display-4">5 days</h3>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="card p-3 col-12 col-md-6">
-						<div class="card-wrapper">
-							<div class="card-img">
-								<div class="price-box">
-									<h5 class="price mbr-fonts-style mbr-bold display-4">$400</h5>
-								</div>
-								<img src="{{request.static_url('localguide:static/assets/images/02.jpg')}}" title="">
-							</div>
-							<div class="card-box">
-								<h4 class="card-title mbr-fonts-style pb-1 mbr-bold display-5">Great Britain Travel</h4>
-								<p class="mbr-text mbr-fonts-style mbr-normal display-4">
-									City Tours, Historic, Park</p>
-								<div class="ico-line-wrap">
-									<div class="ico-line">
-										<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
-										<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
-										<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
-										<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
-										<div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
-										<h3 class="rev mbr-fonts-style mbr-bold display-4">3 reviews</h3>
-									</div>
-									<div class="ico-line">
-										<div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-clock" style="color: rgb(0, 0, 0); fill: rgb(0, 0, 0);" media-simple="true"></div>
-										<h3 class="rev mbr-fonts-style mbr-bold display-4">4 days</h3>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-12 form2" style="padding-top:15px; padding-bottom:15px; align-items:right;">
-					<span class="input-group-btn">
-						<button class="btn btn-form btn-primary display-3">All Tour</button>
-					</span>
-				</div>
-			</div>
-		</section>
+		{% include "../tour/related_tour.jinja2" %}
+		
 	</div>			
 </div>
 

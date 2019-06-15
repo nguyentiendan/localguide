@@ -2503,7 +2503,8 @@ body {
   position: absolute;
   top: -62px;
   left: 20%;
-  max-width: 120px;
+  width: 120px;
+  height: 120px;
   border: 3px solid rgba(255, 255, 255, 1);
   -webkit-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
@@ -2753,18 +2754,6 @@ body {
   padding-bottom: 60px;
   background-color: #ffffff;
 }
-.cid-rccxzpxWWr .card-wrapper {
-  overflow: hidden;
-  height: 100%;
-  color: #444444;
-  padding: 0;
-  border-radius: 6px;
-}
-.cid-rccxzpxWWr .card-wrapper:hover .ico-wrap {
-  opacity: 1;
-  -webkit-transform: scale(1);
-  transform: scale(1);
-}
 .cid-rccxzpxWWr p {
   line-height: 1.6;
 }
@@ -2810,26 +2799,24 @@ body {
   line-height: 1.3;
   text-align: center;
 }
+.cid-rccxzpxWWr .card {
+  background-color: transparent;
+  border: none;
+  align-items: center;
+}
 .cid-rccxzpxWWr .card-img {
- /* 
-  overflow: hidden;
-  position: relative;
-  border-radius: 100%;
- */
- 
   display: inline-block;
-  width: 160px;
-  height: 160px;
-  margin-bottom: 1.6rem;
+  width: 140px;
+  height: 140px;
+  margin-bottom: .6rem;
   overflow: hidden; 
   border-radius: 50%;
- 
 }
 .cid-rccxzpxWWr img {
   transition: all 0.3s;
 }
 .cid-rccxzpxWWr .card-box {
-  padding: 1rem;
+  padding: 0.3rem;
 }
 .cid-rccxzpxWWr .mbr-section-title {
   margin: 0 auto;
@@ -2967,6 +2954,10 @@ body {
 .view_info {
   display:block;
 }
+.view_info_quill {
+  background-color: #E9ECEF;
+  display:block;
+}
 .vertical-center {
   margin: 0;
   position: absolute;
@@ -2977,5 +2968,6 @@ body {
 .is-error {
   color: red;
   font-size: 13px;
+  text-align: center;
 }
 

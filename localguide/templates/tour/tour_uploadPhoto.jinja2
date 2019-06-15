@@ -8,26 +8,32 @@
 </h4>
 <section class="form2 cid-rccP5jr1mU">
 	<div class="col-md-12 card" id="uploadPhoto">
-		<form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
-			<input type="hidden" ref="id" v-model="id">
-			<input type="hidden" ref="uid" v-model="uid">
-			<h4 class="mbr-fonts-style pb-2 form-title display-4">Please select and upload 12 photos for this tour.</h4>
-			<div class="dropbox">
-				<input ref="file" type="file" multiple :name="uploadFieldName" :disabled="isSaving" 
-					@change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length" accept="image/*" class="input-file">
-				
-				<p v-if="isInitial">
-					<i aria-hidden="true" class="fa fa-plus"></i> Drag your file(s) here to upload<br> or click to browse
-				</p>
-				<p v-if="isSaving">
-					Uploading ${ fileCount } files...
-				</p>
-			</div>
-			
-      	</form>
+		<div>
+			<form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
+				<input type="hidden" ref="id" v-model="id">
+				<input type="hidden" ref="uid" v-model="uid">
+				<h4 class="mbr-fonts-style pb-2 form-title display-4">Please select and upload 12 photos for this tour.</h4>
+				<div class="dropbox">
+					<input ref="file" type="file" multiple :name="uploadFieldName" :disabled="isSaving" 
+						@change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length" accept="image/*" class="input-file">
+					
+					<p v-if="isInitial">
+						<i aria-hidden="true" class="fa fa-plus"></i> Drag your file(s) here to upload<br> or click to browse
+					</p>
+					<p v-if="isSaving">
+						Uploading ${ fileCount } files...
+					</p>
+				</div>
+			</form>
+			<span class="input-group-btn" v-if="isInitial || isSaving">
+				<button class="btn btn-form btn-secondary display-4" @click="goList()">Cancel</button>
+			</span>  
+		</div>  
+		<!--  
 		<span class="input-group-btn">
 			<button class="btn btn-form btn-secondary display-4" @click="goList()">Cancel</button>
 		</span>
+		-->
 		<!--SUCCESS-->
       	<div v-if="isSuccess">
 			<h4 class="mbr-fonts-style pb-2 form-title display-4">You have uploaded <b>${ uploadedFiles.length }</b> file(s) successfully.</h4>
@@ -38,7 +44,7 @@
 			</div>
 			<span class="input-group-btn">
 				<button class="btn btn-form btn-primary display-4" @click="reset()">Upload again</button>
-				<button class="btn btn-form btn-secondary display-4" @click="goList()">Cancel</button>
+				<button class="btn btn-form btn-secondary display-4" @click="goList()">Tour list</button>
 			</span>
       	</div>
 		<!--FAILED-->
@@ -46,7 +52,7 @@
 			<h4 class="mbr-fonts-style pb-2 form-title display-4">Uploaded failed. Please try again</h4>
 			<span class="input-group-btn">
 				<button class="btn btn-form btn-primary display-4" @click="reset()">Upload again</button>
-				<button class="btn btn-form btn-secondary display-4" @click="goList()">Cancel</button>
+				<button class="btn btn-form btn-secondary display-4" @click="goList()">Tour list</button>
 			</span>
         	<pre>${ uploadError }</pre>
       	</div>

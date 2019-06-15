@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+{% include "../common/navbar_default.jinja2" %}
+
+<div class="container" style="padding-top:150px; padding-bottom:200px">
+	{% block content %}{% endblock %}
+</div>
+
+{% include "../common/footer.jinja2" %}
+
+<script type="text/javascript">
+
+    /* Tour Detail  */
+	const tourDetail = new Vue({
+        delimiters: ['${', '}'],
+		el: '#tourDetail',
+		data: {
+            photos: [],
+            countries: [],
+            tour: {
+                id: "{{tour.Tour.id}}",
+                uid: "{{tour.Tour.uid}}"
+            },
+		},
+        created() {
+            this.getPhoto()
+        },
+		methods: {			
+            getPhoto() {
+                axios.get(URL + 'static/user_images/guide/' + this.tour.uid + '/' + this.tour.id + '/photo.json').then(response => {    
+					this.photos = response.data.images
+				})
+                
+			},
+            userProfile(id, uid) {
+                url = "../user/profile?id=" + id + '&hash=' + uid;
+				location.href = url				
+			},
+		}
+	});
+    
+</script>
+
+<script type="text/javascript">
+let modalId = $('#image-gallery');
+
+$(document)
+  .ready(function () {
+
+    loadGallery(true, 'a.thumbnail');
+
+    //This function disables buttons when needed
+    function disableButtons(counter_max, counter_current) {
+      $('#show-previous-image, #show-next-image')
+        .show();
+      if (counter_max === counter_current) {
+        $('#show-next-image')
+          .hide();
+      } else if (counter_current === 1) {
+        $('#show-previous-image')
+          .hide();
+      }
+    }
+
+    /**
+     *
+     * @param setIDs        Sets IDs when DOM is loaded. If using a PHP counter, set to false.
+     * @param setClickAttr  Sets the attribute for the click handler.
+     */
+
+    function loadGallery(setIDs, setClickAttr) {
+      let current_image,
+        selector,
+        counter = 0;
+
+      $('#show-next-image, #show-previous-image')
+        .click(function () {
+          if ($(this)
+            .attr('id') === 'show-previous-image') {
+            current_image--;
+          } else {
+            current_image++;
+          }
+
+          selector = $('[data-image-id="' + current_image + '"]');
+		  console.log(selector)
+          updateGallery(selector);
+        });
+
+      function updateGallery(selector) {
+		alert('update Gallery')
+        let $sel = selector;
+        current_image = $sel.data('image-id');
+		console.log(current_image)
+        $('#image-gallery-title')
+          .text($sel.data('title'));
+        $('#image-gallery-image')
+          .attr('src', $sel.data('image'));
+        disableButtons(counter, $sel.data('image-id'));
+      }
+
+      if (setIDs == true) {
+        $('[data-image-id]')
+          .each(function () {
+            counter++;
+            $(this)
+              .attr('data-image-id', counter);
+          });
+      }
+      $(setClickAttr)
+        .on('click', function () {
+          updateGallery($(this));
+        });
+    }
+  });
+
+// build key actions
+$(document)
+  .keydown(function (e) {
+    switch (e.which) {
+      case 37: // left
+        if ((modalId.data('bs.modal') || {})._isShown && $('#show-previous-image').is(":visible")) {
+          $('#show-previous-image')
+            .click();
+        }
+        break;
+
+      case 39: // right
+        if ((modalId.data('bs.modal') || {})._isShown && $('#show-next-image').is(":visible")) {
+          $('#show-next-image')
+            .click();
+        }
+        break;
+
+      default:
+        return; // exit this handler for other keys
+    }
+    e.preventDefault(); // prevent the default action (scroll / move caret)
+  });
+
+</script>
+
+</body>
+</html>

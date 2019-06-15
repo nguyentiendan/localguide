@@ -7,10 +7,10 @@
         <ul class="list-unstyled  components">
             <li>
                 {% if role == '0' %}
-                    <a href="/user/basic" class="active">Profile (Basic)</a>
+                    <a href="/user/basic" class="active">User Profile</a>
                 {% else %}     
                     User role {{role}}          
-                    <a href="/user/basic" class="active">Profile (Basic)</a>
+                    <a href="/user/basic" class="active">User Profile</a>
                     <a href="/user/advance">Profile (Advance)</a>
                     {% if role == '1' %}<a href="/tour/list">Tour List</a>{% endif%}
                     {% if role == '2' %}

@@ -1,64 +1,56 @@
-{% extends "layout_user.jinja2" %}
+{% extends "layout_user_advance.jinja2" %}
 
 {% block content %}
 <h4 class="mbr-fonts-style mbr-bold display-2">
 	User Profile
-	- <small>Experience</small>
+	- <small>Advance</small>
 </h4>
-<section class="form2 cid-rccP5jr1mU" id="experienceEditor">
+
+<section class="form2 cid-rccP5jr1mU" id="advanceInfo">
 	<div class="col-md-12 card" data-form-type="formoid">
-		<div data-form-alert="" hidden="">Thanks you for complete!</div>
-		<form class="mbr-form" data-form-title="form">
+		<form class="mbr-form" data-form-title="Advance Info">
 			<div class="row row-sm-offset">
 				<div class="col-md-12 multi-horizontal">
 					<div class="form-group">
-						<h4 class="mbr-fonts-style pb-2 mbr-bold form-title display-4">Experience</h4>
-						<div :disabled="isEditing" :class="{view: isEditing}">
-							{% if user.experience == 'None' :%}
-								<i>Please update your experience</i>
-							{% else %}
-								<p class="mbr-fonts-style display-4">{{user.experience|safe}}</p>
-							{% endif %}
-						</div>
-						<div :disabled="!isEditing" :class="{view: !isEditing}">
-							<quill-editor v-model="user.experience" ref="expEditor" :options="editorOption"></quill-editor>
-						</div>
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Skills &nbsp;<small>(Enter items separated by a comma...)</small></h4>
+						<input type="text" ref="skill" value="{{user.skill}}" class="form-control" placeholder="Play guitar, sing" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+						<!--<input type="text" v-model.trim="user.skill" ref="skill" :value="user.skill" class="form-control" placeholder="Play guitar, sing" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">-->
+					</div>
+				</div>
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Specialities &nbsp;<small>(Enter items separated by a comma...)</small></h4>
+						<input type="text" ref="specialities" value="{{user.specialities}}" class="form-control" placeholder="Scientist guide, IT guide" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+				<div class="col-md-5 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Education</h4>
+						<input type="text" ref="education" value="{{user.education}}" class="form-control" placeholder="Cameron University" maxlength="80" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+				<div class="col-md-7 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Languages &nbsp;<small>(Enter items separated by a comma...)</small></h4>
+						<input type="text" ref="language" value="{{user.language}}" class="form-control" placeholder="English, Japanese, VietNamese" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Hobby &nbsp;<small>(Enter items separated by a comma...)</small></h4>
+						<input type="text" ref="hobby" value="{{user.hobby}}" ref="hobby" class="form-control" placeholder="Cooking, Movie, Travel" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+					</div>
+				</div>
+				<div class="col-md-12 multi-horizontal">
+					<div class="form-group">
+						<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Experience</h4>
+						<quill-editor ref="experience" name="experience" v-model="user.experience" :options="editorOption" :disabled="!isEditing" :class="{view_info_quill: !isEditing}"></quill-editor>
 					</div>
 				</div>
 			</div>
 			<span class="input-group-btn">
 				<button @click="isEditing = !isEditing" v-if="!isEditing" class="btn btn-form btn-light display-4">Edit<br></button>
-				<button v-else-if="isEditing" @click="save" class="btn btn-form btn-primary display-4">Save</button>
-				<button v-if="isEditing" @click="isEditing = false" class="btn btn-form btn-secondary display-4">Cancel</button>
-			</span>
-		</form>
-	</div>
-</section>
-<hr>
-<section class="form2 cid-rccP5jr1mU" id="workhistoryEditor">
-	<div class="col-md-12 card" data-form-type="formoid">
-		<div data-form-alert="" hidden="">Thanks you for complete!</div>
-		<form class="mbr-form" data-form-title="form">
-			<div class="row row-sm-offset">
-				<div class="col-md-12 multi-horizontal">
-					<div class="form-group">
-						<h4 class="mbr-fonts-style pb-2 mbr-bold form-title display-4">Working history</h4>
-						<div :disabled="isEditing" :class="{view: isEditing}">
-							{% if user.work_history == 'None' :%}
-								<i>Please update your experience</i>
-							{% else %}
-								<p class="mbr-fonts-style display-4">{{user.work_history|safe}}</p>
-							{% endif %}
-						</div>
-						<div :disabled="!isEditing" :class="{view: !isEditing}">
-							<quill-editor v-model="user.work_history" ref="workEditor" :options="editorOption"></quill-editor>
-						</div>
-					</div>
-				</div>
-			</div>
-			<span class="input-group-btn">
-				<button @click="isEditing = !isEditing" v-if="!isEditing" class="btn btn-form btn-light display-4">Edit<br></button>
-				<button v-else-if="isEditing" @click="save" class="btn btn-form btn-primary display-4">Save</button>
+				<button v-else-if="isEditing" @click="processForm" class="btn btn-form btn-primary display-4">Save</button>
 				<button v-if="isEditing" @click="isEditing = false" class="btn btn-form btn-secondary display-4">Cancel</button>
 			</span>
 		</form>
