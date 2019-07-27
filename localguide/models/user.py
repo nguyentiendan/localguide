@@ -82,5 +82,4 @@ class User(Base):
         uid = hashlib.sha1(uid.encode()).hexdigest()  
         self.uid = uid
         return uid
-
     

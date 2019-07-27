@@ -20,32 +20,7 @@ from ..models.user import User
 from ..services.user_service import UserService
 from ..services.tour_service import TourService
 from ..utils import XssHtml
-
-@view_config(route_name='tour_action', match_param='action=admin_tourlist', renderer='localguide:templates/admin/admin_tour_list.jinja2')
-def admin_tourlist(request):
-    print('ADMIN TOUR LIST')
-    user = request.user
-    #check only admin access this function
-    if user is None or request.user.role != '2' :  
-        raise exception_response(404)
-    else :
-        uid  = request.user.uid
-        role = request.user.role
-        tour = TourService.admin_tourall(request=request)
-    return {'tour':tour, 'role':role}
-
-@view_config(route_name='tour_action', match_param='action=list', renderer='localguide:templates/tour/tour_list.jinja2')
-def tour_list(request):
-    print('TOUR LIST of GUIDE')
-    user = request.user
-    #check only admin access this function
-    if user is None or request.user.role == '0' :
-        raise exception_response(404)
-    else :
-        uid  = request.user.uid
-        role = request.user.role
-        tour = TourService.by_uid(uid, request=request)
-    return {'tour':tour, 'role':role}
+import stripe
 
 @view_config(route_name='tour_action', match_param='action=all', renderer='localguide:templates/front/tour_all.jinja2')
 def front_tourall(request):
@@ -54,7 +29,6 @@ def front_tourall(request):
     
     return {'tour':tour}
     
-
 @view_config(route_name='tour_action', match_param='action=detail', renderer='localguide:templates/tour/tour_detail.jinja2')
 def tour_detail(request):
     print('TOUR DETAIL')
@@ -72,13 +46,76 @@ def tour_detail(request):
             raise exception_response(404)
     return {'tour':tour}
 
+@view_config(route_name='tour_action', match_param='action=booking', renderer='localguide:templates/tour/tour_booking.jinja2')
+def tour_booking(request):
+    print('TOUR BOOKING')
+    id  = request.params.get('id')
+    uid = request.params.get('hash')
+    #user = request.user
+    
+    if id is None or uid is None :
+        raise exception_response(404)
+    else :
+        tour = Tour()
+        tour = TourService.detail_by_id_uid(id, uid, request=request)
+        if tour is None :
+            raise exception_response(404)
+        stripe.api_key = 'sk_test_zhVLqm2IiBSzHCmYZbJwlwB400fY8QkLs2'        
+        session = stripe.checkout.Session.create(
+            customer_email='customer@example.com',
+            payment_method_types=['card'],
+            line_items=[{
+                'name': 'T-shirt',
+                'description': 'Comfortable cotton t-shirt',
+                'images': ['https://example.com/t-shirt.png'],
+                'amount': 500,
+                'currency': 'jpy',
+                'quantity': 1,
+            }],
+            success_url='https://example.com/success',
+            cancel_url='https://example.com/cancel',
+        )
 
-@view_config(route_name='tour_action', match_param='action=create', renderer='localguide:templates/tour/tour_create.jinja2')
+    return {'tour':tour}
+
+@view_config(route_name='tour_action', match_param='action=payment')
+def tour_payment(request):
+    print('TOUR PAYMENT')
+    data = request.json_body
+    id  = data['id']
+    uid = data['uid']
+
+    if uid is None or id is None :
+        raise exception_response(404)
+    else :
+        
+        stripe.api_key = 'sk_test_zhVLqm2IiBSzHCmYZbJwlwB400fY8QkLs2'        
+        session = stripe.checkout.Session.create(
+            customer_email='customer@example.com',
+            payment_method_types=['card'],
+            line_items=[{
+                'name': 'T-shirt',
+                'description': 'Comfortable cotton t-shirt',
+                'images': ['https://example.com/t-shirt.png'],
+                'amount': 500,
+                'currency': 'jpy',
+                'quantity': 1,
+            }],
+            success_url='https://example.com/success',
+            cancel_url='https://example.com/cancel',
+        )
+        print(session.id)
+        ssid = session.id
+    return Response(ssid, content_type='text/plain') 
+
+@view_config(route_name='tour_action', match_param='action=create')
 def tour_create(request):
     print('TOUR CREATE')
     user = request.user
+    #After create, Should be send mail to admin
 
-    if user is None :
+    #check only admin access this function
+    if user is None or UserService.isAdmin(request) == False:
         raise exception_response(404)
     else :
         tour = Tour()
@@ -105,7 +142,7 @@ def tour_create(request):
                 tour_folder = settings['user.folder'] + request.user.uid + '/' + str(t.id)
                 access_rights = 0o755    
                 os.mkdir(tour_folder)
-                next_url = '/tour/uploadPhoto?id=' + str(t.id) + '&hash=' + request.user.uid 
+                next_url = 'uploadPhoto?id=' + str(t.id) + '&hash=' + request.user.uid 
                 return Response(
                         next_url,
                         headers=[
@@ -115,30 +152,16 @@ def tour_create(request):
                 )
             except DBAPIError:
                 return Response(db_err_msg, content_type='text/plain', status=500)  
-        return {'role':role}
-
-@view_config(route_name='tour_action', match_param='action=edit', renderer='localguide:templates/tour/tour_edit.jinja2')
-def tour_edit(request):
-    print('TOUR EDIT')    
-    id  = request.params.get('id')
-    uid = request.params.get('uid')
-    user = request.user
-    
-    if uid is None or id is None or user is None :
-        raise exception_response(404)
-    else :
-        tour = TourService.by_id_uid(id, request.user.uid, request=request)
-        if tour is None :
-            raise exception_response(404)
-    
-        return {'tour':tour, 'role':request.user.role}
+        return {}
 
 @view_config(route_name='tour_action', match_param='action=updateTour')
 def tour_update(request):
     print("UPDATE TOUR")
-    
+    #After update, Should be send mail to admin
+
     user = request.user
-    if user is None :
+    #check only admin access this function
+    if user is None or UserService.isAdmin(request) == False:
         raise exception_response(404)
     else :
         tour = Tour()
@@ -153,6 +176,7 @@ def tour_update(request):
             tour.price       = data['price']
             tour.days        = data['days']
             tour.content     = data['content'].replace("'", "\\'" )
+            tour.mtime       = datetime.datetime.now()   
         return Response(
                 '',
                 headers=[
@@ -312,27 +336,13 @@ def tour_getRelatedTour(request):
     if uid is None or id is None :
         raise exception_response(404)
     else :
-        rs = TourService.get_RelatedTour(request=request)
+        rs = TourService.get_RelatedTour(uid, request=request)
         if rs is None :
             raise exception_response(404)
     return [
         dict(id=tour.id, uid=tour.uid, title=tour.title, type=tour.type, short_desc=tour.short_desc, price=tour.price, days=tour.days, banner=tour.banner)
         for tour in rs
     ]    
-
-@view_config(route_name='tour_action', match_param='action=uploadPhoto', renderer='localguide:templates/tour/tour_uploadPhoto.jinja2')
-def uploadPhoto(request):
-    print('UPLOAD PHOTO')
-    user = request.user
-    id  = request.params.get('id')
-    uid = request.params.get('hash')
-
-    if user is None or uid is None or id is None or request.user.role == '0' or uid != request.user.uid :
-        raise exception_response(404)
-    else :
-        role = request.user.role
-        
-    return {'role':role}
 
 @view_config(route_name='tour_action', match_param='action=uploadTourPhoto')
 def tour_uploadTourPhoto(request):
@@ -342,7 +352,9 @@ def tour_uploadTourPhoto(request):
     uid = request.POST['uid']
     fileslist = request.POST.getall('photos')
     user = request.user
-    if user is None or id is None or uid != request.user.uid :
+
+    #check only admin access this function
+    if user is None or UserService.isAdmin(request) == False or uid != request.user.uid :
         raise exception_response(404)
     else:
         settings = request.registry.settings
@@ -404,7 +416,8 @@ def tour_uploadImage(request):
     id  = request.POST['id']
     hash = request.POST['hash']
     user = request.user
-    if user is None or id is None or hash != request.user.uid :
+    #check only admin access this function
+    if user is None or UserService.isAdmin(request) == False or hash != request.user.uid :
         raise exception_response(404)
     else:
         tour = Tour()

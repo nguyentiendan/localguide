@@ -19,12 +19,22 @@ class TourService(object):
         return rs
     
     @classmethod
+    def all_tour(cls, request):
+        rs = request.dbsession.query(Tour).order_by(desc(Tour.mtime)).all()
+        return rs
+
+    @classmethod
     def by_id(cls, _id, request):
         rs = request.dbsession.query(Tour, User.fullname).filter(Tour.id == _id, Tour.uid == User.uid, Tour.status == '1').first()
         return rs
 
     @classmethod
     def by_id_uid(cls, _id, _uid, request):
+        rs = request.dbsession.query(Tour).filter(Tour.id == _id, Tour.uid == _uid).first()
+        return rs
+    
+    @classmethod
+    def update_by_id_uid(cls, _id, _uid, request):
         rs = request.dbsession.query(Tour).filter(Tour.id == _id, Tour.uid == _uid).first()
         return rs
 
@@ -37,7 +47,7 @@ class TourService(object):
     @classmethod
     def by_uid(cls, _uid, request):
         # Lay them User.fullname , tham khảo by_id
-        rs = request.dbsession.query(Tour).filter(Tour.uid == _uid).all()
+        rs = request.dbsession.query(Tour).filter(Tour.uid == _uid, Tour.status != '3').order_by(desc(Tour.mtime)).all()
         return rs    
     
     @classmethod
@@ -57,9 +67,9 @@ class TourService(object):
         return rs
 
     @classmethod
-    def get_RelatedTour(cls, request):
+    def get_RelatedTour(cls, _uid, request):
         #Get related Tour for user
-        rs = request.dbsession.query(Tour.id, Tour.uid, Tour.title, Tour.type, Tour.short_desc, Tour.price, Tour.days, Tour.banner).filter(Tour.status == '1').order_by(func.rand()).limit(2).all()
+        rs = request.dbsession.query(Tour.id, Tour.uid, Tour.title, Tour.type, Tour.short_desc, Tour.price, Tour.days, Tour.banner).filter(Tour.uid == _uid, Tour.status == '1').order_by(func.rand()).limit(2).all()
         return rs
 
     @classmethod

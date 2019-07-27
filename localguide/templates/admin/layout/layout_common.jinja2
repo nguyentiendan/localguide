@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+</head>
+<body id="page-top">
+
+{% block content %}
+{% endblock %}
+
+{% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/vue.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/axios.js')}}"></script> 
+
+<script type="text/javascript">
+    
+    const changepass = new Vue({
+		delimiters: ['${', '}'],
+		el: '#changepass',
+        data: {
+
+        },
+        methods: {
+            processForm(evt) {
+
+            },
+            cancel() {
+                location.href = 'dashboard'
+            }
+        }
+    });    
+</script>
+
+</body>
+</html>

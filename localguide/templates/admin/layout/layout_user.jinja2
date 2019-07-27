@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}    
+</head>
+<body id="page-top">
+
+{% block content %}
+{% endblock %}
+
+{% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/vue.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/vee-validate.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/axios.js')}}"></script> 
+
+<script type="text/javascript">
+	const user_deactive = new Vue({
+		delimiters: ['${', '}'],
+        el: '#user_deactive',
+		data: {
+			user: {
+				id:'{{user.id}}',
+				uid:'{{user.uid}}',
+			},
+		},
+		methods: {
+			user_deactive() {
+				console.log("abc")	
+				axios({
+					method: 'POST',
+					url: URL + 'admin/user_deactive',
+					data: this.user,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.reload();
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});	
+
+	const user_active = new Vue({
+		delimiters: ['${', '}'],
+        el: '#user_active',
+		data: {
+			user: {
+				id:'{{user.id}}',
+				uid:'{{user.uid}}',
+			},
+		},
+		methods: {
+			user_active() {
+				axios({
+					method: 'POST',
+					url: URL + 'admin/user_active',
+					data: this.user,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.reload();
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});	
+
+	const user_setrole = new Vue({
+		delimiters: ['${', '}'],
+        el: '#user_setrole',
+		data: {
+			user: {
+				id:'{{user.id}}',
+				uid:'{{user.uid}}',
+				role:'{{user.role}}'
+			},
+		},
+		methods: {
+			user_setrole() {
+				axios({
+					method: 'POST',
+					url: URL + 'admin/user_setrole',
+					data: this.user,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.reload();
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});
+
+	const user_setlevel = new Vue({
+		delimiters: ['${', '}'],
+        el: '#user_setlevel',
+		data: {
+			user: {
+				id:'{{user.id}}',
+				uid:'{{user.uid}}',
+				level:'{{user.level}}'
+			},
+		},
+		methods: {
+			user_setlevel() {
+				axios({
+					method: 'POST',
+					url: URL + 'admin/user_setlevel',
+					data: this.user,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.reload();
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});	
+</script>
+
+</body>
+</html>

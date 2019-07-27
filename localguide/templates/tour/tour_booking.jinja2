@@ -1,0 +1,134 @@
+{% extends "layout_tour_booking.jinja2" %}
+
+{% block content %}
+
+<div class="row">
+	<!-- Left panel-->	
+	<div class="col-md-8">
+		<section class="form2 cid-rccOyRMpwz" style="padding-top:0px;padding-bottom:0px;" id="tourBook">
+			<div class="row row-content justify-content-center">
+				<div class="card book-card col-md-12">
+					<div class="card-wrapper">
+						<div class="card-text">
+							Pay with card
+						</div>
+						<div class="card-box">
+							<p class="card-text mbr-fonts-style">We are support VISA,Master and Debit card</p>
+							<form class="mbr-form" data-form-title="Basic Infor">
+								<div class="row row-sm-offset">
+									<div class="col-md-12 multi-horizontal">
+										<div class="form-group">
+											<h4 class="mbr-fonts-style pb-2 mbr-bold form-title display-4">Name on card</h4>
+											<input type="text" ref="fullname" value="" class="form-control" placeholder="Fullname" maxlength="50" required="">
+										</div>
+									</div>
+									<div class="col-md-6 multi-horizontal">
+										<div class="form-group">
+											<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Email</h4>
+											<input type="text" ref="job" value="" class="form-control" placeholder="Tour guide" maxlength="50" autocapitalize="off" autocorrect="off">
+										</div>
+									</div>
+									<div class="col-md-6 multi-horizontal">
+										<div class="form-group">
+											<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Mobile</h4>
+											<input type="text" ref="mobile" value="" class="form-control" placeholder="Mobile phone" maxlength="12" autocapitalize="off" autocorrect="off">
+										</div>
+									</div>
+									<div class="col-md-12 multi-horizontal">
+										<!--<label for="card-element">Credit or debit card</label>-->
+										<h4 class="mbr-fonts-style pb-1 mbr-bold form-title display-4">Credit or debit card</h4>
+										<div id="card-element" class="">
+											<!--A Stripe Element will be inserted here. -->
+										</div>
+										<div id="card-errors" role="alert" style="padding-top:5px;padding-bottom:5px;color:red"></div>
+									</div>
+									<div class="col-md-12 multi-horizontal">
+										<span class="input-group-btn" style="align-items: center;">
+											<button class="btn btn-primary btn-block">Pay {{tour.Tour.price}}$</button>
+										</span>
+										<p class="card-text mbr-fonts-style">You won’t be charged yet</p>
+										
+									</div>
+								</div>
+							</form>				
+						</div>
+					</div>
+				</div>
+			</div>	
+		</section>
+		<hr>			
+		<section class="form2 cid-rccAB2jr1U" style="padding-top:0px;padding-bottom:0px;" id="tourDetail">
+			<div class="row">
+				<div class="col-md-12">
+					<!-- Related Projects Row -->
+					<h5 class="mbr-fonts-style pb-1 pt-1 mbr-bold display-4">OTHER TOURS</h5>
+					<div class="row">
+						<div class="col-md-3 col-sm-6 mb-4">
+							<a href="#"><img class="img-fluid" src="https://placehold.it/500x300" alt=""></a>
+						</div>
+
+						<div class="col-md-3 col-sm-6 mb-4">
+							<a href="#"><img class="img-fluid" src="https://placehold.it/500x300" alt=""></a>
+						</div>
+
+						<div class="col-md-3 col-sm-6 mb-4">
+							<a href="#"><img class="img-fluid" src="https://placehold.it/500x300" alt=""></a>
+						</div>
+
+						<div class="col-md-3 col-sm-6 mb-4">
+							<a href="#"><img class="img-fluid" src="https://placehold.it/500x300" alt=""></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+	<!-- Right panel -->
+	<div class="col-md-4">
+		<section class="form2 cid-rccOyRMpwz" style="padding-top:0px;padding-bottom:0px;" id="tourBook">
+			<div class="row row-content justify-content-center">
+				<div class="card book-card col-md-12">
+					<div class="card-wrapper">
+						<div class="card-img">
+							<div class="price-box">
+								<h5 class="price mbr-fonts-style mbr-bold display-4">{{tour.Tour.price}}$</h5>
+							</div>
+							<img name="banner" class="img-fluid rounded" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{tour.Tour.uid}}/{{tour.Tour.banner}}" alt="localguide">	
+						</div>
+						<div class="card-box">
+							<p class="card-text mbr-fonts-style">
+								{{tour.Tour.short_desc}}
+								<br>
+								<i class="fa fa-money"></i><b>{{tour.Tour.price}}$</b>
+								<i class="fa fa-calendar"></i><b>{{tour.Tour.days}} days</b><br>
+								<i class="fa fa-flag"></i><b>{{tour.Tour.country}}</b>
+								<i class="fa fa-building"></i><b>{{tour.Tour.city}}</b>
+								
+							</p>
+							<div class="ico-line-wrap">
+								<div class="ico-line">
+									<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+									<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+									<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(30, 198, 182); fill: rgb(30, 198, 182);" media-simple="true"></div>
+									<div class="px-1 pb-3 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
+									<div class="px-1 pb-3 pr-2 mbr-iconfont mbr-iconfont-social mbri-star" style="color: rgb(158, 158, 158); fill: rgb(158, 158, 158);" media-simple="true"></div>
+									<h3 class="rev mbr-fonts-style mbr-bold display-4">4 reviews</h3>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</section>
+		<section class="form2 cid-rccAB2jr1U">
+			<div class="col-md-12 col-lg-12 align-center">
+				<i class="fa fa-bug" style="color:red;"></i><h5 class="mbr-fonts-style display-4"><small><a href="#">Report this tour</a></small></h5>
+			</div>
+		</section>	
+	</div>
+</div>
+
+
+{% endblock content %}
+

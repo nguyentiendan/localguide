@@ -11,7 +11,7 @@ from pyramid.view import (
     forbidden_view_config,
     view_config,
 )
-import os, uuid, shutil, random, string, json
+import os, uuid, shutil, random, string, json, datetime
 import urllib.request
 from sqlalchemy.exc import DBAPIError
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound,  HTTPForbidden
@@ -23,6 +23,7 @@ from pyramid_mailer.message import Message
 from pyramid_mailer.mailer import Mailer
 from pyramid_mailer import get_mailer
 
+#Move to admin. Please delete here
 @view_config(route_name='user_action', match_param='action=admin_userlist', renderer='localguide:templates/admin/admin_user_list.jinja2')
 def admin_userlist(request):
     print('ADMIN USER LIST')      
@@ -121,7 +122,40 @@ def user_updateBasicInfo(request):
                     ('Content-Type', 'text/html'),
                 ]
         )
-
+#Update User info (admin)
+@view_config(route_name='user_action', match_param='action=updateUserInfo')
+def user_updateUserInfo(request):
+    print("ADMIN UPDATE USER INFO")
+    user = request.user
+    #check only admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        data = request.json_body    
+        user = User()
+        user = UserService.by_uid_all(request.user.uid, request=request)
+        user.fullname       = data['fullname']
+        user.job            = data['job']
+        user.mobile         = data['mobile']
+        user.country        = data['country']
+        user.city           = data['city']
+        user.age            = data['age']
+        user.sex            = data['sex']
+        user.skill          = data['skill']
+        user.specialities   = data['specialities']
+        user.education      = data['education']
+        user.language       = data['language']
+        user.hobby          = data['hobby']
+        user.experience     = data['experience'].replace("'", "\\'" )
+        user.mtime          = datetime.datetime.now()  
+        return Response(
+                '',
+                headers=[
+                    ('X-Relocate', ''),
+                    ('Content-Type', 'text/html'),
+                ]
+        )
+#This function is not need
 @view_config(route_name='user_action', match_param='action=updateAdvanceInfo')
 def user_updateAdvanceInfo(request):
     print("UPDATE ADVANCE INFO")

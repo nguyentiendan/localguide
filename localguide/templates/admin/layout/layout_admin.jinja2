@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+</head>
+<body id="page-top">
+
+{% block content %}
+{% endblock %}
+
+{% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/adassets/vendor/chart.js/Chart.min.js')}}"></script>
+<script src="{{request.static_url('localguide:static/adassets/js/demo/chart-area-demo.js')}}"></script>
+<script src="{{request.static_url('localguide:static/adassets/js/demo/chart-pie-demo.js')}}"></script>
+
+
+</body>
+</html>

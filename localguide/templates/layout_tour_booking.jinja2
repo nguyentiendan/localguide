@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{request.static_url('localguide:static/assets/stripe/css/style.css')}}">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+{% include "../common/navbar_default.jinja2" %}
+
+
+<div class="container" style="padding-top:150px; padding-bottom:200px">
+	{% block content %}{% endblock %}
+</div>
+
+{% include "../common/footer.jinja2" %}
+<!--<script src="{{request.static_url('localguide:static/assets/stripe/js/stripe.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/stripe/js/index.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/stripe/js/i1n.js')}}"></script>-->
+
+<script type="text/javascript">
+    // Create a Stripe client.
+    var stripe = Stripe('pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm');
+    stripe.redirectToCheckout({
+    // Make the id field from the Checkout Session creation API response
+    // available to this file, so you can provide it as parameter here
+    // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+    sessionId: '{{CHECKOUT_SESSION_ID}}'
+}).then(function (result) {
+    // If `redirectToCheckout` fails due to a browser or network
+    // error, display the localized error message to your customer
+    // using `result.error.message`.
+});
+</script>
+
+<!--
+<script type="text/javascript">
+    // Create a Stripe client.
+    var stripe = Stripe('pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm');
+
+    // Create an instance of Elements.
+    var elements = stripe.elements();
+
+    // Custom styling can be passed to options when creating an Element.
+    // (Note that this demo uses a wider set of styles than the guide below.)
+    var style = {
+        base: {
+            color: '#32325d',
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+            color: '#aab7c4'
+            }
+        },
+        invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a'
+        }
+    };
+
+    // Create an instance of the card Element.
+    var card = elements.create('card', {style: style});
+
+    // Add an instance of the card Element into the `card-element` <div>.
+    card.mount('#card-element');
+
+    // Handle real-time validation errors from the card Element.
+    card.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Handle form submission.
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        stripe.createToken(card).then(function(result) {
+            if (result.error) {
+                // Inform the user if there was an error.
+            var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                // Send the token to your server.
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
+
+    // Submit the form with the token ID.
+    function stripeTokenHandler(token) {
+        // Insert the token ID into the form so it gets submitted to the server
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripeToken');
+        hiddenInput.setAttribute('value', token.id);
+        form.appendChild(hiddenInput);
+
+        // Submit the form
+        form.submit();
+    }
+</script>
+-->
+</body>
+</html>

@@ -1038,7 +1038,7 @@ body {
 @media (min-width: 992px) {
   .cid-rccOpUxecg .navbar .menu-content-top {
     display: -webkit-flex;
-    min-height: 83px;
+    min-height: 53px;
     height: 100%;
   }
   .cid-rccOpUxecg .content-right-side {
@@ -1842,6 +1842,22 @@ body {
   border-radius: 50%;
   /* padding-right: 15px; 
   margin: 0 5px;*/
+}
+.cid-rccOyRMpwz .input-group-btn {
+  display: block;
+}
+.cid-rccOyRMpwz input , 
+.cid-rccOyRMpwz textarea {
+  background: none;
+  min-height: 3rem;
+  padding: 0;
+  border-radius: 6px!important;
+  font-size: 16px;
+}
+.cid-rccOyRMpwz .mbr-form input {
+  border-radius: 0px;
+  padding-left: 15px;
+  width: 100%;
 }
 @media (max-width: 576px) {
   .cid-rccOyRMpwz .ico-line-wrap {

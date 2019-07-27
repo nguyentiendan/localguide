@@ -1,0 +1,20 @@
+<!-- Active Modal-->
+<div id="user_active">
+	<div class="modal fade" id="user_activeModal" tabindex="-1" role="dialog" aria-labelledby="DeactiveModal" aria-hidden="true">	
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="">Do you want ACTIVE this user?</h5>
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">Active user can login to system</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+					<button class="btn btn btn-danger" type="button" data-dismiss="modal" @click="user_active">Active</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

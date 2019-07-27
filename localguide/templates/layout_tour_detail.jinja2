@@ -12,7 +12,8 @@
 </div>
 
 {% include "../common/footer.jinja2" %}
-
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://checkout.stripe.com/checkout.js"></script>
 <script type="text/javascript">
 
     /* Tour Detail  */
@@ -28,7 +29,7 @@
             },
 		},
         created() {
-            this.getPhoto()
+            //this.getPhoto()
         },
 		methods: {			
             getPhoto() {
@@ -41,6 +42,108 @@
                 url = "../user/profile?id=" + id + '&hash=' + uid;
 				location.href = url				
 			},
+		}
+	});
+
+	/* Tour Book  */
+	const tourBook = new Vue({
+        delimiters: ['${', '}'],
+		el: '#tourBook',
+		data: {
+            tour: {
+                id: "{{tour.Tour.id}}",
+                uid: "{{tour.Tour.uid}}",
+				price: "{{tour.Tour.price}}"
+            },
+		},
+		methods: {			
+            tourBook(id, uid) {
+                url = "../tour/booking?id=" + id + '&hash=' + uid;
+				location.href = url				
+			},
+			handleStripeToken() {
+				alert('ABC')				
+			},
+			payment(id, uid) {
+				// Creating Stripe Checkout handler object and also 
+				// configuring Stripe publishable key and setting the options in Stripe Js.
+				var handler = StripeCheckout.configure({
+					//Replace it with your stripe publishable key
+					key: 'pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm',
+					image: '../static/images/logo.png',
+					allowRememberMe: true,
+					locale: 'auto',
+					token: handleStripeToken,
+				});
+				
+				handler.open({
+					name: 'Localguide',
+					description: 'Test checkout form' ,
+					amount: 300,
+					email: 'tiendanvn@gmail.com' ,
+					currency: 'USD',
+				
+				});
+			},
+			
+			/*
+			payment(id, uid) {
+				this.tour.id = id
+				this.tour.uid = uid
+				axios({
+					method: 'POST',
+					url: URL + 'tour/payment',
+					data: this.tour,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						ssid = response.data
+						console.log(ssid)
+						var stripe = Stripe('pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm');
+					
+						// Creating Stripe Checkout handler object and also 
+						// configuring Stripe publishable key and setting the options in Stripe Js.
+						var handler = StripeCheckout.configure({
+							//Replace it with your stripe publishable key
+							key: 'pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm',
+							image: '../static/images/logo.png',
+							allowRememberMe: true,
+							locale: 'auto',
+							//token: function(ssid) {	
+							//}
+						});
+						
+						handler.open({
+							name: 'Localguide',
+							description: 'Test checkout form' ,
+							amount: '300usd' ,
+							email: 'tiendanvn@gmail.com' ,
+							currency: 'USD',
+            			
+						});
+
+						<!--
+						stripe.redirectToCheckout({
+							// Make the id field from the Checkout Session creation API response
+							// available to this file, so you can provide it as parameter here
+							// instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+							sessionId: ssid
+						}).then(function (result) {
+							// If `redirectToCheckout` fails due to a browser or network
+							// error, display the localized error message to your customer
+							// using `result.error.message`.
+						});
+						-->
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+			*/
 		}
 	});
     
@@ -147,3 +250,5 @@ $(document)
 
 </body>
 </html>
+
+

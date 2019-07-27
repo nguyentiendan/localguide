@@ -1,0 +1,184 @@
+{% extends "layout/layout_user.jinja2" %}
+
+{% block content %}
+<!-- Page Wrapper -->
+<div id="wrapper">
+	{% include "common/sidebar.jinja2" %}
+	<!-- Content Wrapper -->
+	<div id="content-wrapper" class="d-flex flex-column">
+		<!-- Main Content -->
+		<div id="content">
+			{% include "common/top_navbar.jinja2" %}
+			<!-- Begin Page Content -->
+			<div class="container-fluid">
+				<!-- Page Heading -->
+				<div class="d-sm-flex align-items-center justify-content-between mb-4">
+					<h1 class="h3 mb-0 text-gray-800">User Detail</h1>
+					<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#logoutModal">
+						<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Logout
+					</a>
+				</div>
+				<!-- Content Row -->
+				<div class="row">
+					<!-- Area Chart -->
+					<div class="col-xl-8 col-lg-8">
+						<div class="card shadow mb-4">
+							<!-- Card Header - Dropdown -->
+							<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+								<h6 class="m-0 font-weight-bold text-primary"></h6>
+								{%if user.status == '1'%}
+									<span class="tour_status">User is activing.</span>
+								{%elif user.status == '0'%}	
+									<span class="tour_status">User is deactive</span>
+								{%endif%}
+								<div class="dropdown no-arrow">
+									<a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+									</a>
+									<div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+										<div class="dropdown-header">Dropdown Header:</div>
+										<a class="dropdown-item" href="#">Action</a>
+										<a class="dropdown-item" href="#">Another action</a>
+										<div class="dropdown-divider"></div>
+										<a class="dropdown-item" href="#">Something else here</a>
+									</div>
+								</div>
+							</div>
+							<!-- Card Body -->
+							<div class="card-body">
+								<form data-form-title="Profile Info" id="userdetail">
+									<div class="row row-sm-offset">
+										<div class="col-md-12 multi-horizontal">
+											<div style="align-items: center">
+											{% if user.avatar: %}
+												<img name="avatar" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{user.uid}}/{{user.avatar}}" style="cursor: pointer; display: block;" class="img_profile" alt="avatar image">	
+											{% else %}
+												<img name="avatar" src="{{request.static_url('localguide:static/assets/images/noimage.jpg')}}" style="cursor: pointer;" class="img_profile rounded-circle" alt="avatar image">	
+											{% endif %}
+											</div>
+										</div>
+										<div class="col-md-12 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Fullname</label>
+												<input type="text" ref="fullname" value="{{user.fullname}}" class="form-control" placeholder="Fullname" maxlength="50" disabled>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Current job</label>
+												<input type="text" ref="job" {%if user.job == None %} value="" {%else%} value="{{user.job}}" {%endif%} class="form-control" placeholder="" maxlength="50" disabled>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Mobile phone</label>
+												<input type="text" ref="mobile" value="{{user.mobile}}" class="form-control" placeholder="Mobile phone" maxlength="12" disabled>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal" >
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Country</label>
+												<input type="text" ref="country" {%if user.country == None %} value="" {%else%} value="{{user.country}}" {%endif%} class="form-control" placeholder="" maxlength="12" disabled>												
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">City</label>
+												<input type="text" ref="city" {%if user.city == None %} value="" {%else%} value="{{user.city}}" {%endif%} class="form-control" placeholder="" maxlength="12" disabled>												
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Age</label>
+												<input type="text" ref="age" value="{{user.age}}" class="form-control" maxlength="2" autocapitalize="off" disabled>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Sex</label>
+												{%if user.sex == '1'%}
+													<input type="text" ref="sex" value="Male" class="form-control" placeholder="Sex" maxlength="12" disabled>												
+												{%else%}
+													<input type="text" ref="sex" value="Female" class="form-control" placeholder="Sex" maxlength="12" disabled>												
+												{%endif%}
+											</div>
+										</div>	
+										<div class="col-md-12 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Skills</label>
+												<input type="text" ref="skill" {%if user.skill == None %} value="" {%else%} value="{{user.skill}}" {%endif%} class="form-control" placeholder="" maxlength="100" disabled>
+											</div>
+										</div>
+										<div class="col-md-12 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Specialities</label>
+												<input type="text" ref="specialities" {%if user.specialities == None %} value="" {%else%} value="{{user.specialities}}" {%endif%} class="form-control" placeholder="" maxlength="100" disabled>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Education</label>
+												<input type="text" ref="education" {%if user.education == None %} value="" {%else%} value="{{user.education}}" {%endif%} class="form-control" placeholder="" maxlength="80" disabled>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Languages</label>
+												<input type="text" ref="language" {%if user.language == None %} value="" {%else%} value="{{user.language}}" {%endif%} class="form-control" placeholder="" maxlength="100" disabled>
+											</div>
+										</div>
+										<div class="col-md-12 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Hobby</label>
+												<input type="text" ref="hobby" {%if user.hobby == None %} value="" {%else%} value="{{user.hobby}}" {%endif%} class="form-control" placeholder="" maxlength="100" disabled>
+											</div>
+										</div>
+										<div class="col-md-12 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Experience</label>
+												<textarea class="form-control" rows="10" cols="30" disabled>{%if user.experience == None %}  {%else%}{{user.experience}}{%endif%}</textarea>
+											</div>
+										</div>
+									</div>
+									<span class="input-group-btn">
+										<input type="button" onclick="location.href='userlist'" class="btn btn-form btn-secondary display-4" value="Cancel">
+										{%if user.status == '1' and user.role != '2'%}
+											<input type="button" class="btn btn-form btn-danger display-4" value="Deactive" data-toggle="modal" data-target="#user_deactiveModal">
+											<input type="button" class="btn btn-form btn-warning display-4" value="Set Role" data-toggle="modal" data-target="#user_setroleModal">
+											{%if user.role == '1' and user.role != '2'%}	
+												<input type="button" class="btn btn-form btn-warning display-4" value="Set Level" data-toggle="modal" data-target="#user_setlevelModal">
+											{%endif%}
+										{%elif user.status == '0'%}
+											<input type="button" class="btn btn-form btn-danger display-4" value="Active" data-toggle="modal" data-target="#user_activeModal">
+										{%endif%}
+										
+									</span>
+								</form>
+              				</div>
+            			</div>
+          			</div>
+        		</div>
+				<!-- Content Row -->			
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- End of Main Content -->
+		{% include "common/copyright.jinja2" %}
+	</div>
+	<!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+	<i class="fas fa-angle-up"></i>
+</a>
+
+{% include "common/logout_modal.jinja2" %}
+{% include "common/user_deactive_modal.jinja2" %}
+{% include "common/user_active_modal.jinja2" %}
+{% include "common/user_setrole_modal.jinja2" %}
+{% include "common/user_setlevel_modal.jinja2" %}
+
+{% endblock content %}  
+

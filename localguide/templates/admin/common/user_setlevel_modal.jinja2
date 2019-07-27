@@ -1,0 +1,41 @@
+<!-- Set Level Modal-->
+<div id="user_setlevel">
+	<div class="modal fade" id="user_setlevelModal" tabindex="-1" role="dialog" aria-labelledby="DisableModal" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="">Set Level for User</h5>
+					<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					This user have 
+					{% if user.level == '0'%}
+						Junior
+					{% elif user.level == '1'%}
+						Senior
+					{% elif user.level == '2'%}
+						Professional
+					{%endif%}
+					level
+					<div class="row">
+						<div class="col-md-3">
+							<input type="radio" name="level" v-model="user.level" value="0" {%if user.level == '0'%}checked{%endif%}>&nbsp;&nbsp;Junior
+						</div>
+						<div class="col-md-3">
+							<input type="radio" name="level" v-model="user.level" value="1" {%if user.level == '1'%}checked{%endif%}>&nbsp;&nbsp;Senior
+						</div>	
+						<div class="col-md-4">
+							<input type="radio" name="level" v-model="user.level" value="2" {%if user.level == '2'%}checked{%endif%}>&nbsp;&nbsp;Professional
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+					<button class="btn btn btn-danger" type="button" data-dismiss="modal" @click="user_setlevel">Set Level</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

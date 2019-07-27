@@ -100,19 +100,19 @@
 					<h5 class="mbr-fonts-style pb-1 pt-1 mbr-bold display-4">OTHER TOURS</h5>
 					<div class="row">
 						<div class="col-md-3 col-sm-6 mb-4">
-							<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+							<a href="#"><img class="img-fluid" src="https://placehold.it/500x300" alt=""></a>
 						</div>
 
 						<div class="col-md-3 col-sm-6 mb-4">
-							<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+							<a href="#"><img class="img-fluid" src="https://placehold.it/500x300" alt=""></a>
 						</div>
 
 						<div class="col-md-3 col-sm-6 mb-4">
-							<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+							<a href="#"><img class="img-fluid" src="https://placehold.it/500x300" alt=""></a>
 						</div>
 
 						<div class="col-md-3 col-sm-6 mb-4">
-							<a href="#"><img class="img-fluid" src="http://placehold.it/500x300" alt=""></a>
+							<a href="#"><img class="img-fluid" src="https://placehold.it/500x300" alt=""></a>
 						</div>
 					</div>
 				</div>
@@ -121,7 +121,7 @@
 	</div>
 	<!-- Right panel -->
 	<div class="col-md-4">
-		<section class="form2 cid-rccOyRMpwz" style="padding-top:0px;padding-bottom:0px;">
+		<section class="form2 cid-rccOyRMpwz" style="padding-top:0px;padding-bottom:0px;" id="tourBook">
 			<div class="row row-content justify-content-center">
 				<div class="card book-card col-md-12">
 					<div class="card-wrapper">
@@ -154,7 +154,8 @@
 							</div>
 							<div>
 								<span class="input-group-btn" style="align-items: center;">
-									<button class="btn btn-form btn-primary btn-lg display-4" style="width:90%">Booking</button>
+									<!--<button @click="tourBook('{{tour.Tour.id}}', '{{tour.Tour.uid}}')" class="btn btn-form btn-primary btn-lg display-4" style="width:90%">Booking</button>-->
+									<button @click="payment('{{tour.Tour.id}}', '{{tour.Tour.uid}}')" class="btn btn-form btn-primary btn-lg display-4" style="width:90%">Pay {{tour.Tour.price}}$ </button>
 								</span>
 							</div>
 						</div>

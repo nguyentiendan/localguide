@@ -1,5 +1,6 @@
 
 
+var URL = "https://localhost:8000/"
 
 /** Upload Image for Quill Editor */
 /* Step 1: Select local file */

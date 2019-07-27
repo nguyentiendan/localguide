@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <!-- Quill start -->
+	<script src="https://cdn.quilljs.com/1.3.4/quill.js"></script>
+	<!--<script src="https:////cdn.quilljs.com/1.3.6/quill.min.js"></script>-->
+	<!-- Quill JS Vue -->
+	<script src="https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.4/dist/vue-quill-editor.js"></script>
+	<!-- Include stylesheet -->
+	<link href="https://cdn.quilljs.com/1.3.4/quill.core.css" rel="stylesheet">
+	<!-- Theme -->
+	<link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
+	<!--<link href="https://cdn.quilljs.com/1.3.4/quill.bubble.css" rel="stylesheet">-->
+	<!-- Quill end -->
+	
+</head>
+<body id="page-top">
+
+{% block content %}
+{% endblock %}
+
+{% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/vue.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/axios.js')}}"></script> 
+
+<script type="text/javascript">
+	Vue.use(VueQuillEditor);
+    /* Update Profile info*/
+	const profile = new Vue({
+		delimiters: ['${', '}'],
+		el: '#profile',
+		data: {
+			isEditing: false,
+			uploadfile: '',
+			country: '{{user.country}}',
+			//city: '{{user.city}}',
+			countries: [],
+			count_city:'',
+			cityData: {
+				Japan: [
+					{ name: 'Tokyo', value: 'Tokyo' },
+					{ name: 'Osaka', value: 'Osaka' },
+					{ name: 'Nagoya', value: 'Nagoya' },
+					{ name: 'Kyoto', value: 'Kyoto' },
+					{ name: 'Hiroshima', value: 'Hiroshima' },
+					{ name: 'Hokkaido', value: 'Hokkaido' },
+				],
+				VietNam: [
+					{ name: 'SaiGon', value: 'SaiGon' },
+					{ name: 'DaNang', value: 'DaNang' },
+				]
+			},
+			user: {
+				uid:'',
+				fullname:"",
+				job: "",
+				mobile: "",
+				country: "",
+				city: "{{user.city}}",
+				age: "",
+				sex: "{{user.sex}}",
+                skill:"",
+				specialities: "",
+				education: "",
+				language: "",
+				hobby: "",
+				education: "",
+				experience: '{{user.experience|safe}}',	
+			},
+            editorOption: {
+				syntax: true,
+				placeholder: 'Please update your content',
+				theme: 'snow',
+				modules: {
+					toolbar: {
+						container: [
+							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+							['bold', 'italic', 'underline', 'strike'],
+							[{ 'color': [] }, { 'background': [] }], 
+							[{ 'align': [] }],
+							[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+							['link', 'video'],
+							['blockquote'],
+							['clean']  
+						],
+					},
+				},
+			},
+		},
+		created() {
+			this.getCountry()
+			if (this.city != 'None' || this.city != '')
+				this.count_city = 1
+			if (this.user.experience == 'None')
+				this.user.experience = ''
+		},
+		computed: {
+			options: function() {
+				let options = ''
+				switch(this.country) {
+					case 'Japan':
+						options = this.cityData.Japan
+						break;                    
+					case 'VietNam':
+						options = this.cityData.VietNam
+						break;
+					//default:
+					//	options = this.cityData.Japan
+				}
+				return options
+			}
+		},
+		methods: {
+			cancel() {
+				location.href = 'dashboard'
+			},
+			getCountry() {
+				axios.get(URL + 'static/js/country.json').then(response => {
+					this.countries = response.data
+				})
+			},
+			onChange: function () {
+				this.options = this.options
+				this.count_city = this.options.length
+			},
+			processForm(evt) {
+				// Prevent modal from closing
+				evt.preventDefault()
+                this.isEditing = !this.isEditing;
+				//this.user.uid = this.$refs['uid'].value;
+				this.user.fullname	     = this.$refs['fullname'].value;
+				this.user.job		     = this.$refs['job'].value;
+				this.user.mobile 	     = this.$refs['mobile'].value;
+				this.user.age 		     = this.$refs['age'].value;
+				this.user.sex 		     = this.$refs['sex'].value;
+				this.user.country	     = this.country;
+				this.user.city 		     = this.$refs['city'].value;;
+                this.user.skill			 = this.$refs['skill'].value;
+				this.user.specialities	 = this.$refs['specialities'].value;
+				this.user.education 	 = this.$refs['education'].value;
+				this.user.language		 = this.$refs['language'].value;
+				this.user.hobby			 = this.$refs['hobby'].value;
+				this.user.experience	 = this.$refs['experience'].value;
+				axios({
+					method: 'POST',
+					url: URL + 'user/updateUserInfo',
+					data: this.user,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.reload();
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+			file_open () {
+				this.$refs.file.click()
+			},
+			filesChange(e) {
+				e.preventDefault();
+				//let file_name = this.$refs.file.files[0].name;
+				//let file_size = this.$refs.file.files[0].size;
+				if(!this.validate_img(this.$refs.file.files[0])) {
+					//alert('File size too large or not image file')	
+					return;
+				} else {
+					this.uploadfile = this.$refs.file.files[0]
+					
+					//let formData = new FormData();
+					//formData.append('file', this.uploadfile);
+					//console.log('>> formData >> ', formData);
+					let formData = new FormData();
+					formData.append('photo', this.uploadfile);
+					console.log('>> formData >> ', formData);
+
+					axios({
+						method: 'POST',
+						url: URL + 'user/uploadImage',
+						data: formData, 
+						headers: {'Content-Type': 'multipart/form-data'} 
+					})
+					.then(function (response) {
+						//handle success
+						if (response.status == '200' && response.statusText == 'OK') {
+							location.reload();
+							location.reload(); 
+						}
+					})
+					.catch(function (response) {
+						//handle error
+						console.log(response);
+					});
+				}
+			},	
+			validate_img (f) {
+				if (f.name == '') {
+					alert('No file chosen');
+					return false;
+				} else if (! /\.(jpg|jpeg|png|gif)$/i.test(f.name)) {
+					alert('Please choose image');
+					return false;
+				} else if (f.size > 1024 * 1024) {
+					alert('File too big (> 1MB)');
+					return false;
+				}
+				return true
+			}    
+		}	
+	});
+
+</script>
+</body>
+</html>

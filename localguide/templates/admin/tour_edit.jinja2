@@ -1,0 +1,192 @@
+{% extends "layout/layout_tour_edit.jinja2" %}
+
+{% block content %}
+<!-- Page Wrapper -->
+<div id="wrapper">
+	{% include "common/sidebar.jinja2" %}
+	<!-- Content Wrapper -->
+	<div id="content-wrapper" class="d-flex flex-column">
+		<!-- Main Content -->
+		<div id="content">
+			{% include "common/top_navbar.jinja2" %}
+			<!-- Begin Page Content -->
+			<div class="container-fluid">
+				<!-- Page Heading -->
+				<div class="d-sm-flex align-items-center justify-content-between mb-4">
+					<h1 class="h3 mb-0 text-gray-800">Update your tour</h1>
+					<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#logoutModal">
+						<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Logout
+					</a>
+				</div>
+				<!-- Content Row -->
+				<div class="row">
+					<!-- Area Chart -->
+					<div class="col-xl-8 col-lg-8">
+						<div class="card shadow mb-4">
+							<!-- Card Header - Dropdown -->
+							<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+								<h6 class="m-0 font-weight-bold text-primary"></h6>								
+								{%if tour.status == '0' and tour.req_active == '0'%}
+									<span class="tour_status">Tour is not active. Please request admin to active</span>
+								{%elif tour.status == '0' and tour.req_active == '1'%}	
+									<span class="tour_status">Request active was send to admin. Waiting admin accept</span>	
+								{%elif tour.status == '1'%}	
+									<span class="tour_status">Tour is active, you can view at homepage</span>
+								{%elif tour.status == '2'%}
+									<span class="tour_status">Tour is disable, you can not view at homepage</span>		
+								{%elif tour.status == '3'%}
+									<span class="tour_status">Tour was deleted. Admin can restore this tour</span>		
+								{%endif%}
+								<div class="dropdown no-arrow">
+									<a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+									</a>
+									<div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+										<div class="dropdown-header">Dropdown Header:</div>
+										<a class="dropdown-item" href="#">Action</a>
+										<a class="dropdown-item" href="#">Another action</a>
+										<div class="dropdown-divider"></div>
+										<a class="dropdown-item" href="#">Something else here</a>
+									</div>
+								</div>
+							</div>
+							<!-- Card Body -->
+							<div class="card-body">								
+								<div class="row row-sm-offset">
+									<div class="col-md-12 multi-horizontal">
+										<div class="form-group" id="bannerUpload">
+											<label class="font-weight-bold mb-0">Banner image</label> <small>(Click on image below to upload banner size 900x300)</small></h4>
+											{% if tour.banner: %}
+												<img name="banner" class="img-fluid rounded" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{tour.uid}}/{{tour.banner}}" alt="" style="cursor: pointer; width:900px;height:300px;" @click="file_open">	
+											{% else %}
+												<img name="banner" class="img-fluid rounded" src="http://placehold.it/900x300" alt="" style="cursor: pointer;" @click="file_open" >	
+											{% endif %}	
+											<input ref="file" type="file" name="banner" class="upload_file" @change="filesChange($event)" accept="image/*">
+										</div>
+										<small>(Please upload image file with extension is png or jpg or jpeg. And image size is not larger than 1MB)</small>
+									</div>
+								</div>	
+								<br>
+								<form id="tourUpdateForm" method="POST">	
+									<div class="row row-sm-offset">
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Tour name</label>
+												<input type="text" ref="title" name="title" v-validate="'required|min:20|max:45'" value="{{tour.title}}" class="form-control"  :disabled="!isEditing" :class="{view_info: isEditing}"  autofocus="" autocapitalize="off" autocorrect="off">
+												<span v-show="errors.has('title')" class="is-error">${errors.first('title')}</span>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal" >
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Tour type</label>
+												<input type="text" ref="type" name="type" v-validate="'required|min:8'" value="{{tour.type}}" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}"  autocapitalize="off" autocorrect="off">
+												<span v-show="errors.has('type')" class="is-error">${errors.first('type')}</span>
+											</div>
+										</div>
+										<div class="col-md-12 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Short description</label>
+												<textarea ref="short_desc" name="short_desc" v-validate="'required|max:120|min:20'" value="{{tour.short_desc}}" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">{{tour.short_desc}}</textarea>
+												<span v-show="errors.has('short_desc')" class="is-error">${errors.first('short_desc')}</span>
+											</div>
+										</div>
+
+										<div class="col-md-6 multi-horizontal" >
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Country</label>
+												<select ref="country" name="country" v-validate="'required'" v-model="tour.country" @change="onChange" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">
+													<option v-for="country in countries" :value="country.name">
+														${country.name}
+													</option>
+												</select>
+												<span v-show="errors.has('country')" class="is-error">${errors.first('country')}</span>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">City</label>
+												<select ref="city" name="city" v-validate="'required'" v-model="tour.city" class="form-control" :disabled="!isEditing" :class="{view_info: isEditing}">
+													<option v-for="option in options" :value="option.value">
+														${option.name}
+													</option>
+												</select>
+												<span v-show="errors.has('city')" class="is-error">${errors.first('city')}</span>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Price (USD)</label>
+												<input type="text" ref="price" name="price" v-validate="'required|numeric|min:2|max:3'" value="{{tour.price}}" class="form-control" placeholder="300" :disabled="!isEditing" :class="{view_info: isEditing}" autocapitalize="off" autocorrect="off">
+												<span v-show="errors.has('price')" class="is-error">${errors.first('price')}</span>
+											</div>
+										</div>
+										<div class="col-md-6 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Days</label>
+												<input type="text" ref="days" name="days" v-validate="'required|numeric|min:1|max:2'" value="{{tour.days}}" class="form-control" placeholder="2" :disabled="!isEditing" :class="{view_info: isEditing}" autocapitalize="off" autocorrect="off">
+												<span v-show="errors.has('days')" class="is-error">${errors.first('days')}</span>
+											</div>
+										</div>
+										<div class="col-md-12 multi-horizontal">
+											<div class="form-group">
+												<label class="font-weight-bold mb-0">Long describe about your tour</label>
+												<quill-editor ref="content" name="content" v-model="tour.content" v-validate="'required'" :options="editorOption" :disabled="!isEditing" :class="{view_info_quill: !isEditing}"></quill-editor>
+											</div>
+										</div>
+									</div>
+									<span class="input-group-btn">				
+										{%if request.user.role == '1'%}
+											<input type="button" @click="isEditing = !isEditing" v-if="!isEditing" class="btn btn-form btn-light display-4" value="Edit">
+										{%endif%}
+										<input type="button" v-if="!isEditing" class="btn btn-form btn-secondary display-4" @click="back" value="Back">
+										{%if tour.status == '3' and request.user.role == '2'%}
+											<input type="button" v-if="!isEditing" class="btn btn-form btn-danger display-4" @click="" value="Restore" data-toggle="modal" data-target="#tour_restoreModal">
+										{%endif%}
+										{%if (tour.status == '0' and tour.req_active == '0') or  tour.status == '2' %}
+											<input type="button" v-if="!isEditing" class="btn btn-form btn-danger display-4" @click="" value="Delete" data-toggle="modal" data-target="#tour_deleteModal">
+										{%endif%}
+										{%if tour.status == '0' and tour.req_active == '1' and  request.user.role == '2' %}
+											<input type="button" v-if="!isEditing" class="btn btn-form btn-danger display-4" @click="" value="Active" data-toggle="modal" data-target="#tour_activeModal">
+										{%endif%}
+										{%if tour.status == '1' %}
+											<input type="button" v-if="!isEditing" class="btn btn-form btn-warning display-4" @click="" value="Disable" data-toggle="modal" data-target="#tour_disableModal">
+										{%endif%}
+										{%if tour.status == '2' %}
+											<input type="button" v-if="!isEditing" class="btn btn-form btn-warning display-4" @click="" value="Enable" data-toggle="modal" data-target="#tour_enableModal">
+										{%endif%}
+										{%if tour.status == '0' and request.user.role == '1' and tour.req_active == '0'%}
+											<input type="button" v-if="!isEditing" class="btn btn-form btn-warning display-4" @click="" value="Request active" data-toggle="modal" data-target="#tour_requestactiveModal">
+										{%endif%}
+											<input type="button" v-if="isEditing" :disabled="errors.any()" @click="processForm" class="btn btn-form btn-primary display-4" value="Save">
+											<input type="button" v-if="isEditing" @click="isEditing = false" class="btn btn-form btn-secondary display-4" value="Cancel">
+									</span>									
+								</form>
+              				</div>
+            			</div>
+          			</div>
+        		</div>
+				<!-- Content Row -->			
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- End of Main Content -->
+		{% include "common/copyright.jinja2" %}
+	</div>
+	<!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+	<i class="fas fa-angle-up"></i>
+</a>
+
+{% include "common/logout_modal.jinja2" %}
+{% include "common/tour_disable_modal.jinja2" %}
+{% include "common/tour_delete_modal.jinja2" %}
+{% include "common/tour_requestactive_modal.jinja2" %}
+{% include "common/tour_active_modal.jinja2" %}
+{% include "common/tour_enable_modal.jinja2" %}
+{% include "common/tour_restore_modal.jinja2" %}
+{% endblock content %}  
+

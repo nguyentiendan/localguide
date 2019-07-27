@@ -1,0 +1,82 @@
+/* Placeholder in italic */
+::-webkit-input-placeholder {
+	font-style: italic;
+}
+:-moz-placeholder {
+	font-style: italic;  
+}
+::-moz-placeholder {
+	font-style: italic;  
+}
+:-ms-input-placeholder {  
+	font-style: italic; 
+}
+.view {
+    display:none;
+}
+.view_info {
+    display:block;
+}
+.view_info_quill {
+    background-color: #eaecf4;
+    display:block;
+}
+.upload_file {
+    display: none;
+}
+
+.img_profile {
+    display: inline-block;
+    width: 140px;
+    height: 140px;
+    margin-bottom: 1.6rem;
+    overflow: hidden; 
+    border-radius: 50%;
+    align-items: center;
+}
+.is-error {
+    color: red;
+    font-size: 13px;
+    text-align: center;
+}
+.tour_status {
+    color: red;
+    font-size: 13px;
+    font-weight: 700;
+}
+.dropbox {
+    outline: 2px dashed grey; /* the dash box */
+    outline-offset: -10px;
+    background: lightcyan;
+    color: dimgray;
+    padding: 10px 10px;
+    min-height: 200px; /* minimum height */
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+  
+}
+.input-file {
+    opacity: 0; /* invisible but it's there! */
+    width: 100%;
+    left:-5px;
+    height: 200px;
+    position: absolute;
+    cursor: pointer;
+}
+.dropbox:hover {
+    background: lightblue; /* when mouse over to the drop zone, change color */
+}
+.dropbox p {
+    font-size: 1.2em;
+    text-align: center;
+    padding: 50px 0;
+}
+.img-thumbnail {
+    padding: .1rem;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .1rem;
+    max-width: 70%;
+    height: auto;
+}

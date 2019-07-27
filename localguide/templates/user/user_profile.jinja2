@@ -56,14 +56,18 @@
 
 					<hr>
 					<h5 class="mbr-fonts-style pb-1 pt-1 mbr-bold display-4">SKILLS</h5>
-					{% for item in user.skill.split(',') %}						
-						<button type="button" class="btn btn-light btn-sm skill">{{item}}</button>
-					{%endfor%}
+					{%if user.skill%}
+						{% for item in user.skill.split(',') %}						
+							<button type="button" class="btn btn-light btn-sm skill">{{item}}</button>
+						{%endfor%}
+					{%endif%}
 					<hr>					
 					<h5 class="mbr-fonts-style pb-1 pt-1 mbr-bold display-4">SPECIALITIES</h5>
-					{% for item in user.specialities.split(',') %}						
-						<button type="button" class="btn btn-light btn-sm skill">{{item}}</button>
-					{%endfor%}
+					{%if user.specialities%}
+						{% for item in user.specialities.split(',') %}						
+							<button type="button" class="btn btn-light btn-sm skill">{{item}}</button>
+						{%endfor%}
+					{%endif%}
 					<hr>
 					
 				</div>
@@ -99,7 +103,9 @@
 			<div class="card">
 				<h5 class="mbr-fonts-style pb-1 pt-3 mbr-bold display-4">EXPERIENCES</h5>
 				<span class="card-text">
+				{%if user.experience%}
 					{{ user.experience.replace("\\'","'")|safe}}
+				{%endif%}
 				</span>
 			</div>
 		</section>

@@ -12,7 +12,7 @@ class UserService(object):
     @classmethod
     def by_uid(cls, _uid, request):
         #Select 2 column uid, role
-        rs = request.dbsession.query(User.uid, User.role).filter(User.uid == _uid).first()
+        rs = request.dbsession.query(User.fullname, User.avatar, User.uid, User.role).filter(User.uid == _uid).first()
         return rs
 
     @classmethod
@@ -20,11 +20,7 @@ class UserService(object):
         #Select all column
         rs = request.dbsession.query(User).filter(User.uid == _uid).first()
         return rs    
-        '''
-        query = request.dbsession.query(User)
-        print(query) 
-        return query.get(_uid)
-        '''
+        
     @classmethod
     def check_email(cls, request, _email):        
         rs = request.dbsession.query(User.email).filter(User.email == _email).first()
@@ -35,6 +31,16 @@ class UserService(object):
     @classmethod
     def by_id_uid(cls, _id, _uid, request):
         rs = request.dbsession.query(User).filter(User.id == _id, User.uid == _uid, User.status == '1').first()
+        return rs
+    
+    @classmethod
+    def update_by_id_uid(cls, _id, _uid, request):
+        rs = request.dbsession.query(User).filter(User.id == _id, User.uid == _uid).first()
+        return rs
+
+    @classmethod
+    def user_by_id_uid(cls, _id, _uid, request):
+        rs = request.dbsession.query(User).filter(User.id == _id, User.uid == _uid).first()
         return rs
 
     @classmethod
@@ -59,6 +65,18 @@ class UserService(object):
             return False
         return True
     
+    @classmethod
+    def isAdmin(cls, request):
+        if request.user.role == '1' or request.user.role == '2':
+            return True
+        return False
+    
+    @classmethod
+    def isAdmin_2(cls, request):
+        if request.user.role == '2':
+            return True
+        return False
+
     @classmethod
     def get_RandomUser(cls, request):
         #Get random user active
