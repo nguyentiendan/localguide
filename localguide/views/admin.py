@@ -10,7 +10,9 @@ from ..models.user import User
 from ..models.tour import Tour
 from ..services.user_service import UserService
 from ..services.tour_service import TourService
+from ..services.orders_service import OrdersService
 from ..utils import XssHtml
+import stripe
 
 @view_config(route_name='admin_action', match_param='action=dashboard', renderer='localguide:templates/admin/dashboard.jinja2')
 def admin_dashboard(request):
@@ -57,9 +59,63 @@ def admin_tour_list(request):
         uid  = request.user.uid
         if request.user.role == '2':     #Admin
             tour = TourService.all_tour(request=request)
-        elif request.user.role == '1':   #Tour admin
+        elif request.user.role == '0' or request.user.role == '1':   #Tour admin or Temp Tour guide
             tour = TourService.by_uid(uid, request=request)
+
     return {'tour':tour}
+
+@view_config(route_name='admin_action', match_param='action=orderslist', renderer='localguide:templates/admin/orders_list.jinja2')
+def admin_orders_list(request):
+    print('ORDERS LIST of GUIDE')
+    user = request.user
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        uid  = request.user.uid
+        if request.user.role == '2':     #Admin
+            orders = OrdersService.all_orders(request=request)
+        elif request.user.role == '1':   #Tour admin
+            orders = OrdersService.by_uid(uid, request=request)
+    return {'orders':orders}
+
+@view_config(route_name='admin_action', match_param='action=refund')
+def orders_refund(request):
+    print('ORDERS REFUND')
+    user = request.user 
+    data = request.json_body
+    uid = data['uid']    #uid
+    tour_id = data['tour_id']    #tour_id
+    charge_id  = data['charge_id']    #charge_ID
+    price  = data['price']  #Price
+    price = str(price) + '00'
+    
+    #check only admin/tour admin access this function
+    if user is None or charge_id is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        try :
+            stripe.api_key = 'sk_test_zhVLqm2IiBSzHCmYZbJwlwB400fY8QkLs2'
+            refund = stripe.Refund.create(
+                charge  = charge_id,
+                amount  = price,
+            )
+        except Exception as e:
+            print(e)
+            return Response('Error', content_type='text/plain', status=500)
+        
+        if  refund.status == 'succeeded' :
+            orders = OrdersService.update_by_id_uid_chargeid(tour_id, uid, charge_id, request=request)
+            orders.status   = 'refund_succeeded'
+            orders.mtime  = datetime.datetime.now()   
+        
+            return Response(
+                refund.status,
+                headers=[
+                    ('X-Relocate', ''),
+                    ('Content-Type', 'text/html'),
+                ]
+            )
 
 @view_config(route_name='admin_action', match_param='action= userlist', renderer='localguide:templates/admin/user_list.jinja2')
 def admin_user_list(request):
@@ -131,6 +187,7 @@ def admin_tour_edit(request):
             raise exception_response(404)
     
         return {'tour':tour}
+
 #Admin deactive user
 @view_config(route_name='admin_action', match_param='action=user_deactive')
 def admin_user_deactive(request):
@@ -179,6 +236,7 @@ def admin_user_active(request):
             ('Content-Type', 'text/html'),
         ]
     )
+
 #Admin set role for user
 @view_config(route_name='admin_action', match_param='action=user_setrole')
 def admin_user_setrole(request):
@@ -221,6 +279,30 @@ def admin_user_setlevel(request):
         user = UserService.update_by_id_uid(user.id, user.uid, request=request)
         user.level  = data['level']
         user.mtime  = datetime.datetime.now()
+    return Response(
+        '',
+        headers=[
+            ('X-Relocate', ''),
+            ('Content-Type', 'text/html'),
+        ]
+    )
+
+#Temp guide send request active
+@view_config(route_name='admin_action', match_param='action=user_requestactive')
+def admin_user_requestactive(request):
+    print("TEMP GUIDE SEND REQUEST")
+    user = request.user
+    
+    #check only admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        data = request.json_body    
+        user = User()
+        user.id     = data['id']
+        user.uid    = data['uid']
+        user = UserService.update_by_id_uid(user.id, user.uid, request=request)
+        user.req_active  = '1'
     return Response(
         '',
         headers=[
@@ -378,3 +460,39 @@ def admin_tour_restore(request):
             ('Content-Type', 'text/html'),
         ]
     )
+
+@view_config(route_name='admin_action', match_param='action=calendar', renderer='localguide:templates/admin/calendar.jinja2')
+def admin_calendar(request):
+    print('SHOW CALENDAR')
+    user = request.user
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    
+    return {} 
+
+@view_config(route_name='admin_action', match_param='action=test')
+def admin_test(request):
+    print("TOUR CALENDAR TEST")
+    data = request.json_body
+    title  = data['title']
+    id     = data['id']
+    uid    = data['uid']
+
+    user = request.user
+    print(title)
+    print(id)
+    print(uid)
+
+    #check only admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        
+        return Response(
+                '',
+                headers=[
+                    ('X-Relocate', ''),
+                    ('Content-Type', 'text/html'),
+                ]
+        )

@@ -44,6 +44,13 @@
 								<form data-form-title="Profile Info" id="profile">
 									<div class="row row-sm-offset">
 										<div class="col-md-12 multi-horizontal">
+											{%if request.user.role == '0'%}
+												<span class="mbr-text mbr-fonts-style mbr-normal display-7">	
+												＊You are login as temporary guide. User can not view your profile.<br>
+												＊Please update your profile, upload your avatar, write down your experience....<br>
+												＊And send Request active to Admin for active.
+												</span>
+											{%endif%}
 											<div style="align-items: center">
 											{% if user.avatar: %}
 												<img name="avatar" src="{{ request.static_url('localguide:static/assets/user_images/guide/') }}{{user.uid}}/{{user.avatar}}" style="cursor: pointer; display: block;" v-on:click="file_open" class="img_profile" alt="Click image to update">	
@@ -62,7 +69,7 @@
 										<div class="col-md-6 multi-horizontal">
 											<div class="form-group">
 												<label class="font-weight-bold mb-0">Current job</label>
-												<input type="text" ref="job" {%if user.job == 'None' %} value="" {%else%} value="{{user.job}}" {%endif%} class="form-control" placeholder="Tour guide" maxlength="50" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+												<input type="text" ref="job" value="{{user.job}}" class="form-control" placeholder="Tour guide" maxlength="50" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
 											</div>
 										</div>
 										<div class="col-md-6 multi-horizontal">
@@ -109,31 +116,31 @@
 										<div class="col-md-12 multi-horizontal">
 											<div class="form-group">
 												<label class="font-weight-bold mb-0">Skills &nbsp;<small>(Enter items separated by a comma...)</small></label>
-												<input type="text" ref="skill" {%if user.skill == 'None' %} value="" {%else%} value="{{user.skill}}" {%endif%} class="form-control" placeholder="Guide, Travel" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+												<input type="text" ref="skill" value="{{user.skill}}" class="form-control" placeholder="Guide, Travel" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
 											</div>
 										</div>
 										<div class="col-md-12 multi-horizontal">
 											<div class="form-group">
 												<label class="font-weight-bold mb-0">Specialities &nbsp;<small>(Enter items separated by a comma...)</small></label>
-												<input type="text" ref="specialities" {%if user.specialities == 'None' %} value="" {%else%} value="{{user.specialities}}" {%endif%} class="form-control" placeholder="Scientist guide, IT guide" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+												<input type="text" ref="specialities" value="{{user.specialities}}" class="form-control" placeholder="Scientist guide, IT guide" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
 											</div>
 										</div>
 										<div class="col-md-6 multi-horizontal">
 											<div class="form-group">
 												<label class="font-weight-bold mb-0">Education</label>
-												<input type="text" ref="education" {%if user.education == 'None' %} value="" {%else%} value="{{user.education}}" {%endif%} class="form-control" placeholder="Cameron University" maxlength="80" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+												<input type="text" ref="education" value="{{user.education}}" class="form-control" placeholder="Cameron University" maxlength="80" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
 											</div>
 										</div>
 										<div class="col-md-6 multi-horizontal">
 											<div class="form-group">
 												<label class="font-weight-bold mb-0">Languages &nbsp;<small>(Enter items separated by a comma...)</small></label>
-												<input type="text" ref="language" {%if user.language == 'None' %} value="" {%else%} value="{{user.language}}" {%endif%} class="form-control" placeholder="English, Japanese, VietNamese" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+												<input type="text" ref="language" value="{{user.language}}" class="form-control" placeholder="English, Japanese, VietNamese" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
 											</div>
 										</div>
 										<div class="col-md-12 multi-horizontal">
 											<div class="form-group">
 												<label class="font-weight-bold mb-0">Hobby &nbsp;<small>(Enter items separated by a comma...)</small></label>
-												<input type="text" ref="hobby" {%if user.hobby == 'None' %} value="" {%else%} value="{{user.hobby}}" {%endif%} class="form-control" placeholder="Cooking, Movie, Travel" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
+												<input type="text" ref="hobby" value="{{user.hobby}}" class="form-control" placeholder="Cooking, Movie, Travel" maxlength="100" autocapitalize="off" autocorrect="off" :disabled="!isEditing" :class="{view_info: isEditing}">
 											</div>
 										</div>
 										<div class="col-md-12 multi-horizontal">
@@ -145,6 +152,11 @@
 									</div>
 									<span class="input-group-btn">
 										<input type="button" v-if="!isEditing" @click="isEditing = true"  class="btn btn-form btn-light display-4" value="Edit">
+										{%if user.status == '1' and request.user.role == '0' and user.req_active == '0' %}
+											<input type="button" v-if="!isEditing" class="btn btn-form btn-warning display-4" @click="" value="Request active" data-toggle="modal" data-target="#user_requestactiveModal">
+										{%elif user.status == '1' and request.user.role == '0' and user.req_active == '1'%}	
+											<span v-if="!isEditing">Request active was send</span>
+										{%endif%}
 										<input type="button" v-else="isEditing" @click="processForm" class="btn btn-form btn-primary display-4" value="Save">
 										<input type="button" v-if="isEditing" @click="isEditing = false" class="btn btn-form btn-secondary display-4" value="Cancel">
 									</span>
@@ -171,5 +183,6 @@
 </a>
 
 {% include "common/logout_modal.jinja2" %}
+{% include "common/user_requestactive_modal.jinja2" %}
 
 {% endblock content %}  

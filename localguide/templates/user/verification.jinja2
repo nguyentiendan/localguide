@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="generator" content="localguide.com">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+	<meta name="description" content="">
+	<title>Verification</title>
+	{% include "../common/header_not_login.jinja2" %}
+</head>
+
+<body>
+	<div class="form-container">
+		<div class="text-center mb-4" style="padding-top:100px;">
+			<h1 class="h1 mb-3 font-weight-bold">LocalGuide</h1>
+			<!--<p class="text-center display-5">Signup to become a tour guide</p>-->
+		</div>
+		<form @submit.prevent="processForm" id="verifyForm">				
+			<p class="text-danger text-center">${ message }</p>
+			<div v-if="success==true">	
+				<b-alert :show="dismissCountDown" dismissible variant="success" @dismissed="dismissCountDown=0" @dismiss-count-down="countDownChanged">
+					<b>Verification successful</b><br/>
+					<p>After <b>${ dismissCountDown }</b> seconds will be redirect to Login page.</p>
+					<b-progress variant="warning" :max="dismissSecs" :value="dismissCountDown" height="6px"></b-progress>
+				</b-alert>
+			</div>
+			<div class="form-group" v-if="success==false">
+				<label>Please input your email to verification</label>
+                <input type="email" name="email" ref="email" v-validate="'required|email'" v-model="user.email" class="form-control" placeholder="Email address" autocapitalize="off" maxlength="50">
+				<span v-show="errors.has('email')" class="is-error">${ errors.first('email') }</span>
+			</div>
+			<button type="submit" id="button" class="btn btn-warning btn-lg btn-block" :disabled="errors.any()" v-if="success==false">Verify</button>
+		</form>		
+	</div>	
+	{% include "../common/footer_not_login.jinja2" %}
+	<script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
+
+	<script>
+		Vue.use(VeeValidate);
+		Vue.use(bootstrapVue);	
+
+		const verifyForm =  new Vue({
+			delimiters: ['${', '}'],
+			el:"#verifyForm",
+			data: {
+				dismissSecs: 5,
+        		dismissCountDown: 0,
+        		showDismissibleAlert: false,
+				success: false,
+				message: '',
+				user: {
+					email: '',
+					uid: '',
+					active_code: '',
+				},
+			},			
+			methods: {
+				processForm() {					
+					//attempt validating all
+					this.$validator.validateAll().then((result) => {
+						if (result) {
+							//validation passed succesfully
+							this.user.uid 		  = getUrlParameter('uid')
+							this.user.active_code = getUrlParameter('code')
+							axios({
+								method: 'POST',
+								url: URL + 'auth/verification',
+								data: this.user,
+								config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+							})
+							.then( (response) => {
+								//handle success
+								if (response.status == '200' && response.statusText == 'OK') {
+									//console.log(response.data)
+									this.message = response.data
+									if(this.message == 'success') {
+										this.message = ''
+										this.success = true;
+										verifyForm.showAlert()									
+									}
+								}
+							})
+							.catch( (response) => {
+								//handle error
+								console.log(response.data)
+							});
+						}
+					});
+				},
+				countDownChanged(dismissCountDown) {
+					this.dismissCountDown = dismissCountDown
+					if (this.dismissCountDown == 0) {
+						this.success = false;
+						location.href = '../auth/login'
+					}
+				},
+				showAlert() {
+					this.dismissCountDown = this.dismissSecs
+				},				
+			}
+		});	
+	</script>
+</body>
+</html>

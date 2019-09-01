@@ -1,4 +1,4 @@
-{% extends "layout/layout_tour.jinja2" %}
+{% extends "layout/layout_orders.jinja2" %}
 
 {% block content %}
 <!-- Page Wrapper -->
@@ -13,7 +13,7 @@
 			<div class="container-fluid">
 				<!-- Page Heading -->
 				<div class="d-sm-flex align-items-center justify-content-between mb-4">
-					<h1 class="h3 mb-0 text-gray-800">Tour list</h1>
+					<h1 class="h3 mb-0 text-gray-800">Orders list</h1>
 					<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#logoutModal">
 						<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Logout
 					</a>
@@ -40,51 +40,53 @@
 								</div>
 							</div>
 							<!-- Card Body -->
-							<div class="card-body" id="tourList">
+							<div class="card-body" id="ordersList">
 								<div class="table-responsive">
-									{% if not tour %}
-										You have not a tour. 
-										<a href="create" class="btn btn-primary btn-icon-split">
-											<span class="icon text-white-50">
-												<i class="fas fa-flag"></i>
-											</span>
-											<span class="text">New tour</span>
-										</a>
+									{% if not orders %}
+										You have not a order. 
 									{%else%}
 									<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
 										<thead>
 											<tr>
 												<th>Tour name</th>
-												<th>Tour type</th>
-												<th>Country/City</th>
+												<th>Tour price</th>
+												{% if request.user.role == '2': %} 
 												<th>Guide name</th>
-												<th>Price/Day</th>
+												{%endif%}
+												<th>Name order</th>
+												<th>Email</th>
 												<th>Status</th>
-												<th>Last update</th>
+												<th>Order date</th>
+												<th>#</th>
 											</tr>
 										</thead>
 										<tbody>
-											{% for t in tour %}
+											{% for o in orders %}
 											<tr>
-												<td><a href="#" @click="goEdit( '{{t.id}}', '{{t.uid}}' )" style="cursor: pointer;">{{t.title|e}}</a></td>
-												<td>{{t.type}}</td>
-												<td>{{t.country}}/{{t.city}}</td>
-												<td>Guide name</td>
-												<td>{{t.price}}$/{{t.days}} day</td>
+												<td><a href="#" @click="tourDetail( '{{o.tour_id}}', '{{o.uid}}' )" style="cursor: pointer;">{{o.tour_title|e}}</a></td>
+												<td>{{o.tour_price}} {{o.tour_currency}}</td>
+												{% if request.user.role == '2': %} 
+												<th>Tom</th>
+												{%endif%}
+												<td>{{o.name_card}}</td>
+												<td>{{o.email}}</td>
 												<td>
-													{%if t.status == '0' and t.req_active == '0'%} 
-														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is not active. Please request admin to active">Not active</span> 
-													{%elif t.status == '1'%}  
-														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is active, you can view at homepage">Active</span> 
-													{%elif t.status == '2'%}  	
-														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is disable, you can not view at homepage">Disable</span> 
-													{%elif t.status == '3'%}  		
-														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is delete, you can not view at homepage">Delete</span> 
-													{%elif t.status == '0' and t.req_active == '1'%}  		
-														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is waiting active">Request active</span> 
-													{%endif%}	
+													{% if o.status == 'payment_succeeded': %} 
+														paymented 
+													{% elif o.status == 'refund_succeeded':%}
+														refunded
+													{%endif%}
 												</td>
-												<td>{{t.mtime}}</td>
+												<td>{{o.mtime}}</td>
+												<td>
+													{% if o.status == 'payment_succeeded': %} 
+														<a href="#" @click="refund_init( '{{o.tour_id}}', '{{o.uid}}', '{{o.charge_id}}', '{{o.tour_price}}' )" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#refundModal">
+															Refund
+														</a>
+													{% elif o.status == 'refund_succeeded':%}
+														-
+													{%endif%}
+												</td>
 											</tr>
 											{% endfor %}
 										</tbody>
@@ -112,6 +114,7 @@
 </a>
 
 {% include "common/logout_modal.jinja2" %}
+{% include "common/refund_modal.jinja2" %}
 
 {% endblock content %}  
 

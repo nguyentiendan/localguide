@@ -7,7 +7,7 @@ import zope.sqlalchemy
 # Base.metadata prior to any initialization routines
 from .user import User
 from .tour import Tour
-from .approve import Approve
+from .orders import Orders
 
 # run configure_mappers after defining all of the models to ensure
 # all relationships can be setup

@@ -150,8 +150,8 @@ body {
 .btn-primary,
 .btn-primary:active,
 .btn-primary.active {
-  background-color: #ff4a52 !important;
-  border-color: #ff4a52 !important;
+  background-color: #ff9e4a !important;
+  border-color: #ff9e4a !important;
   color: #ffffff !important;
 }
 .btn-primary:hover,
@@ -1750,6 +1750,13 @@ body {
   left: 5px;
   bottom: 15px;
 }
+.cid-rccOyRMpwz .card-wrapper input {
+  border-radius: 0px;
+  font-size: 14px;
+  padding-left: 15px;
+  width: 100%;
+}
+
 .cid-rccOyRMpwz .display-4 {
   line-height: 1.1;
 }
@@ -2175,9 +2182,9 @@ body {
   }
 }
 .cid-rccP7ctqDC {
-  padding-top: 60px;
-  padding-bottom: 60px;
-  background-color: #000000;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  background-color: #000000a3;
 }
 .cid-rccP7ctqDC .listico {
   padding-right: 1rem;

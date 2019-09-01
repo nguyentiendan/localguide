@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+</head>
+<body id="page-top">
+
+{% block content %}
+{% endblock %}
+
+{% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/vue.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/axios.js')}}"></script> 
+<script src="{{request.static_url('localguide:static/assets/js/bootstrap-vue.js')}}"></script>
+
+<script type="text/javascript">
+	Vue.use(bootstrapVue);
+
+	const ordersList = new Vue({
+		el: '#ordersList',
+		data: {
+			myHtmlCode: ''
+		},
+		methods: {
+			tourDetail(id,uid) {
+				location.href = 'edit?id=' + id + '&uid=' + uid;
+			},
+			goDelete(id,uid) {
+				var conf = confirm("Are you sure. You can't restore.")
+				if (conf) {
+					axios({
+						method: 'POST',
+						url: URL + 'tour/deleteTour',
+						data: {id: id, uid: uid},
+						config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+					})
+					.then(function (response) {
+						//handle success
+						if (response.status == '200' && response.statusText == 'OK') {
+							location.reload() 
+						}
+					})
+					.catch(function (response) {
+						//handle error
+						//console.log(response);
+					});
+				}
+			},
+			refund_init(tour_id, uid, charge_id, price) {
+				document.getElementById('price').innerHTML = price
+				document.getElementById('price_num').value = price
+				document.getElementById('charge_id').value = charge_id
+				document.getElementById('tour_id').value = tour_id
+				document.getElementById('uid').value = uid
+			}
+		}	
+	});	
+	
+	const refundModal = new Vue({
+		el: '#refundModal',
+		data: {	
+			charge_id: "{{charge_id}}",
+			price: "{{price_num}}"		
+		},
+		methods: {
+			refund() {
+				this.charge_id = this.$refs['charge_id'].value;
+				this.price = this.$refs['price_num'].value;
+				this.tour_id = this.$refs['tour_id'].value;
+				this.uid = this.$refs['uid'].value;
+				console.log(this.price)
+				axios({
+					method: 'POST',
+					url: URL + 'admin/refund',
+					data: {tour_id: this.tour_id, uid: this.uid, charge_id: this.charge_id, price: this.price},
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.reload() 
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					//console.log(response);
+				});
+			},
+			
+		}
+	});		
+</script>
+
+</body>
+</html>

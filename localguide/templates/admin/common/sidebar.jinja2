@@ -38,6 +38,14 @@
 			<span>Tour list</span>
 		</a>
 	</li>
+	{%if request.user.role == '1' or request.user.role == '2'%}
+	<li class="nav-item">
+		<a class="nav-link" href="orderslist">
+			<i class="fas fa-fw fa-table"></i>
+			<span>Orders list</span>
+		</a>
+	</li>
+	{%endif%}
 	{%if request.user.role == '2'%}
 	<li class="nav-item">
 		<a class="nav-link" href="userlist">

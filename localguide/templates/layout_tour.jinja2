@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+{% include "../common/navbar_default.jinja2" %}
+
+<div class="container" style="padding-top:150px; padding-bottom:200px">
+	{% block content %}{% endblock %}
+</div>
+
+{% include "../common/footer.jinja2" %}
+
+</body>
+</html>

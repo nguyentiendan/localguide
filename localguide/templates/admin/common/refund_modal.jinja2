@@ -1,0 +1,41 @@
+<!-- Refund Modal-->
+<div class="modal fade" id="refundModal" tabindex="-1" role="dialog" aria-labelledby="RefundModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Refund payment</h5>
+				<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label class="mbr-fonts-style"><b>Refund</b></label>
+						<span id="price"></span>
+					</div>
+					<div class="form-group">
+						<label class="mbr-fonts-style"><b>Reason</b></label>
+						<select class="form-control" style="width:200px;">
+							<option>Select a reason</option>
+							<option>Duplicate</option>
+							<option>Fraudulent</option>
+							<option>Requested by customer</option>
+							<option>Other</option>
+						</select>
+					</div>
+					<span class="mbr-fonts-style">Refunds take 5-10 days to appear on a customer's statement.</span>
+					<input type="hidden" ref="price_num" id="price_num" value="">
+					<input type="hidden" ref="charge_id" id="charge_id" value="">
+					<input type="hidden" ref="tour_id" id="tour_id" value="">
+					<input type="hidden" ref="uid" id="uid" value="">
+				</form>
+			</div>
+			
+			<div class="modal-footer">
+				<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+				<a class="btn btn-primary" href="#" @click="refund">Refund</a>
+			</div>
+		</div>
+	</div>
+</div>

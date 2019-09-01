@@ -44,11 +44,11 @@
 					<input type="checkbox" value="remember-me"> Remember me
 				</label>
 			</div>
-			<button type="submit" id="button" class="btn btn-success btn-lg btn-block" :disabled="errors.any()">LOGIN</button>
+			<button type="submit" id="button" class="btn btn-warning btn-lg btn-block" :disabled="errors.any()">LOGIN</button>
 
 			<hr>
-			<p class="text-center">or <a href="#">Forgot password</a></p>
-			<p class="text-center small text-dark">By signing up, you agree to our <a href="#">Terms of Service</a></p>
+			<p class="text-center">or <a href="#" data-toggle="modal" data-target="#forgot_passwordModal">Forgot password</a></p>
+			<!--<p class="text-center small text-dark">By signing up, you agree to our <a href="#">Terms of Service</a></p>-->
 			<hr>
 			<p class="text-center">Don't have an account ? <a href="/user/create">Sign up</a></p>
 
@@ -56,8 +56,8 @@
 		<div class="text-center display-5 font-weight-normal">
 			<a href="/">HOME</a> | ABOUT US | FAQ's | CONTACT
 		</div>
-
 	</div>
+	{% include "../common/forgot_password_modal.jinja2" %}
 	{% include "../common/footer_not_login.jinja2" %}
 	
 	<script>

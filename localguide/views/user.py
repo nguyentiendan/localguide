@@ -35,10 +35,12 @@ def admin_userlist(request):
     #return {'user':user}
     return {'user':user, 'role':request.user.role}
 
-@view_config(route_name='user_action', match_param='action=create', renderer='localguide:templates/front/user_create.jinja2')
+@view_config(route_name='user_action', match_param='action=create', renderer='localguide:templates/user/user_create.jinja2')
 def signup(request):
     print('USER CREATE')      
     user = request.user
+    print(user)
+
     if user is not None :
         raise HTTPFound(request.route_url("index"))
     else :
@@ -50,6 +52,7 @@ def signup(request):
             password         = data['password']
             user.set_password(password)
             user.random_uid()
+            user.random_active_code()
             
             if UserService.check_email(request, user.email) == False :  # email not duplicate
                 try :
@@ -58,6 +61,21 @@ def signup(request):
                     access_rights = 0o755    
                     user_folder = settings['user.folder'] + user.random_uid()
                     os.mkdir(user_folder)
+
+                    url = "https://localhost:8000/auth/verification?uid=" + str(user.random_uid()) + '&code=' + str(user.random_active_code())
+
+                    body = "Hello, " + user.fullname + "\n\n"
+                    body += "Please click below URL to complete registration\n\n" 
+                    body += url + "\n\n"
+                    body += "Thanks you\nLocalguide"
+
+                    mailer = get_mailer(request)
+                    message = Message(subject="Confirm Registration",
+                                sender="admin@localguide.com",
+                                recipients=[user.email,'tiendanvn@gmail.com'],
+                                body = body)
+                    
+                    mailer.send(message)
                 except DBAPIError:
                     return Response(db_err_msg, content_type='text/plain', status=500)
             else :

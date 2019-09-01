@@ -17,6 +17,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 import hashlib 
+import random
 from .meta import Base
 
 
@@ -26,31 +27,32 @@ class User(Base):
     __table_args__ = {'mysql_engine': 'InnoDB'}
     
     id              = Column(Integer, primary_key=True)
-    uid             = Column(String(50), nullable=False, unique=True)
+    uid             = Column(String(50), nullable=False, unique=True, index=True)
     fullname        = Column(String(100), nullable=False)
-    avatar          = Column(String(255), nullable=True)
+    avatar          = Column(String(255), nullable=True, index=True)
     email           = Column(String(100), nullable=False, unique=True)
     mobile          = Column(String(12), nullable=True, default='08012345678')
     password_hash   = Column(String(255), nullable=False)
-    job             = Column(String(50), nullable=True)
+    job             = Column(String(50), nullable=True, default='')
     sex             = Column(String(1),  nullable=True, default=1, index=True) #1:Male, 0:Female
     age             = Column(String(2),   nullable=True, default=30)
-    country         = Column(String(50), nullable=True, index=True)
-    city            = Column(String(50), nullable=True, index=True)
-    education       = Column(String(80), nullable=True)    
-    language        = Column(String(100), nullable=True)
+    country         = Column(String(50), nullable=True)
+    city            = Column(String(50), nullable=True)
+    education       = Column(String(80), nullable=True, default='')    
+    language        = Column(String(100), nullable=True, default='')
     work_history    = Column(Text, nullable=True)
-    experience      = Column(Text, nullable=True)
-    hobby           = Column(String(100), nullable=True)    
-    skill           = Column(String(100), nullable=True)
-    specialities    = Column(String(100), nullable=True)    
+    experience      = Column(Text, nullable=True, default='')
+    hobby           = Column(String(100), nullable=True, default='')    
+    skill           = Column(String(100), nullable=True, default='')
+    specialities    = Column(String(100), nullable=True, default='')    
     level           = Column(String(1), default=0)  #0:junior:, 1:Senior, 2:Professsional
-    status          = Column(String(1), default=1)  #0:Deactive: can not login, 1:Active
-    role            = Column(String(1), default=0)  #0:User, #1:Guide, #2:Admin 
-    #approve         = Column(String(1), default=0)  #0:Not appove, #1:Approve request, #2 Approved
-    last_login      = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+    status          = Column(String(1), default=0)  #0:Deactive: can not login, 1:Active
+    role            = Column(String(1), default=0)  #0:Temp guide, #1:Guide, #2:Admin 
+    req_active      = Column(String(1), default=0)  #0:Not request, and send request 1:Send request to admin
+    active_code     = Column(String(15), nullable=True)
+    last_login      = Column(DateTime, nullable=True)
     ctime           = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
-    mtime           = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+    mtime           = Column(DateTime, nullable=True)
     
     @property
     def slug(self):
@@ -82,4 +84,12 @@ class User(Base):
         uid = hashlib.sha1(uid.encode()).hexdigest()  
         self.uid = uid
         return uid
+    
+    def random_active_code(self):
+        range_start  = 10**(10-1) #random 10 digit number
+        range_end    = (10**10)-1
+        active_code  = random.randint(range_start, range_end)
+        self.active_code = active_code
+        return active_code
+    
     

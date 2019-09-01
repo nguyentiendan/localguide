@@ -17,6 +17,7 @@ from ..models import (
     )
 from ..models import User
 from ..models import Tour
+from ..models import Orders
 
 def usage(argv):
     cmd = os.path.basename(argv[0])

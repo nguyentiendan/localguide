@@ -10,18 +10,10 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					This user have 
-					{% if user.role == '0'%}
-						User
-					{% elif user.role == '1'%}
-						Tour admin
-					{% elif user.role == '2'%}
-						Admin
-					{%endif%}
-					role
+					Please choose role to set for user 
 					<div class="row">
-						<div class="col-md-3">
-							<input type="radio" name="role" v-model="user.role" value="0" {%if user.role == '0'%}checked{%endif%}>&nbsp;&nbsp;User
+						<div class="col-md-5">
+							<input type="radio" name="role" v-model="user.role" value="0" {%if user.role == '0'%}checked{%endif%}>&nbsp;&nbsp;Temp Tour guide
 						</div>
 						<div class="col-md-4">
 							<input type="radio" name="role" v-model="user.role" value="1" {%if user.role == '1'%}checked{%endif%}>&nbsp;&nbsp;Tour admin

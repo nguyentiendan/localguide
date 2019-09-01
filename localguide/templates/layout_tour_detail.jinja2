@@ -3,6 +3,70 @@
 <head>
     {% include "../common/header.jinja2" %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{{request.static_url('localguide:static/adassets/css/style.css')}}">
+	<style>
+		/*body {
+			margin-bottom: 40px;
+			margin-top: 40px;
+			text-align: center;
+			font-size: 14px;
+			font-family: 'Roboto', sans-serif;
+			background:url(http://www.digiphotohub.com/wp-content/uploads/2015/09/bigstock-Abstract-Blurred-Background-Of-92820527.jpg);
+		}*/
+			
+		#wrap {
+			width: 1100px;
+			margin: 0 auto;
+			}
+			
+		#external-events {
+			float: left;
+			width: 150px;
+			padding: 0 10px;
+			text-align: left;
+			}
+			
+		#external-events h4 {
+			font-size: 16px;
+			margin-top: 0;
+			padding-top: 1em;
+			}
+			
+		.external-event { 
+			margin: 10px 0;
+			padding: 2px 4px;
+			background: #3366CC;
+			color: #fff;
+			font-size: .85em;
+			cursor: pointer;
+			}
+			
+		#external-events p {
+			margin: 1.5em 0;
+			font-size: 11px;
+			color: #666;
+			}
+			
+		#external-events p input {
+			margin: 0;
+			vertical-align: middle;
+			}
+		
+		#calendar {
+			/*float: right; */
+			margin: 0 auto;
+			width: 700px;
+			background-color: #FFFFFF;
+			border-radius: 6px;
+			box-shadow: 0 1px 2px #C3C3C3;
+			-webkit-box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
+			-moz-box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
+			box-shadow: 0px 0px 21px 2px rgba(0,0,0,0.18);
+		}
+		.modal-lg {
+			max-width:750px;
+		}
+	</style>
 </head>
 <body>
 {% include "../common/navbar_default.jinja2" %}
@@ -12,11 +76,16 @@
 </div>
 
 {% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/adassets/js/calendar.js')}}"></script>
 <script src="https://js.stripe.com/v3/"></script>
-<script src="https://checkout.stripe.com/checkout.js"></script>
-<script type="text/javascript">
+<script src="https://unpkg.com/vue-stripe-checkout@1.2.6/build/vue-stripe-checkout.js"></script>
 
-    /* Tour Detail  */
+<script type="text/javascript">
+	Vue.use(VeeValidate);
+	Vue.use(bootstrapVue);
+	Vue.use(VueStripeCheckout, 'pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm');
+    
+	/* Tour Detail  */
 	const tourDetail = new Vue({
         delimiters: ['${', '}'],
 		el: '#tourDetail',
@@ -49,203 +118,194 @@
 	const tourBook = new Vue({
         delimiters: ['${', '}'],
 		el: '#tourBook',
-		data: {
-            tour: {
-                id: "{{tour.Tour.id}}",
-                uid: "{{tour.Tour.uid}}",
-				price: "{{tour.Tour.price}}"
-            },
+		data() {
+			return {
+				status: 'Closed',
+				tokenFromPromise: {},
+				//tokenFromEvent: {},
+				image: '../static/images/logo.png',
+				name: '{{tour.Tour.title}}',
+				email: '',
+				description: 'Localguide secured payment',
+				locale:'auto',
+				currency: 'USD',
+				price: parseInt("{{tour.Tour.price}}"+'00',10),
+				panelLabel: 'Pay',
+				name_card: '',
+				phone: '',
+			}
 		},
 		methods: {			
-            tourBook(id, uid) {
-                url = "../tour/booking?id=" + id + '&hash=' + uid;
-				location.href = url				
-			},
-			handleStripeToken() {
-				alert('ABC')				
-			},
-			payment(id, uid) {
-				// Creating Stripe Checkout handler object and also 
-				// configuring Stripe publishable key and setting the options in Stripe Js.
-				var handler = StripeCheckout.configure({
-					//Replace it with your stripe publishable key
-					key: 'pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm',
-					image: '../static/images/logo.png',
-					allowRememberMe: true,
-					locale: 'auto',
-					token: handleStripeToken,
-				});
-				
-				handler.open({
-					name: 'Localguide',
-					description: 'Test checkout form' ,
-					amount: 300,
-					email: 'tiendanvn@gmail.com' ,
-					currency: 'USD',
-				
+			processForm() {
+				//evt.preventDefault()
+				this.$validator.validateAll().then((result) => {
+					if (result) {
+						//validation passed succesfully
+						this.name_card = this.$refs['name_card'].value;
+						this.phone = this.$refs['phone'].value;					
+						this.checkout()
+					}
 				});
 			},
-			
-			/*
-			payment(id, uid) {
-				this.tour.id = id
-				this.tour.uid = uid
+			async checkout () {
+          		this.tokenFromPromise = await this.$refs.checkoutRef.open();
+        	},
+			done(token) {
+				//this.tokenFromEvent = token;
 				axios({
 					method: 'POST',
-					url: URL + 'tour/payment',
-					data: this.tour,
+					url: URL + 'tour/charge',
+					data: { id:"{{tour.Tour.id}}",uid:"{{tour.Tour.uid}}", stripeToken:token.token.id, stripeEmail:token.token.email, name_card:this.name_card, phone:this.phone,
+						  currency:this.currency},
 					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
 				})
 				.then(function (response) {
 					//handle success
 					if (response.status == '200' && response.statusText == 'OK') {
-						ssid = response.data
-						console.log(ssid)
-						var stripe = Stripe('pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm');
-					
-						// Creating Stripe Checkout handler object and also 
-						// configuring Stripe publishable key and setting the options in Stripe Js.
-						var handler = StripeCheckout.configure({
-							//Replace it with your stripe publishable key
-							key: 'pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm',
-							image: '../static/images/logo.png',
-							allowRememberMe: true,
-							locale: 'auto',
-							//token: function(ssid) {	
-							//}
-						});
-						
-						handler.open({
-							name: 'Localguide',
-							description: 'Test checkout form' ,
-							amount: '300usd' ,
-							email: 'tiendanvn@gmail.com' ,
-							currency: 'USD',
-            			
-						});
-
-						<!--
-						stripe.redirectToCheckout({
-							// Make the id field from the Checkout Session creation API response
-							// available to this file, so you can provide it as parameter here
-							// instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-							sessionId: ssid
-						}).then(function (result) {
-							// If `redirectToCheckout` fails due to a browser or network
-							// error, display the localized error message to your customer
-							// using `result.error.message`.
-						});
-						-->
+						console.log(response.data)
+						if(response.data == 'succeeded') {
+							tourBook.showModal()
+						}
 					}
 				})
 				.catch(function (response) {
 					//handle error
 					console.log(response);
 				});
+				
 			},
-			*/
-		}
-	});
-    
+        	opened() {
+          		this.status = 'Opened';
+        	},
+        	closed() {
+          		this.status = 'Closed';
+        	},
+        	//submit(token) {
+          	//	console.log('token', token);
+          	//	console.log('Submit this token to your server to perform a stripe charge, or subscription.');
+        	//},
+			showModal () {
+				this.$refs.myModalRef.show()
+			},
+			hideModal () {
+				this.$refs.myModalRef.hide();
+				window.location = URL;
+			},
+      	}
+	});    
 </script>
 
-<script type="text/javascript">
-let modalId = $('#image-gallery');
-
-$(document)
-  .ready(function () {
-
-    loadGallery(true, 'a.thumbnail');
-
-    //This function disables buttons when needed
-    function disableButtons(counter_max, counter_current) {
-      $('#show-previous-image, #show-next-image')
-        .show();
-      if (counter_max === counter_current) {
-        $('#show-next-image')
-          .hide();
-      } else if (counter_current === 1) {
-        $('#show-previous-image')
-          .hide();
-      }
-    }
-
-    /**
-     *
-     * @param setIDs        Sets IDs when DOM is loaded. If using a PHP counter, set to false.
-     * @param setClickAttr  Sets the attribute for the click handler.
-     */
-
-    function loadGallery(setIDs, setClickAttr) {
-      let current_image,
-        selector,
-        counter = 0;
-
-      $('#show-next-image, #show-previous-image')
-        .click(function () {
-          if ($(this)
-            .attr('id') === 'show-previous-image') {
-            current_image--;
-          } else {
-            current_image++;
-          }
-
-          selector = $('[data-image-id="' + current_image + '"]');
-		  console.log(selector)
-          updateGallery(selector);
-        });
-
-      function updateGallery(selector) {
-		alert('update Gallery')
-        let $sel = selector;
-        current_image = $sel.data('image-id');
-		console.log(current_image)
-        $('#image-gallery-title')
-          .text($sel.data('title'));
-        $('#image-gallery-image')
-          .attr('src', $sel.data('image'));
-        disableButtons(counter, $sel.data('image-id'));
-      }
-
-      if (setIDs == true) {
-        $('[data-image-id]')
-          .each(function () {
-            counter++;
-            $(this)
-              .attr('data-image-id', counter);
-          });
-      }
-      $(setClickAttr)
-        .on('click', function () {
-          updateGallery($(this));
-        });
-    }
-  });
-
-// build key actions
-$(document)
-  .keydown(function (e) {
-    switch (e.which) {
-      case 37: // left
-        if ((modalId.data('bs.modal') || {})._isShown && $('#show-previous-image').is(":visible")) {
-          $('#show-previous-image')
-            .click();
-        }
-        break;
-
-      case 39: // right
-        if ((modalId.data('bs.modal') || {})._isShown && $('#show-next-image').is(":visible")) {
-          $('#show-next-image')
-            .click();
-        }
-        break;
-
-      default:
-        return; // exit this handler for other keys
-    }
-    e.preventDefault(); // prevent the default action (scroll / move caret)
-  });
-
+<script>
+	$(document).ready(function() {
+	    var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		/*  className colors
+		className: default(transparent), important(red), chill(pink), success(green), info(blue)
+		*/		
+		
+		/* initialize the external events
+		-----------------------------------------------------------------*/
+		/*
+		$('#external-events div.external-event').each(function() {
+		
+			// create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+			// it doesn't need to have a start or end
+			var eventObject = {
+				title: $.trim($(this).text()) // use the element's text as the event title
+			};
+			
+			// store the Event Object in the DOM element so we can get to it later
+			$(this).data('eventObject', eventObject);
+			
+			// make the event draggable using jQuery UI
+			$(this).draggable({
+				zIndex: 999,
+				revert: true,      // will cause the event to go back to its
+				revertDuration: 0  //  original position after the drag
+			});
+			
+		});
+		*/
+		/* initialize the calendar
+		-----------------------------------------------------------------*/	
+		var calendar =  $('#calendar').fullCalendar({
+			header: {
+				left: 'title',
+				center: 'agendaWeek,month',
+				//center: 'agendaDay,agendaWeek,month',
+				right: 'prev,next today'
+			},
+			editable: false,
+			firstDay: 0, // 1(Monday) this can be changed to 0(Sunday) for the USA system
+			selectable: false,
+			defaultView: 'month',
+			
+			axisFormat: 'h:mm',
+			columnFormat: {
+                month: 'ddd',    // Mon
+                week: 'ddd d', // Mon 7
+                day: 'dddd M/d',  // Monday 9/7
+                agendaDay: 'dddd d'
+            },
+            titleFormat: {
+                month: 'MMMM yyyy', // September 2009
+                week: "MMMM yyyy", // September 2009
+                day: 'MMMM yyyy'   // Tuesday, Sep 8, 2009
+            },
+			allDaySlot: false,
+			selectHelper: true,
+			
+			events: [
+				{
+					title: 'All Day Event',
+					start: new Date(y, m, 1)
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d-3, 16, 0),
+					allDay: false,
+					className: 'info'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: new Date(y, m, d+4, 16, 0),
+					allDay: false,
+					className: 'info'
+				},
+				{
+					title: 'Meeting',
+					start: new Date(y, m, d, 10, 30),
+					allDay: false,
+					className: 'important'
+				},
+				{
+					title: 'Lunch',
+					start: new Date(y, m, d, 12, 0),
+					end: new Date(y, m, d, 14, 0),
+					allDay: false,
+					className: 'important'
+				},
+				{
+					title: 'Birthday Party',
+					start: new Date(y, m, d+1, 19, 0),
+					end: new Date(y, m, d+1, 22, 30),
+					allDay: false,
+				},
+				{
+					title: 'Click for Google',
+					start: new Date(y, m, 28),
+					end: new Date(y, m, 29),
+					url: 'https://ccp.cloudaccess.net/aff.php?aff=5188',
+					className: 'success'
+				}
+			],			
+		});	
+	});
 </script>
 
 </body>

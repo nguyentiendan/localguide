@@ -8,6 +8,7 @@ def includeme(config):
     config.add_route('auth_action', '/auth/{action}')
     config.add_route('user_action', '/user/{action}')
     config.add_route('tour_action', '/tour/{action}')
+    config.add_route('orders_action', '/orders/{action}')
     config.add_route('common_action', '/common/{action}')
 
     #Routing for admin page

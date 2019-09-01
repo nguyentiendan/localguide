@@ -74,6 +74,7 @@
 										</div>
 										<span class="input-group-btn">
 											<input type="button" class="btn btn-form btn-primary display-4" @click="reset()" value="Upload again">
+											<button class="btn btn-form btn-primary display-4" @click="setting_calendar()">Setting Calendar</button>
 											<input type="button" class="btn btn-form btn-secondary" @click="goList()" value="Tour list">
 										</span>
 									</div>
@@ -82,6 +83,7 @@
 										<h6 class="pb-2 form-title">Uploaded failed. Please try again</h6>
 										<span class="input-group-btn">
 											<button class="btn btn-form btn-primary display-4" @click="reset()">Upload again</button>
+											<button class="btn btn-form btn-primary display-4" @click="setting_calendar()">Setting Calendar</button>
 											<button class="btn btn-form btn-secondary display-4" @click="goList()">Tour list</button>
 										</span>
 										<pre>${ uploadError }</pre>

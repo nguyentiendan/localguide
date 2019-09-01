@@ -26,10 +26,12 @@
 							<!-- Card Header - Dropdown -->
 							<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
 								<h6 class="m-0 font-weight-bold text-primary"></h6>
-								{%if user.status == '1'%}
-									<span class="tour_status">User is activing.</span>
-								{%elif user.status == '0'%}	
-									<span class="tour_status">User is deactive</span>
+								{%if user.role == '0'%}
+									<span class="tour_status">Temporary tour guide</span>
+								{%elif user.role == '1'%}	
+									<span class="tour_status">Tour Guide</span>
+								{%elif user.role == '2'%}	
+									<span class="tour_status">Admin of this site</span>
 								{%endif%}
 								<div class="dropdown no-arrow">
 									<a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -17,6 +17,7 @@ from sqlalchemy.exc import DBAPIError
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound,  HTTPForbidden
 from ..models.tour import Tour
 from ..models.user import User
+from ..models.orders import Orders
 from ..services.user_service import UserService
 from ..services.tour_service import TourService
 from ..utils import XssHtml
@@ -39,75 +40,69 @@ def tour_detail(request):
     if id is None or uid is None :
         raise exception_response(404)
     else :
-        #role = request.user.role
         tour = Tour()
         tour = TourService.detail_by_id_uid(id, uid, request=request)
         if tour is None :
             raise exception_response(404)
     return {'tour':tour}
 
-@view_config(route_name='tour_action', match_param='action=booking', renderer='localguide:templates/tour/tour_booking.jinja2')
-def tour_booking(request):
-    print('TOUR BOOKING')
-    id  = request.params.get('id')
-    uid = request.params.get('hash')
-    #user = request.user
-    
-    if id is None or uid is None :
-        raise exception_response(404)
-    else :
-        tour = Tour()
-        tour = TourService.detail_by_id_uid(id, uid, request=request)
-        if tour is None :
-            raise exception_response(404)
-        stripe.api_key = 'sk_test_zhVLqm2IiBSzHCmYZbJwlwB400fY8QkLs2'        
-        session = stripe.checkout.Session.create(
-            customer_email='customer@example.com',
-            payment_method_types=['card'],
-            line_items=[{
-                'name': 'T-shirt',
-                'description': 'Comfortable cotton t-shirt',
-                'images': ['https://example.com/t-shirt.png'],
-                'amount': 500,
-                'currency': 'jpy',
-                'quantity': 1,
-            }],
-            success_url='https://example.com/success',
-            cancel_url='https://example.com/cancel',
-        )
-
-    return {'tour':tour}
-
-@view_config(route_name='tour_action', match_param='action=payment')
-def tour_payment(request):
-    print('TOUR PAYMENT')
+@view_config(route_name='tour_action', match_param='action=charge')
+def tour_charge(request):
+    print('TOUR CHARGE')
     data = request.json_body
-    id  = data['id']
-    uid = data['uid']
+    id  = data['id']    #tourID
+    uid  = data['uid']  #UserID
+    token_id  = data['stripeToken']
+    token_email  = data['stripeEmail']
+    name_card = data['name_card']
+    phone = data['phone']
+    currency = data['currency']
+    
+    tour = Tour()
+    tour = TourService.detail_by_id_uid(id, uid, request=request)
 
-    if uid is None or id is None :
+    if uid is None or id is None or tour is None or token_id is None:
         raise exception_response(404)
     else :
+        stripe.api_key = 'sk_test_zhVLqm2IiBSzHCmYZbJwlwB400fY8QkLs2'
+        try :
+            charge = stripe.Charge.create (
+                amount = str(tour.Tour.price) + '00',
+                currency = currency,
+                description = "Payment",
+                source = token_id,
+                capture = False,
+                #statement_descriptor='Custom descriptor'
+            )
+        except Exception as e:
+            return Response('Error', content_type='text/plain', status=500)  
         
-        stripe.api_key = 'sk_test_zhVLqm2IiBSzHCmYZbJwlwB400fY8QkLs2'        
-        session = stripe.checkout.Session.create(
-            customer_email='customer@example.com',
-            payment_method_types=['card'],
-            line_items=[{
-                'name': 'T-shirt',
-                'description': 'Comfortable cotton t-shirt',
-                'images': ['https://example.com/t-shirt.png'],
-                'amount': 500,
-                'currency': 'jpy',
-                'quantity': 1,
-            }],
-            success_url='https://example.com/success',
-            cancel_url='https://example.com/cancel',
-        )
-        print(session.id)
-        ssid = session.id
-    return Response(ssid, content_type='text/plain') 
+        if charge.status == 'succeeded' :
+            orders = Orders()
+            orders.uid             = uid
+            orders.tour_id         = id
+            orders.tour_title      = tour.Tour.title
+            orders.tour_price      = tour.Tour.price
+            orders.tour_currency   = currency
+            orders.charge_id       = charge.id
+            orders.name_card       = name_card
+            orders.email           = token_email
+            orders.phone           = phone
+            orders.status          = 'payment_succeeded'
 
+            try :
+                request.dbsession.add(orders)
+            except DBAPIError:
+                return Response(db_err_msg, content_type='text/plain', status=500)  
+        
+            return Response(
+                    charge.status,
+                    headers=[
+                        ('X-Relocate', ''),
+                        ('Content-Type', 'text/html'),
+                    ]
+            )
+    
 @view_config(route_name='tour_action', match_param='action=create')
 def tour_create(request):
     print('TOUR CREATE')
@@ -226,6 +221,7 @@ def tour_disable(request):
                     ('Content-Type', 'text/html'),
                 ]
         )        
+
 @view_config(route_name='tour_action', match_param='action=enableTour')
 def tour_enable(request):
     print("ENABLE TOUR")
@@ -483,4 +479,3 @@ def tour_uploadImage(request):
                 ('Content-Type', 'text/html'),
             ]
         )
-

@@ -53,6 +53,10 @@ class UserService(object):
         return request.dbsession.query(User).filter(User.email == email, User.status == '1').first()
     
     @classmethod
+    def by_email_activecode(cls, uid, email, active_code, request):
+        return request.dbsession.query(User).filter(User.uid == uid, User.email == email, User.active_code == active_code, User.status == '0').first()
+    
+    @classmethod
     def check_login(cls, request):
         uid = request.unauthenticated_userid
         if uid is None:
@@ -67,7 +71,7 @@ class UserService(object):
     
     @classmethod
     def isAdmin(cls, request):
-        if request.user.role == '1' or request.user.role == '2':
+        if request.user.role == '0' or request.user.role == '1' or request.user.role == '2':
             return True
         return False
     
@@ -80,5 +84,5 @@ class UserService(object):
     @classmethod
     def get_RandomUser(cls, request):
         #Get random user active
-        rs = request.dbsession.query(User.id, User.uid, User.fullname, User.avatar, User.country, User.city, User.job, User.language).filter(User.status == '1', User.role == '1').order_by(func.rand()).limit(3).all()
+        rs = request.dbsession.query(User.id, User.uid, User.fullname, User.avatar, User.country, User.city, User.job, User.language).filter(User.status == '1', User.role == '1', User.avatar != '').order_by(func.rand()).limit(3).all()
         return rs

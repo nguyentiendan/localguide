@@ -19,15 +19,17 @@
             <div class="menu-content-right">
                  <div class=" display-4">
                         <ul class="navbar-nav nav-dropdown js-float-line" data-app-modern-menu="true">
+                            {% if request.user.uid %}                        
+                                <li class="nav-item">
+                                    <a class="nav-link link mbr-black text-danger display-4" href="/admin/profile">Profile</a>                                    
+                                </li>
+                            {% endif %}        
+                            <!--
                             <li class="nav-item">
-                                <a class="nav-link link mbr-black text-danger display-4" href="/publish_tour">Sign up</a>
+                                <a class="nav-link link mbr-black text-danger display-4" href="/publish_tour">Anything</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link link mbr-black text-danger display-4" href="/publish_tour">Login</a>
-                            </li>
-                        </ul>
-                        <!--<p class="widget-title  display-4">abcdsksjhfjkshdfkh</p>-->
-                     
+                            -->
+                        </ul>                     
                     </div>
                 <!--
                 <div class="info-widget">
@@ -49,26 +51,17 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav nav-dropdown js-float-line" data-app-modern-menu="true">
                     {% if request.user.role == '0' %}
+                    <!--
                     <li class="nav-item">
-                        <a class="nav-link link mbr-black text-danger display-4" href="/publish_tour">Publish a tour</a>
+                        <a class="nav-link link mbr-black text-danger display-4" href="/publish_tour">Public a tour</a>
                     </li>
+                    -->
                     {%endif%}
                     <li class="nav-item">
-                        <a class="nav-link link mbr-black text-danger display-4" href="#">Help</a>
+                        <a class="nav-link link mbr-black text-danger display-4" href="/publish_tour">How to public tour</a>
                     </li>
 
-                    {% if request.user.uid %}                        
-                        <li class="nav-item">
-                            {% if request.user.role == '1' or request.user.role == '2' %}
-                                <a class="nav-link link mbr-black text-danger display-4" href="/admin/dashboard">Profile</a>
-                            {%elif request.user.role == '0'%}
-                                <a class="nav-link link mbr-black text-danger display-4" href="/user/basic">Profile</a>
-                            {% endif %}
-                        </li>    
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link link mbr-black text-danger display-4" href="/user/create">Signup</a>
-                        </li>
+                    {% if not request.user.uid %}                        
                         <li class="nav-item">
                             <a class="nav-link link mbr-black text-danger display-4" href="/auth/login">Login</a>
                         </li>
