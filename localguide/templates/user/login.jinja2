@@ -22,7 +22,7 @@
 					<div class="d-block text-center">
 						<h5>Login successfull !</h5>
 					</div>
-					<b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Go to Home</b-btn>
+					<b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Go to Dashboard</b-btn>
 				</b-modal>
         	</div>
 			<p class="text-danger text-center">${ message }</p>
@@ -114,11 +114,8 @@
 				},
 				hideModal () {
 					this.$refs.myModalRef.hide();
-					window.location = URL;
-				},
-				//rerender() {
-				//	this.$forceUpdate();
-				//}
+					window.location = '../admin/dashboard';
+				},				
 			}
 		});
 
