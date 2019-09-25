@@ -391,6 +391,7 @@ def tour_uploadTourPhoto(request):
             
             data['images'].append({  
                 'name': file.filename,
+                'alt': 'copyright@localguide', 
             })
             with open(photo_json, "w") as json_file:
                 json.dump(data, json_file)

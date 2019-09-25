@@ -4,6 +4,8 @@
     {% include "../common/header.jinja2" %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="{{request.static_url('localguide:static/adassets/css/style.css')}}">
+	<link href="https://unpkg.com/vueperslides/dist/vueperslides.css" rel="stylesheet">
+	<link rel="stylesheet" href="{{request.static_url('localguide:static/assets/theme/css/lightbox.css')}}">
 	<style>
 		/*body {
 			margin-bottom: 40px;
@@ -79,31 +81,44 @@
 <script src="{{request.static_url('localguide:static/adassets/js/calendar.js')}}"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://unpkg.com/vue-stripe-checkout@1.2.6/build/vue-stripe-checkout.js"></script>
+<script src="https://unpkg.com/vueperslides@1.20.1/dist/vueperslides.umd.min.js"></script>
+<script src="https://unpkg.com/vue-my-photos/dist/lightbox.js"></script>
 
 <script type="text/javascript">
 	Vue.use(VeeValidate);
 	Vue.use(bootstrapVue);
 	Vue.use(VueStripeCheckout, 'pk_test_5BV29MJdeaXwC6UpVHeY8uQM00VTvLqATm');
+	
     
 	/* Tour Detail  */
 	const tourDetail = new Vue({
         delimiters: ['${', '}'],
 		el: '#tourDetail',
+		components: {
+     		VueSlider: window['vueperslides']
+    	},
 		data: {
-            photos: [],
+            images: '',
+			photos: [],
             countries: [],
+			thumbnailDir: '',
+			num: '',
+			galleryFilter: 'all',
             tour: {
                 id: "{{tour.Tour.id}}",
                 uid: "{{tour.Tour.uid}}"
             },
 		},
         created() {
-            //this.getPhoto()
+            this.getPhoto()
+			this.thumbnailDir = URL + 'static/user_images/guide/' + this.tour.uid + '/' + this.tour.id + '/'
         },
 		methods: {			
             getPhoto() {
                 axios.get(URL + 'static/user_images/guide/' + this.tour.uid + '/' + this.tour.id + '/photo.json').then(response => {    
 					this.photos = response.data.images
+					this.images = response.data.images
+					this.num = response.data.images.length
 				})
                 
 			},
@@ -111,6 +126,9 @@
                 url = "../user/profile?id=" + id + '&hash=' + uid;
 				location.href = url				
 			},
+			showLightbox: function(imageName) {				
+      			this.$refs.lightbox.show(imageName);
+    		},
 		}
 	});
 

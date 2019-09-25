@@ -13,6 +13,9 @@
 	<link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
 	<!--<link href="https://cdn.quilljs.com/1.3.4/quill.bubble.css" rel="stylesheet">-->
 	<!-- Quill end -->
+	<link rel="stylesheet" href="{{request.static_url('localguide:static/assets/theme/css/lightbox.css')}}">
+	<link href="https://unpkg.com/vueperslides/dist/vueperslides.css" rel="stylesheet">
+
 	<!--<link rel="stylesheet" href="{{request.static_url('localguide:static/adassets/css/style.css')}}">-->
 	<style>
 		/*body {
@@ -89,6 +92,8 @@
 <script src="{{request.static_url('localguide:static/assets/js/vee-validate.js')}}"></script>
 <script src="{{request.static_url('localguide:static/assets/js/axios.js')}}"></script> 
 <script src="{{request.static_url('localguide:static/adassets/js/calendar.js')}}"></script>
+<script src="https://unpkg.com/vue-my-photos/dist/lightbox.js"></script>
+<script src="https://unpkg.com/vueperslides@1.20.1/dist/vueperslides.umd.min.js"></script>
 
 <script type="text/javascript">
     Vue.use(VeeValidate);
@@ -106,6 +111,10 @@
 			uploadError: null,
 			currentStatus: null,
 			uploadFieldName: 'photos',
+			images: '',
+			thumbnailDir: '',
+			num: '',
+			galleryFilter: 'all',
 		},
 		computed: {
 			isInitial() {
@@ -135,27 +144,36 @@
 			setting_calendar() {
 				this.id = getUrlParameter('id')
 				this.uid = getUrlParameter('hash')
-				console.log(this.id)
-				console.log(this.uid)
 				location.href = 'calendar?id=' + this.id + '&hash=' + this.uid;
 			},
 			goList() {
 				location.href = 'tourlist'
 			},
 			save(formData) {
-				//console.log(formData)
+				this.id = getUrlParameter('id')
+				this.uid = getUrlParameter('hash')
+				var dir = URL + 'static/user_images/guide/' + this.uid + '/' + this.id + '/'
+				this.thumbnailDir = dir
 				// upload data to the server
-				this.currentStatus = STATUS_SAVING;
 				upload(formData)
 					.then(x => {
+						//axios.get(dir + 'photo.json').then(response => {
+						//	this.num = response.data.images.length
+						//	this.images = response.data.images
+						//})
 						this.uploadedFiles = [].concat(x);
+						
+						this.images = this.uploadedFiles
+						this.num = this.uploadedFiles.length
+						
+						console.log(this.uploadedFiles)
+
 						this.currentStatus = STATUS_SUCCESS;
 					})
 					.catch(err => {
 						this.uploadError = err.response;
 						this.currentStatus = STATUS_FAILED;
 					});
-				
 			},
 			filesChange(fieldName, fileList) {
 				// handle file changes
@@ -168,7 +186,7 @@
 						return;
 					}
 				}
-				if ( !fileList.length || fileList.length > 5 ) {
+				if ( !fileList.length || fileList.length > 30 ) {
 					alert('Please upload 5 files once time');						
 					return;
 				}
@@ -194,6 +212,9 @@
 				}
 				return true
 			},
+			showLightbox: function(imageName) {
+      			this.$refs.lightbox.show(imageName);
+    		},
 		},
 		mounted() {
 			this.reset();

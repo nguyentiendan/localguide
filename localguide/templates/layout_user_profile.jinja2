@@ -2,7 +2,7 @@
 <html >
 <head>
     {% include "../common/header.jinja2" %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">		
 </head>
 <body>
 {% include "../common/navbar_default.jinja2" %}
@@ -12,8 +12,10 @@
 </div>
 
 {% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
 
 <script type="text/javascript">
+
     /* User Related Tour  */
 	const relatedTour = new Vue({
         delimiters: ['${', '}'],

@@ -20,9 +20,9 @@ class TourService(object):
     
     @classmethod
     def all_tour(cls, request):
-        rs = request.dbsession.query(Tour).order_by(desc(Tour.mtime)).all()
+        rs = request.dbsession.query(Tour.id, Tour.uid, Tour.title, Tour.type, Tour.country, Tour.city, Tour.price, Tour.days, Tour.status, Tour.req_active, Tour.mtime, User.fullname).filter(Tour.uid == User.uid).order_by(desc(Tour.mtime)).all()
         return rs
-
+    
     @classmethod
     def by_id(cls, _id, request):
         rs = request.dbsession.query(Tour, User.fullname).filter(Tour.id == _id, Tour.uid == User.uid, Tour.status == '1').first()
@@ -39,15 +39,13 @@ class TourService(object):
         return rs
 
     @classmethod
-    def detail_by_id_uid(cls, _id, _uid, request):
-        # Lay them User.fullname , tham khảo by_id
-        rs = request.dbsession.query(Tour, User.id, User.fullname, User.avatar).filter(Tour.id == _id, Tour.uid == _uid, Tour.uid == User.uid).first()
+    def detail_by_id_uid(cls, _id, _uid, request):        
+        rs = request.dbsession.query(Tour, User.id, User.fullname, User.avatar, User.level).filter(Tour.id == _id, Tour.uid == _uid, Tour.uid == User.uid, Tour.status == '1').first()
         return rs
 
     @classmethod
     def by_uid(cls, _uid, request):
-        # Lay them User.fullname , tham khảo by_id
-        rs = request.dbsession.query(Tour).filter(Tour.uid == _uid, Tour.status != '3').order_by(desc(Tour.mtime)).all()
+        rs = request.dbsession.query(Tour.id, Tour.uid, Tour.title, Tour.type, Tour.country, Tour.city, Tour.price, Tour.days, Tour.status, Tour.req_active, Tour.mtime).filter(Tour.uid == _uid, Tour.status != '3').order_by(desc(Tour.mtime)).all()
         return rs    
     
     @classmethod

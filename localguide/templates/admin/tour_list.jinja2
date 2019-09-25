@@ -57,7 +57,9 @@
 												<th>Tour name</th>
 												<th>Tour type</th>
 												<th>Country/City</th>
-												<th>Guide name</th>
+												{%if request.user.role == '2'%}
+													<th>Guide name</th>
+												{%endif%}
 												<th>Price/Day</th>
 												<th>Status</th>
 												<th>Last update</th>
@@ -69,7 +71,7 @@
 												<td><a href="#" @click="goEdit( '{{t.id}}', '{{t.uid}}' )" style="cursor: pointer;">{{t.title|e}}</a></td>
 												<td>{{t.type}}</td>
 												<td>{{t.country}}/{{t.city}}</td>
-												<td>Guide name</td>
+												{%if request.user.role == '2'%}<td>{{t.fullname}}</td>{%endif%}
 												<td>{{t.price}}$/{{t.days}} day</td>
 												<td>
 													{%if t.status == '0' and t.req_active == '0'%} 

@@ -61,7 +61,7 @@ def admin_tour_list(request):
             tour = TourService.all_tour(request=request)
         elif request.user.role == '0' or request.user.role == '1':   #Tour admin or Temp Tour guide
             tour = TourService.by_uid(uid, request=request)
-
+        print(tour)
     return {'tour':tour}
 
 @view_config(route_name='admin_action', match_param='action=orderslist', renderer='localguide:templates/admin/orders_list.jinja2')

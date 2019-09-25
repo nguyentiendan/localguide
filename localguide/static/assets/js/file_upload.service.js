@@ -5,17 +5,7 @@ function upload(formData) {
         url: URL + 'tour/uploadTourPhoto',
         data: formData, 
         headers: {'Content-Type': 'multipart/form-data'} 
-    })
-    /*
-    .then(function (response) {
-        //handle success
-        //console.log(response.data)
-    })
-    .catch(function (response) {
-        //handle error
-        console.log(response);
-    });
-    */
+    })    
     const photos = formData.getAll('photos');
     const promises = photos.map((x) => getImage(x)
         .then(img => ({
@@ -23,7 +13,7 @@ function upload(formData) {
             originalName: x.name,
             fileName: x.name,
             url: img
-        })));    
+        })));
     return Promise.all(promises);
 }
 

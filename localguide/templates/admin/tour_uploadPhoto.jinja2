@@ -46,7 +46,7 @@
 										<form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
 											<input type="hidden" ref="id" v-model="id">
 											<input type="hidden" ref="uid" v-model="uid">
-											<h6 class="pb-2 form-title">Please choose and upload 12 photos for this tour.</h6>
+											<h6 class="pb-2 form-title">Please choose and upload photos for this tour.</h6>
 											<div class="dropbox">
 												<input ref="file" type="file" multiple :name="uploadFieldName" :disabled="isSaving" 
 													@change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length" accept="image/*" class="input-file">
@@ -65,17 +65,39 @@
 									</div>  
 									
 									<!--SUCCESS-->
-									<div v-if="isSuccess">
-										<h6 class="pb-2 form-title">You have uploaded <b>${ uploadedFiles.length }</b> file(s) successfully.</h6>
-										<div class="row">
-											<div class="col-md-4" v-for="item in uploadedFiles">
-												<img :src="item.url" class="img img-thumbnail" :alt="item.originalName">
+									<div v-if="isSuccess">										
+										<h6 class="pb-2 form-title">You have uploaded <b>${ num }</b> file(s) successfully.</h6>
+										<div style="text-align:center; padding-bottom:10px;">
+											<div v-if="num > 3">
+												<vueper-slides class="no-shadow" :visible-slides="3" slide-multiple :slide-ratio="1/4" :dragging-distance="70" :arrows="true" :bullets="false">
+													<vueper-slide v-for="i in images" :key="i" title="" :image="thumbnailDir+i.fileName"></vueper-slide>
+												</vueper-slides>
 											</div>
+											<div v-else>
+												<vueper-slides class="no-shadow" :visible-slides="3" slide-multiple :slide-ratio="1/4" :dragging-distance="70" :arrows="false" :bullets="false">
+													<vueper-slide v-for="i in images" :key="i" title="" :image="thumbnailDir+i.fileName"></vueper-slide>
+												</vueper-slides>
+											</div>
+											<!--
+											<div class="col-md-12">
+												<h6 class="mbr-fonts-style"><small><a href="#" v-for="thumb in 1" @click="showLightbox(thumb.fileName)">View in large mode</a></small></h6>
+											</div>
+											-->					
+											<lightbox id="mylightbox" 
+												ref="lightbox"
+												:images="images"
+												:directory="thumbnailDir"
+												:filter="galleryFilter"
+												:timeoutDuration="5000"
+											/>	
+											
 										</div>
 										<span class="input-group-btn">
-											<input type="button" class="btn btn-form btn-primary display-4" @click="reset()" value="Upload again">
+											<!--<input type="button" class="btn btn-form btn-primary display-4" @click="reset()" value="Upload again">-->
+											<button class="btn btn-form btn-primary display-4" @click="reset()">Upload again</button>
 											<button class="btn btn-form btn-primary display-4" @click="setting_calendar()">Setting Calendar</button>
-											<input type="button" class="btn btn-form btn-secondary" @click="goList()" value="Tour list">
+											<button class="btn btn-form btn-secondary display-4" @click="goList()">Cancel</button>
+											<!--<input type="button" class="btn btn-form btn-secondary" @click="goList()" value="Cancel">-->
 										</span>
 									</div>
 									<!--FAILED-->
@@ -84,7 +106,7 @@
 										<span class="input-group-btn">
 											<button class="btn btn-form btn-primary display-4" @click="reset()">Upload again</button>
 											<button class="btn btn-form btn-primary display-4" @click="setting_calendar()">Setting Calendar</button>
-											<button class="btn btn-form btn-secondary display-4" @click="goList()">Tour list</button>
+											<button class="btn btn-form btn-secondary display-4" @click="goList()">Cancel</button>
 										</span>
 										<pre>${ uploadError }</pre>
 									</div>

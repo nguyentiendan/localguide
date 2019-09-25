@@ -27,13 +27,17 @@
 							<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
 								<h6 class="m-0 font-weight-bold text-primary"></h6>								
 								{%if tour.status == '0' and tour.req_active == '0'%}
-									<span class="tour_status">Tour is not active. Please request admin to active</span>
+									{%if request.user.role == '2'%}
+										<span class="tour_status">Tour is not active.</span>
+									{%else%}
+										<span class="tour_status">Tour is not active. Please request admin to active</span>
+									{%endif%}
 								{%elif tour.status == '0' and tour.req_active == '1'%}	
 									<span class="tour_status">Request active was send to admin. Waiting admin accept</span>	
 								{%elif tour.status == '1'%}	
-									<span class="tour_status">Tour is active, you can view at homepage</span>
+									<span class="tour_status">Tour is active</span>
 								{%elif tour.status == '2'%}
-									<span class="tour_status">Tour is disable, you can not view at homepage</span>		
+									<span class="tour_status">Tour is disable, can not view at homepage</span>		
 								{%elif tour.status == '3'%}
 									<span class="tour_status">Tour was deleted. Admin can restore this tour</span>		
 								{%endif%}
