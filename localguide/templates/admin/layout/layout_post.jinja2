@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <!-- Quill start -->
+	<script src="https://cdn.quilljs.com/1.3.4/quill.js"></script>
+	<!--<script src="https:////cdn.quilljs.com/1.3.6/quill.min.js"></script>-->
+	<!-- Quill JS Vue -->
+	<script src="https://cdn.jsdelivr.net/npm/vue-quill-editor@3.0.4/dist/vue-quill-editor.js"></script>
+	<!-- Include stylesheet -->
+	<link href="https://cdn.quilljs.com/1.3.4/quill.core.css" rel="stylesheet">
+	<!-- Theme -->
+	<link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
+	<!--<link href="https://cdn.quilljs.com/1.3.4/quill.bubble.css" rel="stylesheet">-->
+	<!-- Quill end -->
+
+	<!--<link rel="stylesheet" href="{{request.static_url('localguide:static/adassets/css/style.css')}}">-->	
+</head>
+<body id="page-top">
+
+{% block content %}
+{% endblock %}
+
+{% include "../common/footer.jinja2" %}
+<script src="{{request.static_url('localguide:static/assets/js/common.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/vue.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/vee-validate.js')}}"></script>
+<script src="{{request.static_url('localguide:static/assets/js/axios.js')}}"></script> 
+<script src="{{request.static_url('localguide:static/assets/js/image_resize.min.js')}}"></script>
+
+<script type="text/javascript">
+    Vue.use(VeeValidate);
+    Vue.use(VueQuillEditor);
+		
+	const postList = new Vue({
+		el: '#postList',
+		data: {},
+		methods: {
+			goEdit(id,uid) {
+				console.log("Go eidt")
+				location.href = 'postedit?id=' + id + '&uid=' + uid;
+			},
+			goDelete(id,uid) {
+				var conf = confirm("Are you sure. You can't restore.")
+				if (conf) {
+					axios({
+						method: 'POST',
+						url: URL + 'tour/deleteTour',
+						data: {id: id, uid: uid},
+						config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+					})
+					.then(function (response) {
+						//handle success
+						if (response.status == '200' && response.statusText == 'OK') {
+							location.reload() 
+						}
+					})
+					.catch(function (response) {
+						//handle error
+						//console.log(response);
+					});
+				}
+			},
+		}	
+	});	
+
+    const postCreateForm = new Vue({
+		delimiters: ['${', '}'],
+        el: '#postCreateForm',
+        data: {
+			success: false,
+			post: {
+				title:'',
+				content:'',
+			},
+			editorOption: {
+				syntax: true,
+				placeholder: 'Please input your content',
+				theme: 'snow',
+				modules: {
+					imageResize: {
+          				displaySize: true
+        			},
+					toolbar: {
+						container: [
+							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+							['bold', 'italic', 'underline', 'strike'],
+							[{ 'color': [] }, { 'background': [] }], 
+							[{ 'align': [] }],
+							[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+							['link', 'image', 'video'],
+							['blockquote'],
+							['clean']  
+						],
+						handlers: {
+							image: imageHandler
+						}
+					},
+				},
+			},
+        },
+		created() { },
+		computed: { },
+		components: {
+			LocalQuillEditor: VueQuillEditor.quillEditor
+		},
+        methods: {
+			processForm(evt) {
+				evt.preventDefault()
+        		//attempt validating all
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+						//validation passed succesfully
+						let formData = new FormData();
+						formData.append('title', this.$refs['title'].value);
+						formData.append('content', this.$refs['content'].value);
+						//console.log('>> formData >> ', formData);
+						axios({
+							method: 'POST',
+							url: URL + 'post/create',
+							data: formData,
+							headers: {'Content-Type': 'multipart/form-data'} 
+						})
+						.then(function (response) {
+							//handle success
+							if (response.status == '200' && response.statusText == 'OK') {
+								console.log(response)
+								if(response.data!='') {
+									location.href = response.data  
+								}
+								//tourCreateForm.showModal()
+							}
+						})
+						.catch(function (response) {
+							//handle error
+						});
+                    }
+                });
+            },
+			postList() {
+				location.href = 'postlist'
+			}
+        }	
+    });
+
+	const postUpdateForm = new Vue({
+		delimiters: ['${', '}'],
+        el: '#postUpdateForm',
+        data: {
+			isEditing: false,
+			success: false,
+			post: {
+				uid: "{{post.uid}}",
+				id: "{{post.id}}",
+				title:'{{post.title}}',
+				content: '{{post.content|safe}}',
+			},
+			editorOption: {
+				syntax: true,
+				placeholder: 'Please input your content',
+				theme: 'snow',
+				modules: {
+					imageResize: {
+          				displaySize: true
+        			},
+					toolbar: {
+						container: [
+							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+							['bold', 'italic', 'underline', 'strike'],
+							[{ 'color': [] }, { 'background': [] }], 
+							[{ 'align': [] }],
+							[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+							['link', 'image', 'video'],
+							['blockquote'],
+							['clean']  
+						],
+						handlers: {
+							image: imageHandler
+						}
+					},
+				},
+			},
+        },
+		created() { },
+		computed: { },
+		components: {
+			LocalQuillEditor: VueQuillEditor.quillEditor
+		},
+        methods: {
+			processForm(evt) {
+				evt.preventDefault()
+				this.isEditing = !this.isEditing;
+        		//attempt validating all
+                this.$validator.validateAll().then((result) => {
+                    if (result) {
+						//validation passed succesfully
+						//let formData = new FormData();
+						//formData.append('title', this.$refs['title'].value);
+						//formData.append('content', this.$refs['content'].value);
+						//console.log('>> formData >> ', formData);
+						
+						this.post.title			= this.$refs['title'].value;
+						this.post.content		= this.$refs['content'].value;
+						console.log(this.post.title)
+						console.log(this.post.content)
+						console.log(this.post.id)
+						axios({
+							method: 'POST',
+							url: URL + 'post/updatePost',
+							data: this.post,
+							config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+						})
+						.then(function (response) {
+							//handle success
+							if (response.status == '200' && response.statusText == 'OK') {
+								console.log(response)
+								if(response.data!='') {
+									location.href = response.data  
+								}
+							}
+						})
+						.catch(function (response) {
+							//handle error
+						});
+                    }
+                });
+            },
+			back() {
+				location.href = 'postlist'
+			}
+			
+        }	
+    });
+
+	const post_delete = new Vue({
+		delimiters: ['${', '}'],
+        el: '#post_delete',
+		data: {
+			post: {
+				id:'{{post.id}}',
+				uid:'{{post.uid}}',
+			},
+		},
+		methods: {
+			post_delete() {
+				axios({
+					method: 'POST',
+					url: URL + 'admin/post_delete',
+					data: this.post,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.href = 'postlist'
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});
+
+	const post_requestactive = new Vue({
+		delimiters: ['${', '}'],
+        el: '#post_requestactive',
+		data: {
+			post: {
+				id:'{{post.id}}',
+				uid:'{{post.uid}}',
+			},
+		},
+		methods: {
+			post_requestactive() {
+				axios({
+					method: 'POST',
+					url: URL + 'admin/post_requestactive',
+					data: this.post,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.href = 'postlist'
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});
+
+	const post_active = new Vue({
+		delimiters: ['${', '}'],
+        el: '#post_active',
+		data: {
+			post: {
+				id:'{{post.id}}',
+				uid:'{{post.uid}}',
+			},
+		},
+		methods: {
+			post_active() {
+				axios({
+					method: 'POST',
+					url: URL + 'admin/post_active',
+					data: this.post,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.href = 'postlist'
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});	
+
+	const post_disable = new Vue({
+		delimiters: ['${', '}'],
+        el: '#post_disable',
+		data: {
+			post: {
+				id:'{{post.id}}',
+				uid:'{{post.uid}}',
+			},
+		},
+		methods: {
+			post_disable() {
+				axios({
+					method: 'POST',
+					url: URL + 'admin/post_disable',
+					data: this.post,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.reload();
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});	
+
+	const post_enable = new Vue({
+		delimiters: ['${', '}'],
+        el: '#post_enable',
+		data: {
+			post: {
+				id:'{{post.id}}',
+				uid:'{{post.uid}}',
+			},
+		},
+		methods: {
+			post_enable() {
+				axios({
+					method: 'POST',
+					url: URL + 'admin/post_enable',
+					data: this.post,
+					config: { headers: {'Content-Type': 'application/json; charset=utf-8' }}
+				})
+				.then(function (response) {
+					//handle success
+					if (response.status == '200' && response.statusText == 'OK') {
+						location.reload();
+					}
+				})
+				.catch(function (response) {
+					//handle error
+					console.log(response);
+				});
+			},
+		}		
+	});	
+	
+</script>
+
+</body>
+</html>

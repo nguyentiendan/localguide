@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% include "../common/header.jinja2" %}
+    <title>How to publish a tour</title>
+</head>
+<body>
+{% include "../common/navbar_default.jinja2" %}
+
+<section class="cid-rccxHGVSrM" id="testimonials01-8">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">            
+            </div>
+        </div>
+        
+        {%if post %}
+        <div class="row row-content justify-content-center">
+            <div class="card py-4 col-md-8">
+                {% for p in post %}
+                <div class="row justify-content-center card-wrapper pt-5">
+                    <div class="col-md-2 col-lg-1 col-sm-6 pb-4 justify-content-center">
+                        <img class="card-img" src="{{ request.static_url('localguide:static/assets/user_images/guide/')}}{{p.Post.uid}}/{{p.avatar}}" title="">
+                    </div>
+                    <div class="col-md-10 col-lg-11 col-sm-12">
+                        <div class="text-box">
+                            <h4 class="card-title pb-2 mbr-fonts-style mbr-bold display-5">{{p.Post.title}}</h4>
+                            <p class="mbr-text pb-3 mbr-fonts-style status mbr-normal display-4">Post by : {{p.fullname}} at {{p.Post.mtime}}</p>
+
+                            <p class="mbr-text pb-4 mbr-fonts-style text mbr-normal display-4">
+                                {{p.Post.content.replace("\\'","'")[:200]|safe}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+            </div>
+        </div>
+        {%else%}
+        <div class="row row-content pt-5" style="height:500px;">
+            Sorry, have not post. Back to <a href="/">&nbsp;Home</a>
+        </div>
+        {%endif%}
+    </div>
+</section>
+
+
+
+
+
+{% include "../common/footer.jinja2" %}
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

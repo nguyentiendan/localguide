@@ -40,6 +40,8 @@ function saveToServer(quill, file) {
     })
     .then(res => {
         if(res.status == '200' && res.statusText == 'OK'){
+            console.log(res.data.url)
+
             var Delta = Quill.import('delta');
             let range = quill.getSelection(true);
             quill.updateContents(new Delta()

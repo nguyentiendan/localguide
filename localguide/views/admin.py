@@ -8,8 +8,10 @@ from sqlalchemy.exc import DBAPIError
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound,  HTTPForbidden
 from ..models.user import User
 from ..models.tour import Tour
+from ..models.post import Post
 from ..services.user_service import UserService
 from ..services.tour_service import TourService
+from ..services.post_service import PostService
 from ..services.orders_service import OrdersService
 from ..utils import XssHtml
 import stripe
@@ -167,7 +169,7 @@ def uploadPhoto(request):
         
     return {}
 
-@view_config(route_name='admin_action', match_param='action=edit', renderer='localguide:templates/admin/tour_edit.jinja2')
+@view_config(route_name='admin_action', match_param='action=touredit', renderer='localguide:templates/admin/tour_edit.jinja2')
 def admin_tour_edit(request):
     print('TOUR EDIT')    
     id  = request.params.get('id')
@@ -496,3 +498,174 @@ def admin_test(request):
                     ('Content-Type', 'text/html'),
                 ]
         )
+
+@view_config(route_name='admin_action', match_param='action=postlist', renderer='localguide:templates/admin/post_list.jinja2')
+def admin_post_list(request):
+    print('POST LIST of GUIDE')
+    user = request.user
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        uid  = request.user.uid
+        if request.user.role == '2':     #Admin
+            post = PostService.all_post(request=request)
+        elif request.user.role == '0' or request.user.role == '1':   #Tour admin or Temp Tour guide
+            post = PostService.by_uid(uid, request=request)
+    
+    return {'post':post}
+
+@view_config(route_name='admin_action', match_param='action=post_create', renderer='localguide:templates/admin/post_create.jinja2')
+def admin_post_create(request):
+    print('LOAD CREATE POST FORM')
+    user = request.user
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+
+    return {}
+
+@view_config(route_name='admin_action', match_param='action=postedit', renderer='localguide:templates/admin/post_edit.jinja2')
+def admin_post_edit(request):
+    print('POST EDIT')    
+    id  = request.params.get('id')
+    uid = request.params.get('uid')
+    user = request.user
+    
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        if request.user.role == '2':    #Admin
+            post = PostService.by_id_uid(id, uid, request=request)
+        elif request.user.role == '1':  #Tour admin
+            post = PostService.by_id_uid(id, request.user.uid, request=request)
+
+        if post is None :
+            raise exception_response(404)
+    
+        return {'post':post}
+
+#Admin/Tour admin delete their post. 
+@view_config(route_name='admin_action', match_param='action=post_delete')
+def admin_post_delete(request):
+    print("ADMIN DELETE POST")
+    user = request.user
+    
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        data = request.json_body    
+        post = Post()
+        post.id     = data['id']
+        post.uid    = data['uid']
+        post = PostService.delete_by_id_uid(post.id, post.uid, request=request)
+        
+    return Response(
+        '',
+        headers=[
+            ('X-Relocate', ''),
+            ('Content-Type', 'text/html'),
+        ]
+    )
+
+#Admin/Tour admin request active their post. 
+@view_config(route_name='admin_action', match_param='action=post_requestactive')
+def admin_post_requestactive(request):
+    print("REQUEST ACTIVE POST")
+    user = request.user
+    
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        data = request.json_body    
+        post = Post()
+        post.id     = data['id']
+        post.uid    = data['uid']
+        post = PostService.update_by_id_uid(post.id, post.uid, request=request)
+        post.req_active  = '1'
+        post.mtime  = datetime.datetime.now()
+    return Response(
+        '',
+        headers=[
+            ('X-Relocate', ''),
+            ('Content-Type', 'text/html'),
+        ]
+    )
+
+#Admin active post. 
+@view_config(route_name='admin_action', match_param='action=post_active')
+def admin_post_active(request):
+    print("ADMIN ACTIVE POST")
+    user = request.user
+    
+    #check only admin can access this function
+    if user is None or UserService.isAdmin_2(request) == False:
+        raise exception_response(404)
+    else :
+        data = request.json_body    
+        post = Post()
+        post.id     = data['id']
+        post.uid    = data['uid']
+        post = PostService.update_by_id_uid(post.id, post.uid, request=request)
+        post.status  = '1'
+        post.mtime  = datetime.datetime.now()
+    return Response(
+        '',
+        headers=[
+            ('X-Relocate', ''),
+            ('Content-Type', 'text/html'),
+        ]
+    )
+
+#Admin/Tour admin disable their post. 
+@view_config(route_name='admin_action', match_param='action=post_disable')
+def admin_post_disable(request):
+    print("ADMIN DISABLE POST")
+    user = request.user
+    
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        data = request.json_body    
+        post = Post()
+        post.id     = data['id']
+        post.uid    = data['uid']
+        post = PostService.update_by_id_uid(post.id, post.uid, request=request)
+        post.status  = '2'
+        post.mtime  = datetime.datetime.now()
+    return Response(
+        '',
+        headers=[
+            ('X-Relocate', ''),
+            ('Content-Type', 'text/html'),
+        ]
+    )
+
+#Admin/Tour admin enable their post. 
+@view_config(route_name='admin_action', match_param='action=post_enable')
+def admin_post_enable(request):
+    print("ADMIN ENABLE POST")
+    user = request.user
+    
+    #check only admin/tour admin access this function
+    if user is None or UserService.isAdmin(request) == False:
+        raise exception_response(404)
+    else :
+        data = request.json_body    
+        post = Post()
+        post.id     = data['id']
+        post.uid    = data['uid']
+        post = PostService.update_by_id_uid(post.id, post.uid, request=request)
+        post.status  = '1'
+        post.mtime  = datetime.datetime.now()
+    return Response(
+        '',
+        headers=[
+            ('X-Relocate', ''),
+            ('Content-Type', 'text/html'),
+        ]
+    )

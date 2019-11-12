@@ -8,6 +8,7 @@ import zope.sqlalchemy
 from .user import User
 from .tour import Tour
 from .orders import Orders
+from .post import Post
 
 # run configure_mappers after defining all of the models to ensure
 # all relationships can be setup

@@ -1,0 +1,113 @@
+{% extends "layout/layout_post.jinja2" %}
+
+{% block content %}
+<!-- Page Wrapper -->
+<div id="wrapper">
+	{% include "common/sidebar.jinja2" %}
+	<!-- Content Wrapper -->
+	<div id="content-wrapper" class="d-flex flex-column">
+		<!-- Main Content -->
+		<div id="content">
+			{% include "common/top_navbar.jinja2" %}
+			<!-- Begin Page Content -->
+			<div class="container-fluid">
+				<!-- Page Heading -->
+				<div class="d-sm-flex align-items-center justify-content-between mb-4">
+					<h1 class="h3 mb-0 text-gray-800">Post list</h1>
+					<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#logoutModal">
+						<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Logout
+					</a>
+				</div>
+				<!-- Content Row -->
+				<div class="row">
+					<!-- Area Chart -->
+					<div class="col-xl-10 col-lg-10">
+						<div class="card shadow mb-4">
+							<!-- Card Header - Dropdown -->
+							<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+								<h6 class="m-0 font-weight-bold text-primary"></h6>
+								<div class="dropdown no-arrow">
+									<a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+									</a>
+									<div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+										<div class="dropdown-header">Dropdown Header:</div>
+										<a class="dropdown-item" href="#">Action</a>
+										<a class="dropdown-item" href="#">Another action</a>
+										<div class="dropdown-divider"></div>
+										<a class="dropdown-item" href="#">Something else here</a>
+									</div>
+								</div>
+							</div>
+							<!-- Card Body -->
+							<div class="card-body" id="postList">
+								<div class="table-responsive">
+									{% if not post %}
+										You have not a post. 
+										<a href="post_create" class="btn btn-primary btn-icon-split">
+											<span class="icon text-white-50">
+												<i class="fas fa-flag"></i>
+											</span>
+											<span class="text">New post</span>
+										</a>
+									{%else%}
+									<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+										<thead>
+											<tr>
+												<th>Title</th>
+												{%if request.user.role == '2'%}
+													<th>Guide name</th>
+												{%endif%}
+												<th>Status</th>
+												<th>Last update</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for p in post %}
+											<tr>
+												<td><a href="#" @click="goEdit( '{{p.id}}', '{{p.uid}}' )" style="cursor: pointer;">{{p.title|e}}</a></td>										
+												{%if request.user.role == '2'%}<td>{{p.fullname}}</td>{%endif%}
+												<td>
+													{%if p.status == '0' and p.req_active == '0'%} 
+														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is not active. Please request admin to active">Not active</span> 
+													{%elif p.status == '1'%}  
+														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is active, you can view at homepage">Active</span> 
+													{%elif p.status == '2'%}  	
+														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is disable, you can not view at homepage">Disable</span> 
+													{%elif p.status == '3'%}  		
+														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is delete, you can not view at homepage">Delete</span> 
+													{%elif p.status == '0' and p.req_active == '1'%}  		
+														<span class="tour_status" style="cursor: pointer;" data-toggle="tooltip" data-placement="right" title="Tour is waiting active">Request active</span> 
+													{%endif%}	
+												</td>
+												<td>{{p.mtime}}</td>
+											</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+									{%endif%}
+								</div>
+              				</div>
+            			</div>
+          			</div>
+        		</div>
+				<!-- Content Row -->			
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- End of Main Content -->
+		{% include "common/copyright.jinja2" %}
+	</div>
+	<!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+	<i class="fas fa-angle-up"></i>
+</a>
+
+{% include "common/logout_modal.jinja2" %}
+
+{% endblock content %}  
+
